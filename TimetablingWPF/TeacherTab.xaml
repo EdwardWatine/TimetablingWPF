@@ -1,0 +1,43 @@
+﻿<Page x:Class="TimetablingWPF.TeacherTab"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TimetablingWPF"
+        mc:Ignorable="d"
+        Title="CheckboxPopup" FocusManager.FocusedElement="{Binding ElementName=txName}"
+        >
+    <Page.Background>
+        <SolidColorBrush Color="#1A1A74"/>
+    </Page.Background>
+
+    <Grid Grid.Row="1" Margin="10" HorizontalAlignment="Stretch" Name="gdMain">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="2*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.ColumnSpan="2" Name="tbTitle" Style="{StaticResource HeaderText}"/>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
+        <TextBox  Grid.Row="1" VerticalContentAlignment="Center" HorizontalAlignment="Left" Grid.Column="1" Name="txName" MinWidth="200"/>
+        <TextBlock HorizontalAlignment="Right" Grid.Row="2" Style="{StaticResource DialogText}" Text="Unavailable periods:"/>
+        <ScrollViewer Grid.Row="2" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Name="spPeriods"/>
+        </ScrollViewer>
+        <TextBlock HorizontalAlignment="Right" Grid.Row="3" Style="{StaticResource DialogText}" Text="Subjects:"/>
+        <local:DoubleMenu x:Name="dmSubjects" Grid.Row="3" Grid.Column="1" Columns="1"/>
+
+        <TextBlock HorizontalAlignment="Right" Grid.Row="4" Style="{StaticResource DialogText}" Text="Assignments:"/>
+        <local:DoubleMenu x:Name="dmAssignments" Grid.Row="4" Grid.Column="1" Margin="0,5,0,0" Columns="2"/>
+
+        <Button Margin="0,20,0,0" Grid.Row="5" Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="13">Confirm</Button>
+        <Button Margin="0,20,0,0" Grid.Row="5" Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" FontSize="13">Cancel</Button>
+    </Grid>
+</Page>

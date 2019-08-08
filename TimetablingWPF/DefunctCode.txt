@@ -1,0 +1,43 @@
+﻿if (((List<Subject>)Application.Current.Properties["Subjects"]).Count == 0)
+            {
+                TextBlock text = new TextBlock()
+                {
+                    Text = "No subjects created yet!",
+                    Style = (Style)Application.Current.Resources["DialogText"],
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    Margin = new Thickness(0),
+                    VerticalAlignment = VerticalAlignment.Center
+                };
+Grid.SetColumn(text, 1);
+                Grid.SetRow(text, 2);
+                gdInner.Children.Add(text);
+                bdSubjects.Visibility = Visibility.Collapsed;
+            }
+
+
+            int count = 0;
+            foreach (Subject subject in (List<Subject>) Application.Current.Properties["Subjects"])
+{
+    CheckBox cbox = new CheckBox()
+    {
+        VerticalAlignment = VerticalAlignment.Center,
+        Tag = Tuple.Create(subject, false),
+        FontSize = 15,
+        VerticalContentAlignment = VerticalAlignment.Center,
+        Margin = new Thickness(5),
+        Content = new TextBlock()
+        {
+            Text = subject.Name,
+            Style = (Style)Application.Current.Resources["DialogText"],
+            Margin = new Thickness(0)
+        }
+
+    };
+
+    cbox.Click += ToggleGroup;
+    Grid.SetColumn(cbox, count % 3);
+    Grid.SetRow(cbox, count / 3);
+    count++;
+
+    gdSubjects.Children.Add(cbox);
+}

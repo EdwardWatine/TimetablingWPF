@@ -1,0 +1,46 @@
+﻿<Application x:Class="TimetablingWPF.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:TimetablingWPF"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <BitmapImage x:Key="NewFileIcon" UriSource="Media/NewFileIcon.png" />
+        <BitmapImage x:Key="FileIcon" UriSource="Media/FileIcon.png"/>
+        <BitmapImage x:Key="FolderIcon" UriSource="Media/FolderIcon.png"/>
+        <BitmapImage x:Key="NewFileImportIcon" UriSource="Media/NewFileImportIcon.png"/>
+        <BitmapImage x:Key="LeftArrowIcon" UriSource="Media/LeftArrowIcon.png"/>
+        <BitmapImage x:Key="CrossIcon" UriSource="Media/CrossIcon.png"/>
+        <Style x:Key="HeaderText" TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="10"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+                <Setter Property="FontSize" Value="20"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="DialogText" TargetType="TextBlock">
+            <Style.Setters>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+                <Setter Property="FontSize" Value="15"/>
+                <Setter Property="Margin" Value="5"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="GridLineInternal" TargetType="Border">
+            <Style.Setters>
+                <Setter Property="BorderThickness" Value="0, 0, 1, 1"/>
+                <Setter Property="BorderBrush" Value="#000000"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="GridLineExternal" TargetType="Border">
+            <Style.Setters>
+                <Setter Property="BorderThickness" Value="1, 1, 0, 0"/>
+                <Setter Property="BorderBrush" Value="#000000"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="Collapsed" TargetType="FrameworkElement">
+            <Style.Setters>
+                <Setter Property="Visibility" Value="Collapsed"/>
+            </Style.Setters>
+        </Style>
+    </Application.Resources>
+</Application>

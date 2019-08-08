@@ -1,0 +1,84 @@
+﻿<Page x:Class="TimetablingWPF.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TimetablingWPF"
+      mc:Ignorable="d" 
+      Title="MainPage" Background="#FFFFFF">
+    <Page.Resources>
+        <MenuItem x:Key="miEditTeacher" Header="Edit item"/>
+        <MenuItem x:Key="miNewTeacher" Header="New Teacher"/>
+        <MenuItem x:Key="miDeleteTeachers" Header="Delete selection"/>
+        <MenuItem x:Key="miDuplicateTeacher" Header="Duplicate teacher"/>
+    </Page.Resources>
+    <Page.CommandBindings>
+        <CommandBinding Command="local:Commands.NewTeacher" CanExecute="CanExecuteNewTeacherCommand" Executed="ExecuteNewTeacherCommand"/>
+        <CommandBinding Command="local:Commands.EditItem" CanExecute="CanExecuteEditItem" Executed="ExecuteEditItemCommand"/>
+        <CommandBinding Command="local:Commands.DuplicateTeacher" CanExecute="CanExecuteDuplicateTeacher" Executed="ExecuteDuplicateTeacher"/>
+        <CommandBinding Command="local:Commands.DeleteItem" CanExecute="CanExecuteDeleteItem" Executed="ExecuteDeleteItem"/>
+    </Page.CommandBindings>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.Resources>
+            <local:ListFormatter x:Key="ListFormatter"/>
+            <Style x:Key="tbStyle" TargetType="TextBlock">
+                <Setter Property="FontSize" Value="10"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                
+            </Style>
+            <DataTemplate x:Key="NameTemplate">
+                <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Name}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="SubjectTemplate">
+                <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subjects, Converter={StaticResource ListFormatter}}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="UnavailableTemplate">
+                <TextBlock Style="{StaticResource tbStyle}" Text="{Binding UnavailablePeriods, Converter={StaticResource ListFormatter}}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="ClassTemplate">
+                <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
+            </DataTemplate>
+        </Grid.Resources>
+        <Menu>
+            <MenuItem Header="Hello"/>
+            <MenuItem Header="Hello2"/>
+        </Menu>
+        <TabControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch">
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Hello"/>
+                </TabItem.Header>
+                <DataGrid Name="dgTeachers" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False" 
+                          SelectionUnit="FullRow" SelectionMode="Extended" Tag="Teachers" CanUserSortColumns="True">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn CanUserSort="True" SortMemberPath="Name" Width="*" Header="Name" CellTemplate="{StaticResource NameTemplate}"/>
+                        <DataGridTemplateColumn Width="3*" Header="Subjects" CellTemplate="{StaticResource SubjectTemplate}"/>
+                        <DataGridTemplateColumn Width="3*" Header="Unavailable Periods" CellTemplate="{StaticResource UnavailableTemplate}"/>
+                        <DataGridTemplateColumn Width="3*" Header="Assignments" CellTemplate="{StaticResource ClassTemplate}"/>
+                    </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <StaticResource ResourceKey="miNewTeacher"/>
+                            <Separator/>
+                            <StaticResource ResourceKey="miEditTeacher"/>
+                            <StaticResource ResourceKey="miDuplicateTeacher"/>
+                            <Separator/>
+                            <StaticResource ResourceKey="miDeleteTeachers"/>
+                            <Separator/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+            </TabItem>
+        </TabControl>
+        <StatusBar Grid.Row="2" Background="#FF0000" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <StatusBarItem>Hello</StatusBarItem>
+            <StatusBarItem>Hello2</StatusBarItem>
+
+        </StatusBar>
+    </Grid>
+</Page>
