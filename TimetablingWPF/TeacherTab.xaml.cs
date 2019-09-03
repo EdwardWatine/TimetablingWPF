@@ -33,6 +33,8 @@ namespace TimetablingWPF
             Assignments = teacher?.Assignments ?? new ObservableCollection<Assignment>();
             cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties["Subjects"];
             cmbxAssignmentSubject.ItemsSource = Subjects;
+            cmbxAssignmentClass.ItemsSource = (IEnumerable<Class>)Application.Current.Properties["Classes"];
+            cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
             TimetableStructure structure = (TimetableStructure)Application.Current.Properties["Structure"];
             string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
@@ -233,6 +235,18 @@ namespace TimetablingWPF
             }
         }
 
-
+        private void CmbxAssignmentsSubjectsSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox cmbx = (ComboBox)sender;
+            Subject subject = (Subject)cmbx.SelectedItem;
+            IEnumerable<Class> all_classes = (IEnumerable<Class>)Application.Current.Properties["Classes"];
+            if (subject != null)
+            {
+                cmbxAssignmentClass.ItemsSource = all_classes;
+                return;
+            }
+            IEnumerable<Class> classes = from @class in all_classes where @class.Subject == subject select @class;
+            cmbxAssignmentClass.ItemsSource = classes;
+        }
     }
 }

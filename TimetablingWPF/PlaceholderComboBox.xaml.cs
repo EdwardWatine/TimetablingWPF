@@ -27,7 +27,7 @@ namespace TimetablingWPF
         }
 
         public static DependencyProperty PlaceholderProperty =
-        DependencyProperty.Register("Placeholder", typeof(string), typeof(PlaceholderComboBox));
+            DependencyProperty.Register("Placeholder", typeof(string), typeof(PlaceholderComboBox));
 
         public static DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(PlaceholderComboBox));
