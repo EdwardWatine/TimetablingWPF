@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
 
 namespace TimetablingWPF
 {
@@ -29,11 +31,8 @@ namespace TimetablingWPF
             UnavailablePeriods = teacher?.UnavailablePeriods ?? new ObservableCollection<TimetableSlot>();
             Subjects = teacher?.Subjects ?? new ObservableCollection<Subject>();
             Assignments = teacher?.Assignments ?? new ObservableCollection<Assignment>();
-
-            dmSubjects.Dataset = (IList<Subject>)Application.Current.Properties["Subjects"];
-            dmAssignments.Dataset = (IList<Subject>)Application.Current.Properties["Subjects"];
-            dmAssignments.function = x => Tuple.Create(x, 0);
-
+            cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties["Subjects"];
+            cmbxAssignmentSubject.ItemsSource = Subjects;
 
             TimetableStructure structure = (TimetableStructure)Application.Current.Properties["Structure"];
             string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
@@ -76,9 +75,9 @@ namespace TimetablingWPF
                     gridWeek.Children.Add(dayBorder);
                 }
 
-                int periodCount = 0;
-                foreach (TimetableStructurePeriod period in structure.Structure)
+                for (int periodCount=0; periodCount<structure.Structure.Count; periodCount++)
                 {
+                    TimetableStructurePeriod period = structure.Structure[periodCount];
                     RowDefinition rowPeriod = new RowDefinition()
                     {
                         //Height = new GridLength(1, GridUnitType.Star)
@@ -112,8 +111,6 @@ namespace TimetablingWPF
                         Grid.SetRow(rectBorder, periodCount + 1);
                         gridWeek.Children.Add(rectBorder);
                     }
-
-                    periodCount++;
                 }
                 gridWeek.MouseRightButtonDown += ToggleAll;
                 spPeriods.Children.Add(new Border()
@@ -125,29 +122,75 @@ namespace TimetablingWPF
             }
         }
 
-        private void TriggerSubjectCbox(object sender, MouseButtonEventArgs e)
+        private void SubjectButtonClick(object sender, RoutedEventArgs e)
         {
-            CheckBox cbox = (CheckBox)((StackPanel)sender).Tag;
-            cbox.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+            
+            Subject subject = (Subject)cmbxSubjects.SelectedItem;
+            if (subject == null)
+            {
+                if (string.IsNullOrEmpty(cmbxSubjects.Text))
+                {
+                    return;
+                }
+                subject = new Subject(cmbxSubjects.Text);
+            }
+            else
+            {
+                if (Subjects.Contains(subject))
+                {
+                    return;
+                }
+            }
+            AddSubject(subject);
         }
 
-        private void ToggleGroup(object sender, RoutedEventArgs e)
+        private void AssignmentButtonClick(object sender, RoutedEventArgs e)
         {
-            CheckBox cbox = (CheckBox)sender;
-            Tuple<Subject, bool> tag = (Tuple<Subject, bool>)cbox.Tag;
-            cbox.Tag = Tuple.Create(tag.Item1, !tag.Item2);
-            if (tag.Item2)
+            Class @class = (Class)cmbxAssignmentClass.SelectedItem;
+            int? periods = iupdown.Value;
+            if (@class == null || periods == null)
             {
-                Subjects.Remove(tag.Item1);
                 return;
             }
-            Subjects.Add(tag.Item1);
+            Assignment assignment = new Assignment(@class, (int)periods);
+            AddAssignment(assignment);
         }
 
-        private IList<TimetableSlot> UnavailablePeriods;
-        private IList<Subject> Subjects;
-        private IList<Assignment> Assignments;
+        private void AddSubject(Subject subject)
+        {
+            Subjects.Add(subject);
+            
+            spSubjects.Children.Add(Utility.verticalMenuItem(subject, RemoveSubject));
+        }
+
+        private void RemoveSubject(object sender, RoutedEventArgs e)
+        {
+            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
+            Subject subject = (Subject)sp.Tag;
+            Subjects.Remove(subject);
+            spSubjects.Children.Remove(sp);
+        }
+
+        private void AddAssignment(Assignment assignment)
+        {
+            Assignments.Add(assignment);
+
+            spAssignments.Children.Add(Utility.verticalMenuItem(assignment, RemoveAssignment));
+        }
+
+        private void RemoveAssignment(object sender, RoutedEventArgs e)
+        {
+            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
+            Assignment assignment = (Assignment)sp.Tag;
+            Assignments.Remove(assignment);
+            spAssignments.Children.Remove(sp);
+        }
+
+        private ObservableCollection<TimetableSlot> UnavailablePeriods;
+        private ObservableCollection<Subject> Subjects;
+        private ObservableCollection<Assignment> Assignments;
         public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
+        private Dictionary<Class, int> OldAssignments = new Dictionary<Class, int>();
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -176,5 +219,20 @@ namespace TimetablingWPF
             }
             UnavailablePeriods.Remove(tag.Item1);
         }
+
+        private void CmbxSubjects_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                SubjectButtonClick(null, null);
+            }
+            if (e.Key == Key.Escape)
+            {
+                cmbxSubjects.SelectedItem = null;
+                Keyboard.ClearFocus();
+            }
+        }
+
+
     }
 }

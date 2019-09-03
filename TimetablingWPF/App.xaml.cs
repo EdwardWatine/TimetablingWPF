@@ -10,6 +10,9 @@ using Humanizer;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Controls;
+using System.Collections.ObjectModel;
+using System.Windows.Media;
+using System.Windows.Input;
 
 namespace TimetablingWPF
 {
@@ -22,11 +25,11 @@ namespace TimetablingWPF
         {
             Properties["APPLICATION_NAME"] = "Timetabler";
             Properties["RecentFiles"] = new Queue<string>(6);
-            Properties["Teachers"] = new List<Teacher>();
-            Properties["Rooms"] = new List<Room>();
-            Properties["Classes"] = new List<Class>();
-            Properties["Subjects"] = new List<Subject>();
-            Properties["Groups"] = new List<Subject>();
+            Properties["Teachers"] = new ObservableCollection<Teacher>();
+            Properties["Rooms"] = new ObservableCollection<Room>();
+            Properties["Classes"] = new ObservableCollection<Class>();
+            Properties["Subjects"] = new ObservableCollection<Subject>();
+            Properties["Groups"] = new ObservableCollection<Subject>();
             Properties["Structure"] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
             {
                 new TimetableStructurePeriod("1", true),
@@ -99,6 +102,32 @@ namespace TimetablingWPF
                 Child = element,
                 Style = (Style)Application.Current.Resources["GridLineInternal"]
             };
+        }
+        public static StackPanel verticalMenuItem(object @object, MouseButtonEventHandler @event = null)
+        {
+            StackPanel sp = new StackPanel() { Orientation = Orientation.Horizontal, Tag = @object, Margin = new Thickness(0, 0, 0, 5) };
+            TextBlock tb = new TextBlock()
+            {
+                Style = (Style)Application.Current.Resources["DialogText"],
+                Text = @object.ToString(),
+                Margin = new Thickness(0, 0, 5, 0),
+                Height = 22,
+                Padding = new Thickness(1)                
+            };
+            Image img = new Image()
+            {
+                Source = (ImageSource)Application.Current.Resources["CrossIcon"],
+                Height = 22,
+                Tag = sp,
+                Cursor = Cursors.Hand
+            };
+            if (@event != null)
+            {
+                img.MouseDown += @event;
+            }
+            sp.Children.Add(tb);
+            sp.Children.Add(img);
+            return sp;
         }
         public static void ShowErrorBox(string msg)
         {

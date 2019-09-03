@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Windows;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Humanizer;
+using System.Diagnostics;
 
 namespace TimetablingWPF
 {
@@ -55,26 +58,55 @@ namespace TimetablingWPF
         public Class Class;
         public int Periods;
 
-        public Assignment(Teacher teacher, Class @class, int periods)
+        public Assignment(Teacher teacher, int periods)
         {
             Teacher = teacher;
+            Periods = periods;
+        }
+
+        public Assignment(Class @class, int periods)
+        {
             Class = @class;
             Periods = periods;
         }
 
-        public void Commit()
+        public void Commit(Teacher teacher)
         {
+            if (Class == null)
+            {
+                throw new System.InvalidOperationException("Commit should be called with a class, as the class has not been set");
+            }
+            Teacher = teacher;
+            Teacher.Assignments.Add(this);
+            Class.Assignments.Add(this);
+        }
+
+        public void Commit(Class @class)
+        {
+            if (Teacher == null)
+            {
+                throw new System.InvalidOperationException("Commit should be called with a teacher, as the teacher has not been set");
+            }
+            Class = @class;
             Teacher.Assignments.Add(this);
             Class.Assignments.Add(this);
         }
 
         public override string ToString()
         {
+            if (Class == null)
+            {
+                return $"{Teacher} ({Periods})";
+            }
+            if (Teacher == null)
+            {
+                return $"{Class} ({Periods})";
+            }
             return $"{Teacher}: {Class} ({Periods})";
         }
     }
 
-    public class BaseDataClass : INotifyPropertyChanged
+    public abstract class BaseDataClass : INotifyPropertyChanged
     {
         public string Name
         {
@@ -90,6 +122,12 @@ namespace TimetablingWPF
         }
 
         private string _Name;
+
+        protected BaseDataClass()
+        {
+            string className = this.GetType().Name;
+            ((IList)Application.Current.Properties[className.Pluralize()]).Add(this);
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

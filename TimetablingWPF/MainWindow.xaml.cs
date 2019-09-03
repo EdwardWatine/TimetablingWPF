@@ -33,16 +33,15 @@ namespace TimetablingWPF
                 new Subject("Science"),
                 new Subject("Timetabling")
             };
-            ((List<Subject>)Application.Current.Properties["Subjects"]).AddRange(TestSubjects);
-            IList<Teacher> TestData = new List<Teacher>
+            ObservableCollection<Teacher> TestData = new ObservableCollection<Teacher>
             {
                 new Teacher("Mr Worth", new ObservableCollection<TimetableSlot>(), subjects: TestSubjects),
                 new Teacher("Mr Henley", new ObservableCollection<TimetableSlot>(), subjects: TestSubjects)
             };
             
-            Subject Science = new Subject("Science");
+            //Subject Science = new Subject("Science");
 
-            Room sroom = new Room("Science Rooms", 5);
+            //Room sroom = new Room("Science Rooms", 5);
             Content = new MainPage(TestData);
             return;
             if (AppDomain.CurrentDomain.ActivationContext == null)
