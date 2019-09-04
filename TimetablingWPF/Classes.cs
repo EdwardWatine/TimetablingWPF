@@ -140,7 +140,7 @@ namespace TimetablingWPF
         {
             return Name;
         }
-        public RelationalList<T> NewRL<T>(RelationalList<T> list)
+        protected RelationalList<T> NewRL<T>(RelationalList<T> list)
         {
             if (list == null) { return null; }
             list.SetParent(this);
