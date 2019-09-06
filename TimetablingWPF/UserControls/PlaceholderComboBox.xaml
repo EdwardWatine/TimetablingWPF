@@ -8,7 +8,7 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <!-- Code from https://riptutorial.com/wpf/example/22328/combobox-with-custom-default-text -->
     <UserControl.Resources>
-        <local:InverseNullVisibilityConverter x:Key="InvNullVisibleConverter" />
+        <local:BoxToVisibilityConverter x:Key="InvNullVisibleConverter" />
     </UserControl.Resources>
     <Grid>
         <ComboBox x:Name="comboBox"
@@ -16,13 +16,21 @@
                   SelectedItem="{Binding ElementName=placeholderComboBox, Path=SelectedItem}"
                   IsEditable="{Binding ElementName=placeholderComboBox, Path=IsEditable}"
                   IsReadOnly="{Binding ElementName=placeholderComboBox, Path=IsReadOnly}"
-                  HorizontalContentAlignment="Left" VerticalContentAlignment="Center"/>
-        
+                  HorizontalContentAlignment="Left" VerticalContentAlignment="Center"
+                  StaysOpenOnEdit="True"
+                  />
+
 
 
         <TextBlock Margin="2" HorizontalAlignment="Center" VerticalAlignment="Center"
-               IsHitTestVisible="False"
-               Text="{Binding ElementName=placeholderComboBox, Path=Placeholder}"
-               Visibility="{Binding ElementName=placeholderComboBox, Path=SelectedItem, Converter={StaticResource InvNullVisibleConverter}}"/>
+               IsHitTestVisible="False" x:Name="textBlock"
+               Text="{Binding ElementName=placeholderComboBox, Path=Placeholder}">
+            <TextBlock.Visibility>
+                <MultiBinding Converter="{StaticResource InvNullVisibleConverter}">
+                    <Binding ElementName="comboBox" Path="SelectedItem"/>
+                    <Binding ElementName="comboBox" Path="Text"/>
+                </MultiBinding>
+            </TextBlock.Visibility>
+        </TextBlock>
     </Grid>
 </UserControl>

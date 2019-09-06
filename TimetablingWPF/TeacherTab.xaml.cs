@@ -35,10 +35,13 @@ namespace TimetablingWPF
             cmbxAssignmentSubject.ItemsSource = Subjects;
             cmbxAssignmentClass.ItemsSource = (IEnumerable<Class>)Application.Current.Properties["Classes"];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
+            ErrManager = new ErrorManager(spErrors);
 
-            TimetableStructure structure = (TimetableStructure)Application.Current.Properties["Structure"];
+            ErrManager.AddError(HAS_NO_PERIODS, UnavailablePeriods.Count == Structure.TotalFreePeriods);
+            ErrManager.AddError(NOT_ENOUGH_PERIODS);
+
             string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
-            for (int week = 0; week < structure.WeeksPerCycle; week++)
+            for (int week = 0; week < Structure.WeeksPerCycle; week++)
             {
                 Grid gridWeek = new Grid()
                 {
@@ -77,9 +80,9 @@ namespace TimetablingWPF
                     gridWeek.Children.Add(dayBorder);
                 }
 
-                for (int periodCount=0; periodCount<structure.Structure.Count; periodCount++)
+                for (int periodCount=0; periodCount<Structure.Structure.Count; periodCount++)
                 {
-                    TimetableStructurePeriod period = structure.Structure[periodCount];
+                    TimetableStructurePeriod period = Structure.Structure[periodCount];
                     RowDefinition rowPeriod = new RowDefinition()
                     {
                         //Height = new GridLength(1, GridUnitType.Star)
@@ -130,11 +133,11 @@ namespace TimetablingWPF
             Subject subject = (Subject)cmbxSubjects.SelectedItem;
             if (subject == null)
             {
-                if (string.IsNullOrEmpty(cmbxSubjects.Text))
+                if (string.IsNullOrWhiteSpace(cmbxSubjects.Text))
                 {
                     return;
                 }
-                subject = new Subject(cmbxSubjects.Text);
+                subject = new Subject(cmbxSubjects.Text.Trim());
             }
             else
             {
@@ -156,6 +159,7 @@ namespace TimetablingWPF
             }
             Assignment assignment = new Assignment(@class, (int)periods);
             AddAssignment(assignment);
+            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - UnavailablePeriods.Count) < Assignments.Sum(x => x.Periods));
         }
 
         private void AddSubject(Subject subject)
@@ -171,6 +175,7 @@ namespace TimetablingWPF
             Subject subject = (Subject)sp.Tag;
             Subjects.Remove(subject);
             spSubjects.Children.Remove(sp);
+            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - UnavailablePeriods.Count) < Assignments.Sum(x => x.Periods));
         }
 
         private void AddAssignment(Assignment assignment)
@@ -192,7 +197,11 @@ namespace TimetablingWPF
         private ObservableCollection<Subject> Subjects;
         private ObservableCollection<Assignment> Assignments;
         public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
+        private TimetableStructure Structure = (TimetableStructure) Application.Current.Properties["Structure"];
         private Dictionary<Class, int> OldAssignments = new Dictionary<Class, int>();
+        private Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
+        private Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
+        private ErrorManager ErrManager;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -217,9 +226,13 @@ namespace TimetablingWPF
             if (tag.Item2)
             {
                 UnavailablePeriods.Add(tag.Item1);
-                return;
             }
-            UnavailablePeriods.Remove(tag.Item1);
+            else
+            {
+                UnavailablePeriods.Remove(tag.Item1);
+            }
+            ErrManager.UpdateError(HAS_NO_PERIODS, UnavailablePeriods.Count == Structure.TotalFreePeriods);
+            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - UnavailablePeriods.Count) < Assignments.Sum(x => x.Periods));
         }
 
         private void CmbxSubjects_KeyDown(object sender, KeyEventArgs e)

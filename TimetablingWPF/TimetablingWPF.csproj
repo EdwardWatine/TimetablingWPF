@@ -101,15 +101,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Content Include="DefunctCode.txt" />
-    <Compile Include="PlaceholderComboBox.xaml.cs">
+    <Compile Include="ErrorManager.cs" />
+    <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DoubleMenu.xaml.cs">
+    <Compile Include="UserControls\DoubleMenu.xaml.cs">
       <DependentUpon>DoubleMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="TeacherTab.xaml.cs">
       <DependentUpon>TeacherTab.xaml</DependentUpon>
     </Compile>
+    <Resource Include="Media\ErrorIcon.png" />
+    <Resource Include="Media\WarningIcon.png" />
     <Resource Include="Media\PlusIcon.png" />
     <Resource Include="Media\CrossIcon.png" />
     <Resource Include="Media\LeftArrowIcon.png" />
@@ -117,11 +120,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="PlaceholderComboBox.xaml">
+    <Page Include="UserControls\PlaceholderComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="DoubleMenu.xaml">
+    <Page Include="UserControls\DoubleMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -144,7 +147,7 @@
     <Compile Include="CheckboxDialog.xaml.cs">
       <DependentUpon>CheckboxDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Classes.cs" />
+    <Compile Include="DataClasses.cs" />
     <Compile Include="FirstTime.xaml.cs">
       <DependentUpon>FirstTime.xaml</DependentUpon>
     </Compile>

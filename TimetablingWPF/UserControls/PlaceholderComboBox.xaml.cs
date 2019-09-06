@@ -74,14 +74,14 @@ namespace TimetablingWPF
         public string Text => comboBox.Text;
     }
 
-    public class InverseNullVisibilityConverter : IValueConverter
+    public class BoxToVisibilityConverter : IMultiValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object Convert(object[] value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            return value == null ? Visibility.Visible : Visibility.Hidden;
+            return value[0] == null && string.IsNullOrEmpty((string)value[1]) ? Visibility.Visible : Visibility.Hidden;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             throw new NotImplementedException();
         }

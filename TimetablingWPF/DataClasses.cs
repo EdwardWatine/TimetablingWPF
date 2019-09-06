@@ -276,9 +276,11 @@ namespace TimetablingWPF
         {
             WeeksPerCycle = weeksPerCycle;
             Structure = structure;
+            TotalFreePeriods = weeksPerCycle*5*(from period in structure where period.IsSchedulable select period).Count();
         }
         public int WeeksPerCycle { get; }
         public IList<TimetableStructurePeriod> Structure { get; }
+        public int TotalFreePeriods { get; }
     }
     public class TimetableStructurePeriod :  INotifyPropertyChanged
     {
