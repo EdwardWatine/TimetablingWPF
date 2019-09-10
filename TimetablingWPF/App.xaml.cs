@@ -103,13 +103,13 @@ namespace TimetablingWPF
                 Style = (Style)Application.Current.Resources["GridLineInternal"]
             };
         }
-        public static StackPanel verticalMenuItem(object @object, MouseButtonEventHandler @event = null)
+        public static StackPanel verticalMenuItem(object @object, MouseButtonEventHandler @event = null, string repr = null)
         {
             StackPanel sp = new StackPanel() { Orientation = Orientation.Horizontal, Tag = @object, Margin = new Thickness(0, 0, 0, 5) };
             TextBlock tb = new TextBlock()
             {
                 Style = (Style)Application.Current.Resources["DialogText"],
-                Text = @object.ToString(),
+                Text = repr ?? @object.ToString(),
                 Margin = new Thickness(0, 0, 5, 0),
                 Height = 22,
                 Padding = new Thickness(1)                

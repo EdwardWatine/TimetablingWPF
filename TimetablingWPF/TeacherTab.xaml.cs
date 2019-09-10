@@ -147,6 +147,7 @@ namespace TimetablingWPF
                 }
             }
             AddSubject(subject);
+            cmbxSubjects.SelectedItem = subject;
         }
 
         private void AssignmentButtonClick(object sender, RoutedEventArgs e)
@@ -182,7 +183,7 @@ namespace TimetablingWPF
         {
             Assignments.Add(assignment);
 
-            spAssignments.Children.Add(Utility.verticalMenuItem(assignment, RemoveAssignment));
+            spAssignments.Children.Add(Utility.verticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
         }
 
         private void RemoveAssignment(object sender, RoutedEventArgs e)
@@ -244,6 +245,7 @@ namespace TimetablingWPF
             if (e.Key == Key.Escape)
             {
                 cmbxSubjects.SelectedItem = null;
+                cmbxSubjects.Text = "";
                 Keyboard.ClearFocus();
             }
         }

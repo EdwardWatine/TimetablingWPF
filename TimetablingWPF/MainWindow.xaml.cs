@@ -28,7 +28,7 @@ namespace TimetablingWPF
         {
             InitializeComponent();
 
-            RelationalList<Subject> TestSubjects = new RelationalList<Subject>("Subjects", "Teachers") {
+            RelationalList<Subject> TestSubjects = new RelationalList<Subject>("Teachers") {
 
                 new Subject("Science"),
                 new Subject("Timetabling")

@@ -71,7 +71,11 @@ namespace TimetablingWPF
             set { SetValue(IsEditableProperty, value); }
         }
 
-        public string Text => comboBox.Text;
+        public string Text
+        {
+            get => comboBox.Text;
+            set => comboBox.Text = value;
+        }
     }
 
     public class BoxToVisibilityConverter : IMultiValueConverter
