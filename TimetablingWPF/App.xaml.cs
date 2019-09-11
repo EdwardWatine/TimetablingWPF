@@ -24,7 +24,6 @@ namespace TimetablingWPF
         public App()
         {
             Properties["APPLICATION_NAME"] = "Timetabler";
-            Properties["RecentFiles"] = new Queue<string>(6);
             Properties["Teachers"] = new ObservableCollection<Teacher>();
             Properties["Rooms"] = new ObservableCollection<Room>();
             Properties["Classes"] = new ObservableCollection<Class>();

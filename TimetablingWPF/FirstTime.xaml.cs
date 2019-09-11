@@ -31,14 +31,14 @@ namespace TimetablingWPF
 
             InitializeComponent();
 
-            IList<string> lines = (List<string>)Application.Current.Properties["RecentFiles"];
+            IList<string> lines = (IList<string>)Properties.Settings.Default.RECENT_FILES;
             if (lines.Count == 0)
             {
-                this.tbNoRecentFiles.Visibility = Visibility.Visible;
-                this.icRecentFiles.Visibility = Visibility.Collapsed;
+                tbNoRecentFiles.Visibility = Visibility.Visible;
+                icRecentFiles.Visibility = Visibility.Collapsed;
             }
-            IEnumerable<Uri> URIs = lines.Take(6).Select(x => new Uri(x));
-            icRecentFiles.ItemsSource = URIs;
+            IEnumerable<Uri> uris = lines.Take(6).Select(x => new Uri(x));
+            icRecentFiles.ItemsSource = uris;
         }
 
         private void Recent_File_Click(object sender, RoutedEventArgs e)
