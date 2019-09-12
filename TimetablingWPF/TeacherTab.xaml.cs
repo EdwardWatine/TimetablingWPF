@@ -39,6 +39,7 @@ namespace TimetablingWPF
 
             ErrManager.AddError(HAS_NO_PERIODS, UnavailablePeriods.Count == Structure.TotalFreePeriods);
             ErrManager.AddError(NOT_ENOUGH_PERIODS);
+            ErrManager.AddError(HAS_EMPTY_NAME);
 
             string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
             for (int week = 0; week < Structure.WeeksPerCycle; week++)
@@ -194,15 +195,15 @@ namespace TimetablingWPF
             spAssignments.Children.Remove(sp);
         }
 
-        private ObservableCollection<TimetableSlot> UnavailablePeriods;
-        private ObservableCollection<Subject> Subjects;
-        private ObservableCollection<Assignment> Assignments;
+        private readonly ObservableCollection<TimetableSlot> UnavailablePeriods;
+        private readonly ObservableCollection<Subject> Subjects;
+        private readonly ObservableCollection<Assignment> Assignments;
         public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
-        private TimetableStructure Structure = (TimetableStructure) Application.Current.Properties["Structure"];
-        private Dictionary<Class, int> OldAssignments = new Dictionary<Class, int>();
-        private Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
-        private Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
-        private ErrorManager ErrManager;
+        private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties["Structure"];
+        private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
+        private readonly Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
+        private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
+        private readonly ErrorManager ErrManager;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -262,6 +263,20 @@ namespace TimetablingWPF
             }
             IEnumerable<Class> classes = from @class in all_classes where @class.Subject == subject select @class;
             cmbxAssignmentClass.ItemsSource = classes;
+        }
+
+        private void TxNameChanged(object sender, TextChangedEventArgs e)
+        {
+            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
+        }
+
+        private void Cancel(object sender, RoutedEventArgs e)
+        {
+            if (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?", 
+                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+            {
+                MainPage.CloseTab(this);
+            }
         }
     }
 }

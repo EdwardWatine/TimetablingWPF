@@ -36,7 +36,7 @@
             </Grid.RowDefinitions>
             <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
             <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
-                     Name="txName" MinWidth="200" MinHeight="32"/>
+                     Name="txName" MinWidth="200" MinHeight="32" TextChanged="TxNameChanged"/>
             <TextBlock HorizontalAlignment="Right" Grid.Row="1" Style="{StaticResource DialogText}" Text="Unavailable periods:"/>
             <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,5">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Name="spPeriods"/>
@@ -90,7 +90,7 @@
         </Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2">
             <Button Margin="0,5,400,0" Padding="2" HorizontalAlignment="Center" FontSize="13">Confirm</Button>
-            <Button Margin="0,5,0,0" Padding="2" HorizontalAlignment="Center" FontSize="13">Cancel</Button>
+            <Button Margin="0,5,0,0" Padding="2" HorizontalAlignment="Center" FontSize="13" Click="Cancel">Cancel</Button>
         </StackPanel>
 
     </Grid>

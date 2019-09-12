@@ -47,8 +47,6 @@ namespace TimetablingWPF
         private void ExecuteNewTeacherCommand(object sender, ExecutedRoutedEventArgs e)
         {
             NewTab(new TeacherTab(), "New Teacher");
-
-
         }
 
         private void CanExecuteNewTeacherCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -97,7 +95,7 @@ namespace TimetablingWPF
             e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count >= 1;
         }
 
-        public void NewTab(object page, string title, bool focus=true)
+        public void NewTab(object page, string title, bool focus = true)
         {
             TabItem newTab = new TabItem()
             {
@@ -106,6 +104,19 @@ namespace TimetablingWPF
             };
             tcMainTabControl.Items.Add(newTab);
             if (focus) { tcMainTabControl.SelectedItem = newTab; }
+        }
+
+        public void CloseTab(object page)
+        {
+            foreach (TabItem tab in tcMainTabControl.Items)
+            {
+                if ((tab.Content as Frame)?.Content == page)
+                {
+                    tcMainTabControl.Items.Remove(tab);
+                    return;
+                }
+            }
+            throw new System.ArgumentException($"Page {page} of type {page.GetType().Name} does not exist in the tab list");
         }
     }
 
