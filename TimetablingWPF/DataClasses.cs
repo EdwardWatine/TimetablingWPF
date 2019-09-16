@@ -16,7 +16,7 @@ namespace TimetablingWPF
     /// A list which reflects updates in itself with the list in the added class
     /// </summary>
     /// <typeparam name="T">The type of the objects in this list</typeparam>
-    public class RelationalList<T> : ObservableCollection<T>
+    public class RelationalList<T> : ObservableCollection<T>, ICloneable
     {
         /// <summary>
         /// The object to which this list belongs
@@ -46,6 +46,14 @@ namespace TimetablingWPF
             base.Add(item);
 
             ((IList)item.GetType().GetProperty(OtherClassField).GetValue(item)).Add(Parent);
+        }
+        /// <summary>
+        /// Shallow clone of object
+        /// </summary>
+        /// <returns> An object that is a shallow copy of this one</returns>
+        public object Clone()
+        {
+            return MemberwiseClone();
         }
     }
     /// <summary>
@@ -138,7 +146,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Base class for all data objects
     /// </summary>
-    public abstract class BaseDataClass : INotifyPropertyChanged
+    public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable
     {
         public string Name
         {
@@ -202,6 +210,20 @@ namespace TimetablingWPF
         public void Delete()
         {
             throw new NotImplementedException();
+        }
+
+        public object Clone()
+        {
+            object copy = MemberwiseClone();
+            foreach (System.Reflection.PropertyInfo prop in GetType().GetProperties())
+            {
+                object prop_val = prop.GetValue(copy);
+                if (prop_val is IEnumerable)
+                {
+                    prop.SetValue(copy, ((ICloneable)prop_val).Clone());
+                }
+            };
+            return copy;
         }
     }
 
