@@ -46,7 +46,7 @@ namespace TimetablingWPF
 
         private void ExecuteNewTeacherCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            NewTab(new TeacherTab(), "New Teacher");
+            NewTab(new TeacherTab(new Teacher()), "New Teacher");
         }
 
         private void CanExecuteNewTeacherCommand(object sender, CanExecuteRoutedEventArgs e)

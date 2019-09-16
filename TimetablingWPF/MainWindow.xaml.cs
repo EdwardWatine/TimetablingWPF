@@ -33,10 +33,11 @@ namespace TimetablingWPF
                 new Subject("Science"),
                 new Subject("Timetabling")
             };
+            foreach (Subject subject in TestSubjects) { subject.Commit(); }
             ObservableCollection<Teacher> TestData = new ObservableCollection<Teacher>
             {
-                new Teacher("Mr Worth", new ObservableCollection<TimetableSlot>(), subjects: TestSubjects),
-                new Teacher("Mr Henley", new ObservableCollection<TimetableSlot>(), subjects: TestSubjects)
+                new Teacher(){Name="Mr Worth" },
+                new Teacher(){Name="Mr Henley" }
             };
 
             //Subject Science = new Subject("Science");

@@ -148,6 +148,11 @@ namespace TimetablingWPF
     /// </summary>
     public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable
     {
+
+        public BaseDataClass()
+        {
+            ApplyOnType<RelationalList<object>>((prop, val) => ((RelationalList<object>)val).Parent = this);
+        }
         public string Name
         {
             get { return _Name; }
@@ -215,15 +220,20 @@ namespace TimetablingWPF
         public object Clone()
         {
             object copy = MemberwiseClone();
+            ApplyOnType<IEnumerable>((prop, val) => prop.SetValue(copy, ((ICloneable)val).Clone()));
+            return copy;
+        }
+
+        private void ApplyOnType<T>(Action<System.Reflection.PropertyInfo, object> action)
+        {
             foreach (System.Reflection.PropertyInfo prop in GetType().GetProperties())
             {
-                object prop_val = prop.GetValue(copy);
-                if (prop_val is IEnumerable)
+                object val = prop.GetValue(this);
+                if (val is T)
                 {
-                    prop.SetValue(copy, ((ICloneable)prop_val).Clone());
+                    action(prop, val);
                 }
             };
-            return copy;
         }
     }
 
@@ -255,18 +265,9 @@ namespace TimetablingWPF
 
     public class Teacher : BaseDataClass
     {
-        public Teacher(string name, ObservableCollection<TimetableSlot> unavailablePeriods,
-            RelationalList<Subject> subjects = null, ObservableCollection<Assignment> assignments = null)
-        {
-            Name = name;
-            UnavailablePeriods = unavailablePeriods;
-            Subjects = NewRL(subjects) ?? new RelationalList<Subject>("Teachers", this);
-            Assignments = assignments ?? new ObservableCollection<Assignment>();
-            
-        }
-        public ObservableCollection<TimetableSlot> UnavailablePeriods { get; }
-        public RelationalList<Subject> Subjects { get; }
-        public ObservableCollection<Assignment> Assignments { get; }
+        public ObservableCollection<TimetableSlot> UnavailablePeriods { get; } = new ObservableCollection<TimetableSlot>();
+        public RelationalList<Subject> Subjects { get; } = new RelationalList<Subject>("Teachers");
+        public ObservableCollection<Assignment> Assignments { get; } = new ObservableCollection<Assignment>();
         protected override string ListName => "Teachers";
     }
 

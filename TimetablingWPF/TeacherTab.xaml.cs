@@ -23,7 +23,7 @@ namespace TimetablingWPF
     /// </summary>
     public partial class TeacherTab : Page
     {
-        public TeacherTab(Teacher teacher = null)
+        public TeacherTab(Teacher teacher)
         {
             InitializeComponent();
             Teacher = teacher;
