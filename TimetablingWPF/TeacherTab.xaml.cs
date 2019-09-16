@@ -26,6 +26,7 @@ namespace TimetablingWPF
         public TeacherTab(Teacher teacher = null)
         {
             InitializeComponent();
+            Teacher = teacher;
             tbTitle.Text = "Create a new Teacher";
             txName.Text = teacher?.Name;
             UnavailablePeriods = teacher?.UnavailablePeriods ?? new ObservableCollection<TimetableSlot>();
@@ -139,6 +140,7 @@ namespace TimetablingWPF
                     return;
                 }
                 subject = new Subject(cmbxSubjects.Text.Trim());
+                subject.Commit();
             }
             else
             {
@@ -198,6 +200,7 @@ namespace TimetablingWPF
         private readonly ObservableCollection<TimetableSlot> UnavailablePeriods;
         private readonly ObservableCollection<Subject> Subjects;
         private readonly ObservableCollection<Assignment> Assignments;
+        private readonly Teacher Teacher;
         public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties["Structure"];
         private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
@@ -276,6 +279,27 @@ namespace TimetablingWPF
                 "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 MainPage.CloseTab(this);
+            }
+        }
+
+        private void Confirm(object sender, RoutedEventArgs e)
+        {
+            if (ErrManager.GetNumErrors() > 0)
+            {
+                Utility.ShowErrorBox("Please fix all errors!");
+                return;
+            }
+            if (ErrManager.GetNumWarnings() > 0)
+            {
+                if (System.Windows.MessageBox.Show("There are warnings. Do you want to continue?", "Warning", 
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+            }
+            foreach (Assignment assignment in Assignments)
+            {
+                //assignment.Commit()
             }
         }
     }

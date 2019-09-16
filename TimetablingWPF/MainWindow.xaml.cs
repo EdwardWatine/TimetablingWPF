@@ -38,7 +38,7 @@ namespace TimetablingWPF
                 new Teacher("Mr Worth", new ObservableCollection<TimetableSlot>(), subjects: TestSubjects),
                 new Teacher("Mr Henley", new ObservableCollection<TimetableSlot>(), subjects: TestSubjects)
             };
-            
+
             //Subject Science = new Subject("Science");
 
             //Room sroom = new Room("Science Rooms", 5);

@@ -6,7 +6,7 @@
              xmlns:local="clr-namespace:TimetablingWPF"
              mc:Ignorable="d" x:Name="placeholderComboBox"
              d:DesignHeight="450" d:DesignWidth="800">
-    <!-- Code from https://riptutorial.com/wpf/example/22328/combobox-with-custom-default-text -->
+    <!-- Base code from https://riptutorial.com/wpf/example/22328/combobox-with-custom-default-text -->
     <UserControl.Resources>
         <local:BoxToVisibilityConverter x:Key="InvNullVisibleConverter" />
     </UserControl.Resources>

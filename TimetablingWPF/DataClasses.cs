@@ -156,13 +156,19 @@ namespace TimetablingWPF
         /// Holder for Name
         /// </summary>
         private string _Name;
+        protected abstract string ListName { get; }
+        private bool Commited = false;
         /// <summary>
-        /// Constructor. Add this to the associated list in properties
+        /// Add this to its associated list in properties. Is idempotent.
         /// </summary>
-        protected BaseDataClass()
+        public virtual void Commit()
         {
-            string className = this.GetType().Name;
-            ((IList)Application.Current.Properties[className.Pluralize()]).Add(this);
+            if (Commited)
+            {
+                return;
+            }
+            ((IList)Application.Current.Properties[ListName]).Add(this);
+            Commited = true;
         }
         /// <summary>
         /// Event when property is changed
@@ -221,6 +227,8 @@ namespace TimetablingWPF
             }
         }
         public RelationalList<Subject> Subjects { get; }
+
+        protected override string ListName => "Rooms";
     }
 
     public class Teacher : BaseDataClass
@@ -237,6 +245,7 @@ namespace TimetablingWPF
         public ObservableCollection<TimetableSlot> UnavailablePeriods { get; }
         public RelationalList<Subject> Subjects { get; }
         public ObservableCollection<Assignment> Assignments { get; }
+        protected override string ListName => "Teachers";
     }
 
     public class Subject : BaseDataClass
@@ -249,6 +258,7 @@ namespace TimetablingWPF
         }
         public RelationalList<Room> Rooms { get; }
         public RelationalList<Teacher> Teachers { get; }
+        protected override string ListName => "Subjects";
     }
 
     public class Group : BaseDataClass
@@ -259,6 +269,7 @@ namespace TimetablingWPF
             Classes = NewRL(classes) ?? new RelationalList<Class>("Groups", this);
         }
         public RelationalList<Class> Classes { get; }
+        protected override string ListName => "Groups";
     }
 
     public class Class : BaseDataClass
@@ -302,6 +313,7 @@ namespace TimetablingWPF
         }
         public ObservableCollection<Assignment> Assignments { get; }
         public RelationalList<Group> Groups { get; }
+        protected override string ListName => "Classes";
         private int _LessonLength;
         public int LessonLength
         {

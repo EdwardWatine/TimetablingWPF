@@ -1,0 +1,1 @@
+(gci -include *.cs,*.xaml -recurse | select-string .).Count
