@@ -56,7 +56,12 @@ namespace TimetablingWPF
 
         private void ExecuteEditItemCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            //do edit stuff
+            switch (((DataGrid)e.Parameter).SelectedItem)
+            {
+                case Teacher teacher:
+                    NewTab(new TeacherTab(teacher), "Edit Teacher");
+                    break;
+            }
         }
 
         private void CanExecuteEditItem(object sender, CanExecuteRoutedEventArgs e)

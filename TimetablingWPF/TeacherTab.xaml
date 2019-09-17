@@ -89,7 +89,7 @@
             </Grid>
         </Grid>
         <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="2">
-            <Button Margin="0,5,400,0" Padding="2" HorizontalAlignment="Center" FontSize="13">Confirm</Button>
+            <Button Margin="0,5,400,0" Padding="2" HorizontalAlignment="Center" FontSize="13" Click="Confirm">Confirm</Button>
             <Button Margin="0,5,0,0" Padding="2" HorizontalAlignment="Center" FontSize="13" Click="Cancel">Cancel</Button>
         </StackPanel>
 

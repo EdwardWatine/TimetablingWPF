@@ -26,19 +26,17 @@ namespace TimetablingWPF
         public TeacherTab(Teacher teacher)
         {
             InitializeComponent();
+            ErrManager = new ErrorManager(spErrors);
             Teacher = teacher;
             tbTitle.Text = "Create a new Teacher";
-            txName.Text = teacher?.Name;
-            UnavailablePeriods = teacher?.UnavailablePeriods ?? new ObservableCollection<TimetableSlot>();
-            Subjects = teacher?.Subjects ?? new ObservableCollection<Subject>();
-            Assignments = teacher?.Assignments ?? new ObservableCollection<Assignment>();
+            txName.Text = teacher.Name;
+            txName.SelectionStart = txName.Text.Length;
             cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties["Subjects"];
-            cmbxAssignmentSubject.ItemsSource = Subjects;
+            cmbxAssignmentSubject.ItemsSource = Teacher.Subjects;
             cmbxAssignmentClass.ItemsSource = (IEnumerable<Class>)Application.Current.Properties["Classes"];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
-            ErrManager = new ErrorManager(spErrors);
 
-            ErrManager.AddError(HAS_NO_PERIODS, UnavailablePeriods.Count == Structure.TotalFreePeriods);
+            ErrManager.AddError(HAS_NO_PERIODS, Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods);
             ErrManager.AddError(NOT_ENOUGH_PERIODS);
             ErrManager.AddError(HAS_EMPTY_NAME);
 
@@ -144,7 +142,7 @@ namespace TimetablingWPF
             }
             else
             {
-                if (Subjects.Contains(subject))
+                if (Teacher.Subjects.Contains(subject))
                 {
                     return;
                 }
@@ -163,12 +161,12 @@ namespace TimetablingWPF
             }
             Assignment assignment = new Assignment(@class, (int)periods);
             AddAssignment(assignment);
-            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - UnavailablePeriods.Count) < Assignments.Sum(x => x.Periods));
+            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
         }
 
         private void AddSubject(Subject subject)
         {
-            Subjects.Add(subject);
+            Teacher.Subjects.Add(subject);
             
             spSubjects.Children.Add(Utility.verticalMenuItem(subject, RemoveSubject));
         }
@@ -177,14 +175,14 @@ namespace TimetablingWPF
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
             Subject subject = (Subject)sp.Tag;
-            Subjects.Remove(subject);
+            Teacher.Subjects.Remove(subject);
             spSubjects.Children.Remove(sp);
-            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - UnavailablePeriods.Count) < Assignments.Sum(x => x.Periods));
+            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
         }
 
         private void AddAssignment(Assignment assignment)
         {
-            Assignments.Add(assignment);
+            Teacher.Assignments.Add(assignment);
 
             spAssignments.Children.Add(Utility.verticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
         }
@@ -193,13 +191,9 @@ namespace TimetablingWPF
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
             Assignment assignment = (Assignment)sp.Tag;
-            Assignments.Remove(assignment);
+            Teacher.Assignments.Remove(assignment);
             spAssignments.Children.Remove(sp);
         }
-
-        private readonly ObservableCollection<TimetableSlot> UnavailablePeriods;
-        private readonly ObservableCollection<Subject> Subjects;
-        private readonly ObservableCollection<Assignment> Assignments;
         private readonly Teacher Teacher;
         public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties["Structure"];
@@ -230,14 +224,14 @@ namespace TimetablingWPF
             rect.Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(tag.Item2 ? "#FF0000" : "#00FF00");
             if (tag.Item2)
             {
-                UnavailablePeriods.Add(tag.Item1);
+                Teacher.UnavailablePeriods.Add(tag.Item1);
             }
             else
             {
-                UnavailablePeriods.Remove(tag.Item1);
+                Teacher.UnavailablePeriods.Remove(tag.Item1);
             }
-            ErrManager.UpdateError(HAS_NO_PERIODS, UnavailablePeriods.Count == Structure.TotalFreePeriods);
-            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - UnavailablePeriods.Count) < Assignments.Sum(x => x.Periods));
+            ErrManager.UpdateError(HAS_NO_PERIODS, Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods);
+            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
         }
 
         private void CmbxSubjects_KeyDown(object sender, KeyEventArgs e)
@@ -297,10 +291,12 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            foreach (Assignment assignment in Assignments)
+            foreach (Assignment assignment in Teacher.Assignments)
             {
-                //assignment.Commit()
+                assignment.Commit(Teacher);
             }
+            Teacher.Name = txName.Text;
+            Teacher.Commit();
         }
     }
 }

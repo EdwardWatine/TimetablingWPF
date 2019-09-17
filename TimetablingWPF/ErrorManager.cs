@@ -79,10 +79,14 @@ namespace TimetablingWPF
         }
         public void UpdateError(Error error, bool isError)
         {
-            StackPanel sp = Errors[error];
             if (error.IsError^isError)
             {
                 error.IsError = isError;
+
+                if (!Errors.TryGetValue(error, out StackPanel sp))
+                {
+                    return;
+                }
                 if (isError)
                 {
                     sp.Visibility = Visibility.Visible;

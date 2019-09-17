@@ -55,6 +55,12 @@ namespace TimetablingWPF
         {
             return MemberwiseClone();
         }
+
+        public new void Remove(T item)
+        {
+            base.Remove(item);
+            ((IList)item.GetType().GetProperty(OtherClassField).GetValue(item)).Remove(Parent);
+        }
     }
     /// <summary>
     /// Holds data about a timetabling slot
