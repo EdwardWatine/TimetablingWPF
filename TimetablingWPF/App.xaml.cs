@@ -10,7 +10,6 @@ using Humanizer;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Controls;
-using System.Collections.ObjectModel;
 using System.Windows.Media;
 using System.Windows.Input;
 
@@ -24,11 +23,11 @@ namespace TimetablingWPF
         public App()
         {
             Properties["APPLICATION_NAME"] = "Timetabler";
-            Properties["Teachers"] = new ObservableCollection<Teacher>();
-            Properties["Rooms"] = new ObservableCollection<Room>();
-            Properties["Classes"] = new ObservableCollection<Class>();
-            Properties["Subjects"] = new ObservableCollection<Subject>();
-            Properties["Groups"] = new ObservableCollection<Subject>();
+            Properties["Teachers"] = new InternalObservableCollection<Teacher>();
+            Properties["Rooms"] = new InternalObservableCollection<Room>();
+            Properties["Classes"] = new InternalObservableCollection<Class>();
+            Properties["Subjects"] = new InternalObservableCollection<Subject>();
+            Properties["Groups"] = new InternalObservableCollection<Subject>();
             Properties["Structure"] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
             {
                 new TimetableStructurePeriod("1", true),
@@ -131,6 +130,19 @@ namespace TimetablingWPF
         public static void ShowErrorBox(string msg)
         {
             MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        public static string WeekToString(int week)
+        {
+            return Convert.ToString((char)('A' + week));
+        }
+        public static string DayToString(int day)
+        {
+            string[] days = { "Mon", "Tue", "Wed", "Thu", "Fri" };
+            return days[day];
+        }
+        public static TimetableStructurePeriod PeriodNumToPeriod(int period)
+        {
+            return ((TimetableStructure)Application.Current.Properties["Structure"]).Structure[period];
         }
     }
 

@@ -27,23 +27,24 @@ namespace TimetablingWPF
         public MainWindow()
         {
             InitializeComponent();
-
-            RelationalList<Subject> TestSubjects = new RelationalList<Subject>("Teachers") {
-
-                new Subject("Science"),
-                new Subject("Timetabling")
-            };
-            foreach (Subject subject in TestSubjects) { subject.Commit(); }
             ObservableCollection<Teacher> TestData = new ObservableCollection<Teacher>
             {
                 new Teacher(){Name="Mr Worth" },
                 new Teacher(){Name="Mr Henley" }
             };
-
+            foreach (Teacher teacher in TestData)
+            {
+                teacher.Commit();
+            }
+            ObservableCollection<Subject> TestSubjects = new ObservableCollection<Subject>() {
+                new Subject(){Name = "Science" },
+                new Subject() { Name = "Timetabling" }
+            };
+            foreach (Subject subject in TestSubjects) { subject.Commit(); }
             //Subject Science = new Subject("Science");
 
             //Room sroom = new Room("Science Rooms", 5);
-            Content = new MainPage(TestData);
+            Content = new MainPage();
             return;
             if (AppDomain.CurrentDomain.ActivationContext == null)
             {

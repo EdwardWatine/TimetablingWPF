@@ -101,6 +101,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Content Include="DefunctCode.txt" />
+    <Compile Include="DataClasses\Collections.cs" />
     <Compile Include="ErrorManager.cs" />
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>

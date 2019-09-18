@@ -23,7 +23,7 @@ namespace TimetablingWPF
     /// </summary>
     public partial class MainPage : Page
     {
-        public MainPage(IList<Teacher> data)
+        public MainPage()
         {
             Application.Current.MainWindow.WindowState = WindowState.Maximized;
             Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
@@ -38,15 +38,15 @@ namespace TimetablingWPF
             attachCommand("miNewTeacher", Commands.NewTeacher);
             attachCommand("miDeleteTeachers", Commands.DeleteItem, dgTeachers);
             attachCommand("miDuplicateTeacher", Commands.DuplicateTeacher, dgTeachers);
-            
-            dgTeachers.ItemsSource = data;
+
+            dgTeachers.ItemsSource = (IList)Application.Current.Properties["Teachers"];
         }
 
 
 
         private void ExecuteNewTeacherCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            NewTab(new TeacherTab(new Teacher()), "New Teacher");
+            NewTab(new TeacherTab(new Teacher(), CommandType.@new), "New Teacher");
         }
 
         private void CanExecuteNewTeacherCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -59,7 +59,7 @@ namespace TimetablingWPF
             switch (((DataGrid)e.Parameter).SelectedItem)
             {
                 case Teacher teacher:
-                    NewTab(new TeacherTab(teacher), "Edit Teacher");
+                    NewTab(new TeacherTab(teacher, CommandType.edit), "Edit Teacher");
                     break;
             }
         }
@@ -137,6 +137,12 @@ namespace TimetablingWPF
             "DeleteItem", "DeleteItem", typeof(Commands));
     }
 
+    public enum CommandType : byte {
+        @new,
+        edit,
+        copy
+    }
+
     public class ListFormatter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -145,8 +151,12 @@ namespace TimetablingWPF
             {
                 return "N/A";
             }
-            IEnumerable<BaseDataClass> enumerable = ((IList)value).Cast<BaseDataClass>();
-            return String.Join<BaseDataClass>(", ", enumerable);
+            if (((IList)value).Count == 0)
+            {
+                return "None";
+            }
+            IEnumerable<object> enumerable = ((IList)value).Cast<object>();
+            return string.Join(", ", enumerable);
         }
         public object ConvertBack(object value, Type targetType, object paramter, System.Globalization.CultureInfo culture)
         {

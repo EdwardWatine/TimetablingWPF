@@ -23,11 +23,13 @@ namespace TimetablingWPF
     /// </summary>
     public partial class TeacherTab : Page
     {
-        public TeacherTab(Teacher teacher)
+        public TeacherTab(Teacher teacher, CommandType commandType)
         {
             InitializeComponent();
             ErrManager = new ErrorManager(spErrors);
-            Teacher = teacher;
+            CommandType = commandType;
+            OriginalTeacher = teacher;
+            Teacher = (Teacher)teacher.Clone();
             tbTitle.Text = "Create a new Teacher";
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;
@@ -40,6 +42,15 @@ namespace TimetablingWPF
             ErrManager.AddError(NOT_ENOUGH_PERIODS);
             ErrManager.AddError(HAS_EMPTY_NAME);
 
+            foreach (Subject subject in Teacher.Subjects)
+            {
+                AddSubject(subject);
+            }
+            foreach (Assignment assignment in Teacher.Assignments)
+            {
+                AddAssignment(assignment);
+            }
+
             string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
             for (int week = 0; week < Structure.WeeksPerCycle; week++)
             {
@@ -49,10 +60,9 @@ namespace TimetablingWPF
                 };
                 gridWeek.ColumnDefinitions.Add(new ColumnDefinition());
                 gridWeek.RowDefinitions.Add(new RowDefinition());
-
                 gridWeek.Children.Add(Utility.setInternalBorder(new TextBlock()
                 {
-                    Text = Convert.ToString((char)('A' + week)),
+                    Text = Utility.WeekToString(week),
                     Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                     Padding = new Thickness(2),
                     TextAlignment = TextAlignment.Center
@@ -102,10 +112,13 @@ namespace TimetablingWPF
                     for (int day = 0; day < 5; day++)
                     {
                         bool schedulable = period.IsSchedulable;
+                        TimetableSlot slot = new TimetableSlot(week, day, periodCount);
                         Rectangle rect = new Rectangle()
                         {
-                            Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(schedulable ? "#00FF00" : "#A8A8A8"),
-                            Tag = schedulable ? Tuple.Create(new TimetableSlot(week, day, periodCount), true) : null
+                            Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(schedulable ?
+                            (Teacher.UnavailablePeriods.Contains(slot) ? "#FF0000" : "#00FF00") :
+                            "#A8A8A8"),
+                            Tag = schedulable ? Tuple.Create(slot, true) : null
                         };
                         if (schedulable)
                         {
@@ -137,7 +150,7 @@ namespace TimetablingWPF
                 {
                     return;
                 }
-                subject = new Subject(cmbxSubjects.Text.Trim());
+                subject = new Subject() { Name = cmbxSubjects.Text.Trim() };
                 subject.Commit();
             }
             else
@@ -149,6 +162,7 @@ namespace TimetablingWPF
             }
             AddSubject(subject);
             cmbxSubjects.SelectedItem = subject;
+            Teacher.Subjects.Add(subject);
         }
 
         private void AssignmentButtonClick(object sender, RoutedEventArgs e)
@@ -162,12 +176,11 @@ namespace TimetablingWPF
             Assignment assignment = new Assignment(@class, (int)periods);
             AddAssignment(assignment);
             ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
+            Teacher.Assignments.Add(assignment);
         }
 
         private void AddSubject(Subject subject)
-        {
-            Teacher.Subjects.Add(subject);
-            
+        {            
             spSubjects.Children.Add(Utility.verticalMenuItem(subject, RemoveSubject));
         }
 
@@ -182,8 +195,6 @@ namespace TimetablingWPF
 
         private void AddAssignment(Assignment assignment)
         {
-            Teacher.Assignments.Add(assignment);
-
             spAssignments.Children.Add(Utility.verticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
         }
 
@@ -195,12 +206,14 @@ namespace TimetablingWPF
             spAssignments.Children.Remove(sp);
         }
         private readonly Teacher Teacher;
+        private readonly Teacher OriginalTeacher;
         public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties["Structure"];
         private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
         private readonly Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
         private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
+        private CommandType CommandType;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -278,6 +291,7 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
+            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
             if (ErrManager.GetNumErrors() > 0)
             {
                 Utility.ShowErrorBox("Please fix all errors!");
@@ -296,7 +310,15 @@ namespace TimetablingWPF
                 assignment.Commit(Teacher);
             }
             Teacher.Name = txName.Text;
-            Teacher.Commit();
+
+            if (CommandType == CommandType.edit) {
+                OriginalTeacher.Recommit(Teacher);
+            } else
+            {
+                Teacher.Commit();
+            }
+            
+            MainPage.CloseTab(this);
         }
     }
 }
