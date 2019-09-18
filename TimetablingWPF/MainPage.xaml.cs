@@ -71,7 +71,8 @@ namespace TimetablingWPF
 
         private void ExecuteDuplicateTeacher(object sender, ExecutedRoutedEventArgs e)
         {
-            //do duplicate stuff
+            Teacher teacher = (Teacher)((DataGrid)e.Parameter).SelectedItem;
+            NewTab(new TeacherTab(teacher, CommandType.copy), "New Teacher");
         }
 
         private void CanExecuteDuplicateTeacher(object sender, CanExecuteRoutedEventArgs e)
@@ -81,17 +82,15 @@ namespace TimetablingWPF
 
         private void ExecuteDeleteItem(object sender, ExecutedRoutedEventArgs e)
         {
-            
             DataGrid grid = (DataGrid)e.Parameter;
             int num_sel = grid.SelectedItems.Count;
-            string teacher_string = num_sel == 1 ? $"'{((BaseDataClass)grid.SelectedItem).Name}'" : $"{num_sel} {grid.Tag}";
-            if (MessageBox.Show("Are you sure you want to delete " + teacher_string + "?",
-                $"Delete {teacher_string}?", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel)
+            string conf_str = num_sel == 1 ? $"'{((BaseDataClass)grid.SelectedItem).Name}'" : $"{num_sel} {grid.Tag}";
+            if (MessageBox.Show("Are you sure you want to delete " + conf_str + "?",
+                $"Delete {conf_str}?", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel)
                 == MessageBoxResult.Cancel) { return; }
-            foreach (BaseDataClass teacher in grid.SelectedItems)
+            for (int i = 0; i < grid.SelectedItems.Count;)
             {
-                teacher.Delete();
-                ((IList)Application.Current.Properties[(string)grid.Tag]).Remove(teacher);
+                ((BaseDataClass)grid.SelectedItems[i]).Delete();
             }
         }
 

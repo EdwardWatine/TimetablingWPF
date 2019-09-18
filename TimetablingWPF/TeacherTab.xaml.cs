@@ -29,7 +29,7 @@ namespace TimetablingWPF
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalTeacher = teacher;
-            Teacher = (Teacher)teacher.Clone();
+            Teacher = commandType == CommandType.@new ? teacher : (Teacher)teacher.Clone();
             tbTitle.Text = "Create a new Teacher";
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;

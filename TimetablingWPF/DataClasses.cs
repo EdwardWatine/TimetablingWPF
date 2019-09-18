@@ -191,8 +191,7 @@ namespace TimetablingWPF
             {
                 foreach (object @object in (IEnumerable)val)
                 {
-                    RelationalList<BaseDataClass> rlist = (RelationalList<BaseDataClass>)@object.GetType().GetProperty(val.OtherClassProperty).GetValue(@object);
-                    rlist.Remove(this);
+                    ((IList)@object.GetType().GetProperty(val.OtherClassProperty).GetValue(@object)).Remove(this);
                 }
             }
             ApplyOnType<IRelationalList>(delete);
@@ -201,8 +200,10 @@ namespace TimetablingWPF
 
         public object Clone()
         {
-            object copy = MemberwiseClone();
-            ((BaseDataClass)copy).Commited = false;
+            BaseDataClass copy = (BaseDataClass)MemberwiseClone();
+            copy.Commited = false;
+            copy.PropertyChanged = null;
+
             ApplyOnType<IEnumerable>((prop, val) => prop.SetValue(copy, ((ICloneable)val).Clone()));
             ApplyOnType<IRelationalList>((prop, val) => val.Parent = this);
             return copy;
