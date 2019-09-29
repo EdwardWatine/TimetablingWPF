@@ -34,22 +34,38 @@ namespace TimetablingWPF
                 ((MenuItem)Resources[key]).CommandParameter = parameter;
                 ((MenuItem)Resources[key]).Command = command;
             }
-            attachCommand("miEditTeacher", Commands.EditItem, dgTeachers);
-            attachCommand("miNewTeacher", Commands.NewTeacher);
-            attachCommand("miDeleteTeachers", Commands.DeleteItem, dgTeachers);
-            attachCommand("miDuplicateTeacher", Commands.DuplicateTeacher, dgTeachers);
+            DataGrid[] grids = { dgTeachers, dgSubjects };
+            string[] type_strings = { "Teacher", "Subject" };
+            object[] types = { new Teacher(), new Subject() };
+            for(int i=0; i<types.Length; i++)
+            {
+                attachCommand($"miEdit{type_strings[i]}", Commands.EditItem, grids[i]);
+                attachCommand($"miNew{type_strings[i]}", Commands.NewItem, types[i]);
+                attachCommand($"miDelete{type_strings[i]}", Commands.DeleteItem, grids[i]);
+                attachCommand($"miDuplicate{type_strings[i]}", Commands.DuplicateItem, grids[i]);
+            }
+            
 
-            dgTeachers.ItemsSource = (IList)Application.Current.Properties["Teachers"];
+            dgTeachers.ItemsSource = (IList)Application.Current.Properties[Teacher.ListName];
+            dgSubjects.ItemsSource = (IList)Application.Current.Properties[Subject.ListName];
         }
 
 
 
-        private void ExecuteNewTeacherCommand(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteNewItemCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            NewTab(new TeacherTab(new Teacher(), CommandType.@new), "New Teacher");
+            switch (e.Parameter)
+            {
+                case Teacher teacher:
+                    NewTab(new TeacherTab(teacher, CommandType.@new), "New Teacher");
+                    break;
+                case Subject subject:
+                    NewTab(new SubjectTab(subject, CommandType.@new), "New Subject");
+                    break;
+            }
         }
 
-        private void CanExecuteNewTeacherCommand(object sender, CanExecuteRoutedEventArgs e)
+        private void CanExecuteNewItemCommand(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
@@ -61,6 +77,9 @@ namespace TimetablingWPF
                 case Teacher teacher:
                     NewTab(new TeacherTab(teacher, CommandType.edit), "Edit Teacher");
                     break;
+                case Subject subject:
+                    NewTab(new SubjectTab(subject, CommandType.edit), "Edit Subject");
+                    break;
             }
         }
 
@@ -69,13 +88,21 @@ namespace TimetablingWPF
             e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count == 1;
         }
 
-        private void ExecuteDuplicateTeacher(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
         {
-            Teacher teacher = (Teacher)((DataGrid)e.Parameter).SelectedItem;
-            NewTab(new TeacherTab(teacher, CommandType.copy), "New Teacher");
+            switch (((DataGrid)e.Parameter).SelectedItem)
+            {
+                case Teacher teacher:
+                    NewTab(new TeacherTab(teacher, CommandType.copy), "New Teacher");
+                    break;
+                case Subject subject:
+                    NewTab(new SubjectTab(subject, CommandType.copy), "New Subject");
+                    break;
+            }
+           
         }
 
-        private void CanExecuteDuplicateTeacher(object sender, CanExecuteRoutedEventArgs e)
+        private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count == 1;
         }
@@ -101,10 +128,20 @@ namespace TimetablingWPF
 
         public void NewTab(object page, string title, bool focus = true)
         {
+            Grid grid = new Grid();
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
+            TextBlock tb = new TextBlock() { Text = title };
+            Grid.SetColumn(tb, 0);
+            grid.Children.Add(tb);
+            Button button = new Button() { Content = new TextBlock() { Text = "x" } };
+            button.Click += delegate (object sender, RoutedEventArgs e) { ((ITab)page).Cancel(); };
+            Grid.SetColumn(button, 1);
+            grid.Children.Add(button);
             TabItem newTab = new TabItem()
             {
                 Content = new Frame() { Content = page },
-                Header = title
+                Header = grid
             };
             tcMainTabControl.Items.Add(newTab);
             if (focus) { tcMainTabControl.SelectedItem = newTab; }
@@ -126,12 +163,12 @@ namespace TimetablingWPF
 
     public class Commands
     {
-        public static readonly RoutedUICommand NewTeacher = new RoutedUICommand(
+        public static readonly RoutedUICommand NewItem = new RoutedUICommand(
             "NewTeacher", "NewTeacher", typeof(Commands));
         public static readonly RoutedUICommand EditItem = new RoutedUICommand(
             "EditItem", "EditItem", typeof(Commands));
-        public static readonly RoutedUICommand DuplicateTeacher = new RoutedUICommand(
-            "DuplicateTeacher", "DuplicateTeacher", typeof(Commands));
+        public static readonly RoutedUICommand DuplicateItem = new RoutedUICommand(
+            "DuplicateItem", "DuplicateItem", typeof(Commands));
         public static readonly RoutedUICommand DeleteItem = new RoutedUICommand(
             "DeleteItem", "DeleteItem", typeof(Commands));
     }
@@ -140,6 +177,11 @@ namespace TimetablingWPF
         @new,
         edit,
         copy
+    }
+
+    interface ITab
+    {
+        void Cancel();
     }
 
     public class ListFormatter : IValueConverter

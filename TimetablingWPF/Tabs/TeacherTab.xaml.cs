@@ -21,7 +21,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class TeacherTab : Page
+    public partial class TeacherTab : Page, ITab
     {
         public TeacherTab(Teacher teacher, CommandType commandType)
         {
@@ -29,13 +29,13 @@ namespace TimetablingWPF
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalTeacher = teacher;
-            Teacher = commandType == CommandType.@new ? teacher : (Teacher)teacher.Clone();
+            Teacher = (Teacher)teacher.Clone();
             tbTitle.Text = "Create a new Teacher";
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties["Subjects"];
+            cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
             cmbxAssignmentSubject.ItemsSource = Teacher.Subjects;
-            cmbxAssignmentClass.ItemsSource = (IEnumerable<Class>)Application.Current.Properties["Classes"];
+            cmbxAssignmentClass.ItemsSource = (IEnumerable<Class>)Application.Current.Properties[Class.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
             ErrManager.AddError(HAS_NO_PERIODS, Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods);
@@ -113,12 +113,13 @@ namespace TimetablingWPF
                     {
                         bool schedulable = period.IsSchedulable;
                         TimetableSlot slot = new TimetableSlot(week, day, periodCount);
+                        bool isUnavailable = Teacher.UnavailablePeriods.Contains(slot);
                         Rectangle rect = new Rectangle()
                         {
                             Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(schedulable ?
-                            (Teacher.UnavailablePeriods.Contains(slot) ? "#FF0000" : "#00FF00") :
+                            (isUnavailable ? "#FF0000" : "#00FF00") :
                             "#A8A8A8"),
-                            Tag = schedulable ? Tuple.Create(slot, true) : null
+                            Tag = schedulable ? Tuple.Create(slot, !isUnavailable) : null
                         };
                         if (schedulable)
                         {
@@ -208,7 +209,7 @@ namespace TimetablingWPF
         private readonly Teacher Teacher;
         private readonly Teacher OriginalTeacher;
         public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
-        private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties["Structure"];
+        private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
         private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
         private readonly Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
         private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
@@ -265,7 +266,7 @@ namespace TimetablingWPF
         {
             ComboBox cmbx = (ComboBox)sender;
             Subject subject = (Subject)cmbx.SelectedItem;
-            IEnumerable<Class> all_classes = (IEnumerable<Class>)Application.Current.Properties["Classes"];
+            IEnumerable<Class> all_classes = (IEnumerable<Class>)Application.Current.Properties[Class.ListName];
             if (subject != null)
             {
                 cmbxAssignmentClass.ItemsSource = all_classes;
@@ -280,9 +281,14 @@ namespace TimetablingWPF
             ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
         }
 
-        private void Cancel(object sender, RoutedEventArgs e)
+        private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            if (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?", 
+            
+        }
+
+        public void Cancel()
+        {
+            if (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
                 "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
                 MainPage.CloseTab(this);

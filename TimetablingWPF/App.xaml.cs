@@ -23,12 +23,11 @@ namespace TimetablingWPF
         public App()
         {
             Properties["APPLICATION_NAME"] = "Timetabler";
-            Properties["Teachers"] = new InternalObservableCollection<Teacher>();
-            Properties["Rooms"] = new InternalObservableCollection<Room>();
-            Properties["Classes"] = new InternalObservableCollection<Class>();
-            Properties["Subjects"] = new InternalObservableCollection<Subject>();
-            Properties["Groups"] = new InternalObservableCollection<Subject>();
-            Properties["Structure"] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
+            Properties[Teacher.ListName] = new InternalObservableCollection<Teacher>();
+            Properties[Room.ListName] = new InternalObservableCollection<Room>();
+            Properties[Class.ListName] = new InternalObservableCollection<Class>();
+            Properties[Subject.ListName] = new InternalObservableCollection<Subject>();
+            Properties[TimetableStructure.ListName] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
             {
                 new TimetableStructurePeriod("1", true),
                 new TimetableStructurePeriod("2", true),
@@ -142,7 +141,7 @@ namespace TimetablingWPF
         }
         public static TimetableStructurePeriod PeriodNumToPeriod(int period)
         {
-            return ((TimetableStructure)Application.Current.Properties["Structure"]).Structure[period];
+            return ((TimetableStructure)Application.Current.Properties[TimetableStructure.ListName]).Structure[period];
         }
     }
 

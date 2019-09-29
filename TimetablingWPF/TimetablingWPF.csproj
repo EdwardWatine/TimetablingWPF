@@ -102,14 +102,22 @@
     </ApplicationDefinition>
     <Content Include="DefunctCode.txt" />
     <Compile Include="DataClasses\Collections.cs" />
+    <Compile Include="DataClasses\Class.cs" />
+    <Compile Include="DataClasses\Teacher Subject Group.cs" />
+    <Compile Include="DataClasses\Room.cs" />
+    <Compile Include="DataClasses\TimetableStructure.cs" />
+    <Compile Include="DataClasses\BaseDataClass.cs" />
     <Compile Include="ErrorManager.cs" />
+    <Compile Include="Tabs\SubjectTab.xaml.cs">
+      <DependentUpon>SubjectTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\DoubleMenu.xaml.cs">
       <DependentUpon>DoubleMenu.xaml</DependentUpon>
     </Compile>
-    <Compile Include="TeacherTab.xaml.cs">
+    <Compile Include="Tabs\TeacherTab.xaml.cs">
       <DependentUpon>TeacherTab.xaml</DependentUpon>
     </Compile>
     <Resource Include="Media\ErrorIcon.png" />
@@ -120,6 +128,10 @@
     <Page Include="CheckboxDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Tabs\SubjectTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\PlaceholderComboBox.xaml">
       <SubType>Designer</SubType>
@@ -148,7 +160,7 @@
     <Compile Include="CheckboxDialog.xaml.cs">
       <DependentUpon>CheckboxDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="DataClasses.cs" />
+    <Compile Include="DataClasses\Assignment.cs" />
     <Compile Include="FirstTime.xaml.cs">
       <DependentUpon>FirstTime.xaml</DependentUpon>
     </Compile>
@@ -159,7 +171,7 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="TeacherTab.xaml">
+    <Page Include="Tabs\TeacherTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -8,14 +8,18 @@
       Title="MainPage" Background="#FFFFFF">
     <Page.Resources>
         <MenuItem x:Key="miEditTeacher" Header="Edit item"/>
-        <MenuItem x:Key="miNewTeacher" Header="New Teacher"/>
-        <MenuItem x:Key="miDeleteTeachers" Header="Delete selection"/>
-        <MenuItem x:Key="miDuplicateTeacher" Header="Duplicate teacher"/>
+        <MenuItem x:Key="miNewTeacher" Header="New item"/>
+        <MenuItem x:Key="miDeleteTeacher" Header="Delete selection"/>
+        <MenuItem x:Key="miDuplicateTeacher" Header="Duplicate item"/>
+        <MenuItem x:Key="miEditSubject" Header="Edit item"/>
+        <MenuItem x:Key="miNewSubject" Header="New item"/>
+        <MenuItem x:Key="miDeleteSubject" Header="Delete selection"/>
+        <MenuItem x:Key="miDuplicateSubject" Header="Duplicate item"/>
     </Page.Resources>
     <Page.CommandBindings>
-        <CommandBinding Command="local:Commands.NewTeacher" CanExecute="CanExecuteNewTeacherCommand" Executed="ExecuteNewTeacherCommand"/>
+        <CommandBinding Command="local:Commands.NewItem" CanExecute="CanExecuteNewItemCommand" Executed="ExecuteNewItemCommand"/>
         <CommandBinding Command="local:Commands.EditItem" CanExecute="CanExecuteEditItem" Executed="ExecuteEditItemCommand"/>
-        <CommandBinding Command="local:Commands.DuplicateTeacher" CanExecute="CanExecuteDuplicateTeacher" Executed="ExecuteDuplicateTeacher"/>
+        <CommandBinding Command="local:Commands.DuplicateItem" CanExecute="CanExecuteDuplicateItem" Executed="ExecuteDuplicateItem"/>
         <CommandBinding Command="local:Commands.DeleteItem" CanExecute="CanExecuteDeleteItem" Executed="ExecuteDeleteItem"/>
     </Page.CommandBindings>
     <Grid>
@@ -43,6 +47,12 @@
             <DataTemplate x:Key="ClassTemplate">
                 <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
             </DataTemplate>
+            <DataTemplate x:Key="TeacherTemplate">
+                <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Teachers, Converter={StaticResource ListFormatter}}"/>
+            </DataTemplate>
+            <DataTemplate x:Key="RoomTemplate">
+                <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Rooms, Converter={StaticResource ListFormatter}}"/>
+            </DataTemplate>
         </Grid.Resources>
         <Menu>
             <MenuItem Header="Hello"/>
@@ -54,7 +64,7 @@
                     <TextBlock Text="Hello"/>
                 </TabItem.Header>
                 <DataGrid Name="dgTeachers" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False" 
-                          SelectionUnit="FullRow" SelectionMode="Extended" Tag="Teachers" CanUserSortColumns="True">
+                          SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn CanUserSort="True" SortMemberPath="Name" Width="*" Header="Name" CellTemplate="{StaticResource NameTemplate}"/>
                         <DataGridTemplateColumn Width="3*" Header="Subjects" CellTemplate="{StaticResource SubjectTemplate}"/>
@@ -68,7 +78,31 @@
                             <StaticResource ResourceKey="miEditTeacher"/>
                             <StaticResource ResourceKey="miDuplicateTeacher"/>
                             <Separator/>
-                            <StaticResource ResourceKey="miDeleteTeachers"/>
+                            <StaticResource ResourceKey="miDeleteTeacher"/>
+                            <Separator/>
+                        </ContextMenu>
+                    </DataGrid.ContextMenu>
+                </DataGrid>
+            </TabItem>
+            <TabItem>
+                <TabItem.Header>
+                    <TextBlock Text="Hello"/>
+                </TabItem.Header>
+                <DataGrid Name="dgSubjects" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False" 
+                          SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
+                    <DataGrid.Columns>
+                        <DataGridTemplateColumn CanUserSort="True" SortMemberPath="Name" Width="*" Header="Name" CellTemplate="{StaticResource NameTemplate}"/>
+                        <DataGridTemplateColumn Width="2*" Header="Teachers" CellTemplate="{StaticResource TeacherTemplate}"/>
+                        <DataGridTemplateColumn Width="2*" Header="Rooms" CellTemplate="{StaticResource RoomTemplate}"/>
+                    </DataGrid.Columns>
+                    <DataGrid.ContextMenu>
+                        <ContextMenu>
+                            <StaticResource ResourceKey="miNewSubject"/>
+                            <Separator/>
+                            <StaticResource ResourceKey="miEditSubject"/>
+                            <StaticResource ResourceKey="miDuplicateSubject"/>
+                            <Separator/>
+                            <StaticResource ResourceKey="miDeleteSubject"/>
                             <Separator/>
                         </ContextMenu>
                     </DataGrid.ContextMenu>
