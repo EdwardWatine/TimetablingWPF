@@ -51,16 +51,15 @@ namespace TimetablingWPF
         }
 
 
-
         private void ExecuteNewItemCommand(object sender, ExecutedRoutedEventArgs e)
         {
             switch (e.Parameter)
             {
                 case Teacher teacher:
-                    NewTab(new TeacherTab(teacher, CommandType.@new), "New Teacher");
+                    NewTab(new TeacherTab(teacher, this, CommandType.@new), "New Teacher");
                     break;
                 case Subject subject:
-                    NewTab(new SubjectTab(subject, CommandType.@new), "New Subject");
+                    NewTab(new SubjectTab(subject, this, CommandType.@new), "New Subject");
                     break;
             }
         }
@@ -75,10 +74,10 @@ namespace TimetablingWPF
             switch (((DataGrid)e.Parameter).SelectedItem)
             {
                 case Teacher teacher:
-                    NewTab(new TeacherTab(teacher, CommandType.edit), "Edit Teacher");
+                    NewTab(new TeacherTab(teacher, this, CommandType.edit), "Edit Teacher");
                     break;
                 case Subject subject:
-                    NewTab(new SubjectTab(subject, CommandType.edit), "Edit Subject");
+                    NewTab(new SubjectTab(subject, this, CommandType.edit), "Edit Subject");
                     break;
             }
         }
@@ -93,10 +92,10 @@ namespace TimetablingWPF
             switch (((DataGrid)e.Parameter).SelectedItem)
             {
                 case Teacher teacher:
-                    NewTab(new TeacherTab(teacher, CommandType.copy), "New Teacher");
+                    NewTab(new TeacherTab(teacher, this, CommandType.copy), "New Teacher");
                     break;
                 case Subject subject:
-                    NewTab(new SubjectTab(subject, CommandType.copy), "New Subject");
+                    NewTab(new SubjectTab(subject, this, CommandType.copy), "New Subject");
                     break;
             }
            
@@ -182,6 +181,7 @@ namespace TimetablingWPF
     interface ITab
     {
         void Cancel();
+        MainPage MainPage { get; set; }
     }
 
     public class ListFormatter : IValueConverter

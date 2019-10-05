@@ -23,9 +23,10 @@ namespace TimetablingWPF
     /// </summary>
     public partial class SubjectTab : Page, ITab
     {
-        public SubjectTab(Subject subject, CommandType commandType)
+        public SubjectTab(Subject subject, MainPage mainPage, CommandType commandType)
         {
             InitializeComponent();
+            MainPage = mainPage;
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalSubject = subject;
@@ -35,7 +36,6 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
             cmbxRooms.ItemsSource = (IEnumerable<Room>)Application.Current.Properties[Room.ListName];
             cmbxTeachers.ItemsSource = (IEnumerable<Teacher>)Application.Current.Properties[Teacher.ListName];
-
             //Errors
 
             foreach (Room room in Subject.Rooms)
@@ -74,7 +74,7 @@ namespace TimetablingWPF
 
         private void AddRoom(Room room)
         {            
-            spRooms.Children.Add(Utility.verticalMenuItem(room, RemoveRoom));
+            spRooms.Children.Add(Utility.VerticalMenuItem(room, RemoveRoom));
         }
 
         private void RemoveRoom(object sender, RoutedEventArgs e)
@@ -87,7 +87,7 @@ namespace TimetablingWPF
 
         private void AddTeacher(Teacher teacher)
         {
-            spTeachers.Children.Add(Utility.verticalMenuItem(teacher, RemoveTeacher));
+            spTeachers.Children.Add(Utility.VerticalMenuItem(teacher, RemoveTeacher));
         }
 
         private void RemoveTeacher(object sender, RoutedEventArgs e)
@@ -99,12 +99,12 @@ namespace TimetablingWPF
         }
         private readonly Subject Subject;
         private readonly Subject OriginalSubject;
-        public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
         private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
         private readonly Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
         private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
+        public MainPage MainPage { get; set; }
         private CommandType CommandType;
 
         private void TxNameChanged(object sender, TextChangedEventArgs e)

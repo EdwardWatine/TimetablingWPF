@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:TimetablingWPF"
+      xmlns:local="clr-namespace:TimetablingWPF" xmlns:dgblz="clr-namespace:Dragablz;assembly=Dragablz"
       mc:Ignorable="d" 
       Title="MainPage" Background="#FFFFFF">
     <Page.Resources>
@@ -58,7 +58,10 @@
             <MenuItem Header="Hello"/>
             <MenuItem Header="Hello2"/>
         </Menu>
-        <TabControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch">
+        <dgblz:TabablzControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch">
+            <dgblz:TabablzControl.InterTabController>
+                <dgblz:InterTabController/>
+            </dgblz:TabablzControl.InterTabController>
             <TabItem>
                 <TabItem.Header>
                     <TextBlock Text="Hello"/>
@@ -108,7 +111,7 @@
                     </DataGrid.ContextMenu>
                 </DataGrid>
             </TabItem>
-        </TabControl>
+        </dgblz:TabablzControl>
         <StatusBar Grid.Row="2" Background="#FF0000" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StatusBarItem>Hello</StatusBarItem>
             <StatusBarItem>Hello2</StatusBarItem>

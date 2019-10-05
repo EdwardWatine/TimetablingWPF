@@ -13,10 +13,12 @@ using System.Collections.Specialized;
 
 namespace TimetablingWPF
 {
+#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     /// <summary>
     /// Base class for all data objects
     /// </summary>
     public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable
+#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
 
         public BaseDataClass()
@@ -88,6 +90,10 @@ namespace TimetablingWPF
         public override string ToString()
         {
             return Name;
+        }
+        public override bool Equals(object obj)
+        {
+            return ReferenceEquals(this, obj) || obj.GetType() == typeof(Wildcard);
         }
         /// <summary>
         /// Will remove all instances of self from <see cref="RelationalList{T}"/>. Will then remove self from the properties list

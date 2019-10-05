@@ -92,7 +92,7 @@ namespace TimetablingWPF
         {
             return number == 1 ? word : word.Pluralize();
         }
-        public static Border setInternalBorder(FrameworkElement element)
+        public static Border SetInternalBorder(FrameworkElement element)
         {
             return new Border()
             {
@@ -100,9 +100,9 @@ namespace TimetablingWPF
                 Style = (Style)Application.Current.Resources["GridLineInternal"]
             };
         }
-        public static StackPanel verticalMenuItem(object @object, MouseButtonEventHandler @event = null, string repr = null)
+        public static StackPanel VerticalMenuItem(object @object, MouseButtonEventHandler @event = null, string repr = null)
         {
-            StackPanel sp = new StackPanel() { Orientation = Orientation.Horizontal, Tag = @object, Margin = new Thickness(0, 0, 0, 5) };
+            StackPanel sp = new StackPanel() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 5) };
             TextBlock tb = new TextBlock()
             {
                 Style = (Style)Application.Current.Resources["DialogText"],
@@ -115,7 +115,7 @@ namespace TimetablingWPF
             {
                 Source = (ImageSource)Application.Current.Resources["CrossIcon"],
                 Height = 22,
-                Tag = sp,
+                Tag = @object,
                 Cursor = Cursors.Hand
             };
             if (@event != null)

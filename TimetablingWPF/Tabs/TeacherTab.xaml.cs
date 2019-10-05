@@ -23,9 +23,10 @@ namespace TimetablingWPF
     /// </summary>
     public partial class TeacherTab : Page, ITab
     {
-        public TeacherTab(Teacher teacher, CommandType commandType)
+        public TeacherTab(Teacher teacher, MainPage mainPage, CommandType commandType)
         {
             InitializeComponent();
+            MainPage = mainPage;
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalTeacher = teacher;
@@ -34,7 +35,7 @@ namespace TimetablingWPF
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
-            cmbxAssignmentSubject.ItemsSource = Teacher.Subjects;
+            cmbxAssignmentSubject.ItemsSource = cmbxSubjects.ItemsSource;
             cmbxAssignmentClass.ItemsSource = (IEnumerable<Class>)Application.Current.Properties[Class.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
@@ -60,7 +61,7 @@ namespace TimetablingWPF
                 };
                 gridWeek.ColumnDefinitions.Add(new ColumnDefinition());
                 gridWeek.RowDefinitions.Add(new RowDefinition());
-                gridWeek.Children.Add(Utility.setInternalBorder(new TextBlock()
+                gridWeek.Children.Add(Utility.SetInternalBorder(new TextBlock()
                 {
                     Text = Utility.WeekToString(week),
                     Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
@@ -85,7 +86,7 @@ namespace TimetablingWPF
                         Padding = new Thickness(2),
                         TextAlignment = TextAlignment.Center
                     };
-                    Border dayBorder = Utility.setInternalBorder(dayHeading);
+                    Border dayBorder = Utility.SetInternalBorder(dayHeading);
                     Grid.SetColumn(dayBorder, day + 1);
                     gridWeek.Children.Add(dayBorder);
                 }
@@ -105,7 +106,7 @@ namespace TimetablingWPF
                         Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                         Padding = new Thickness(2)
                     };
-                    Border periodBorder = Utility.setInternalBorder(periodHeading);
+                    Border periodBorder = Utility.SetInternalBorder(periodHeading);
                     Grid.SetRow(periodBorder, periodCount + 1);
                     gridWeek.Children.Add(periodBorder);
 
@@ -125,7 +126,7 @@ namespace TimetablingWPF
                         {
                             rect.MouseLeftButtonDown += ToggleSlot;
                         }
-                        Border rectBorder = Utility.setInternalBorder(rect);
+                        Border rectBorder = Utility.SetInternalBorder(rect);
                         Grid.SetColumn(rectBorder, day + 1);
                         Grid.SetRow(rectBorder, periodCount + 1);
                         gridWeek.Children.Add(rectBorder);
@@ -182,13 +183,14 @@ namespace TimetablingWPF
 
         private void AddSubject(Subject subject)
         {            
-            spSubjects.Children.Add(Utility.verticalMenuItem(subject, RemoveSubject));
+            spSubjects.Children.Add(Utility.VerticalMenuItem(subject, RemoveSubject));
         }
 
         private void RemoveSubject(object sender, RoutedEventArgs e)
         {
-            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Subject subject = (Subject)sp.Tag;
+            FrameworkElement element = (FrameworkElement)sender;
+            StackPanel sp = (StackPanel)element.Parent;
+            Subject subject = (Subject)element.Tag;
             Teacher.Subjects.Remove(subject);
             spSubjects.Children.Remove(sp);
             ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
@@ -196,19 +198,20 @@ namespace TimetablingWPF
 
         private void AddAssignment(Assignment assignment)
         {
-            spAssignments.Children.Add(Utility.verticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
+            spAssignments.Children.Add(Utility.VerticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
         }
 
         private void RemoveAssignment(object sender, RoutedEventArgs e)
         {
-            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Assignment assignment = (Assignment)sp.Tag;
+            FrameworkElement element = (FrameworkElement)sender;
+            StackPanel sp = (StackPanel)element.Parent;
+            Assignment assignment = (Assignment)element.Tag;
             Teacher.Assignments.Remove(assignment);
             spAssignments.Children.Remove(sp);
         }
         private readonly Teacher Teacher;
         private readonly Teacher OriginalTeacher;
-        public MainPage MainPage = (MainPage)Application.Current.MainWindow.Content;
+        public MainPage MainPage { get; set; }
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
         private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
         private readonly Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
@@ -283,7 +286,7 @@ namespace TimetablingWPF
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            
+            Cancel();
         }
 
         public void Cancel()
