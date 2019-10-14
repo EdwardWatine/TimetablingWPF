@@ -12,7 +12,7 @@ namespace TimetablingWPF
     {
         public override bool Equals(object obj)
         {
-            return obj.GetType() == typeof(BaseDataClass);
+            return obj.GetType() == typeof(BaseDataClass) || obj.GetType().BaseType == typeof(BaseDataClass);
         }
         public override string ToString()
         {
