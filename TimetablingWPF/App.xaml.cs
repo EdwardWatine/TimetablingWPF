@@ -37,7 +37,26 @@ namespace TimetablingWPF
                 new TimetableStructurePeriod("Lch", false),
                 new TimetableStructurePeriod("5", true)
             });
-
+            ObservableCollection<Teacher> TestData = new ObservableCollection<Teacher>
+            {
+                new Teacher(){Name="Mr Worth" },
+                new Teacher(){Name="Mr Henley" }
+            };
+            foreach (Teacher teacher in TestData)
+            {
+                teacher.Commit();
+            }
+            ObservableCollection<Subject> TestSubjects = new ObservableCollection<Subject>() {
+                new Subject(){Name = "Science" },
+                new Subject() { Name = "Timetabling" }
+            };
+            foreach (Subject subject in TestSubjects) { subject.Commit(); }
+            MainWindow window = new MainWindow();
+            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject) })
+            {
+                window.GetMainPage().NewDataClassTab(type);
+            }
+            window.Show();
         }
 
     }
@@ -62,7 +81,7 @@ namespace TimetablingWPF
                 }
                 catch (Exception e)
                 {
-                    Utility.ShowErrorBox(e.Message);
+                    VisualHelpers.ShowErrorBox(e.Message);
                     throw e;
                 }
             }
@@ -79,70 +98,10 @@ namespace TimetablingWPF
                 }
                 catch (Exception e)
                 {
-                    Utility.ShowErrorBox(e.Message);
+                    VisualHelpers.ShowErrorBox(e.Message);
                     throw e;
                 }
             }
         }
     }
-
-    internal class Utility
-    {
-        public static string Pluralize(int number, string word)
-        {
-            return number == 1 ? word : word.Pluralize();
-        }
-        public static Border SetInternalBorder(FrameworkElement element)
-        {
-            return new Border()
-            {
-                Child = element,
-                Style = (Style)Application.Current.Resources["GridLineInternal"]
-            };
-        }
-        public static StackPanel VerticalMenuItem(object @object, MouseButtonEventHandler @event = null, string repr = null)
-        {
-            StackPanel sp = new StackPanel() { Orientation = Orientation.Horizontal, Margin = new Thickness(0, 0, 0, 5) };
-            TextBlock tb = new TextBlock()
-            {
-                Style = (Style)Application.Current.Resources["DialogText"],
-                Text = repr ?? @object.ToString(),
-                Margin = new Thickness(0, 0, 5, 0),
-                Height = 22,
-                Padding = new Thickness(1)                
-            };
-            Image img = new Image()
-            {
-                Source = (ImageSource)Application.Current.Resources["CrossIcon"],
-                Height = 22,
-                Tag = @object,
-                Cursor = Cursors.Hand
-            };
-            if (@event != null)
-            {
-                img.MouseDown += @event;
-            }
-            sp.Children.Add(tb);
-            sp.Children.Add(img);
-            return sp;
-        }
-        public static void ShowErrorBox(string msg)
-        {
-            MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        }
-        public static string WeekToString(int week)
-        {
-            return Convert.ToString((char)('A' + week));
-        }
-        public static string DayToString(int day)
-        {
-            string[] days = { "Mon", "Tue", "Wed", "Thu", "Fri" };
-            return days[day];
-        }
-        public static TimetableStructurePeriod PeriodNumToPeriod(int period)
-        {
-            return ((TimetableStructure)Application.Current.Properties[TimetableStructure.ListName]).Structure[period];
-        }
-    }
-
 }

@@ -29,7 +29,7 @@ namespace TimetablingWPF
         {
             ;
             TimetableStructure structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
-            return $"{Utility.WeekToString(Week)} {Utility.DayToString(Day)} P{Utility.PeriodNumToPeriod(Period).Name}";
+            return $"{DataHelpers.WeekToString(Week)} {DataHelpers.DayToString(Day)} P{DataHelpers.PeriodNumToPeriod(Period).Name}";
         }
     }
     /// <summary>

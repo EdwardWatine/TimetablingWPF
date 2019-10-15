@@ -29,103 +29,76 @@ namespace TimetablingWPF
             Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
             Application.Current.MainWindow.SizeToContent = SizeToContent.Manual;
             InitializeComponent();
-            void attachCommand(string key, ICommand command, object parameter = null)
+
+            void MoveWindow()
             {
-                ((MenuItem)Resources[key]).CommandParameter = parameter;
-                ((MenuItem)Resources[key]).Command = command;
+                Vector vector = Mouse.GetPosition(tcMainTabControl) - DraggingTab.Item2;
+                Window.GetWindow(tcMainTabControl).Left += vector.X;
+                Window.GetWindow(tcMainTabControl).Top += vector.Y;
             }
-            DataGrid[] grids = { dgTeachers, dgSubjects };
-            string[] type_strings = { "Teacher", "Subject" };
-            object[] types = { new Teacher(), new Subject() };
-            for(int i=0; i<types.Length; i++)
+            void ReleaseMouse()
             {
-                attachCommand($"miEdit{type_strings[i]}", Commands.EditItem, grids[i]);
-                attachCommand($"miNew{type_strings[i]}", Commands.NewItem, types[i]);
-                attachCommand($"miDelete{type_strings[i]}", Commands.DeleteItem, grids[i]);
-                attachCommand($"miDuplicate{type_strings[i]}", Commands.DuplicateItem, grids[i]);
+                tcMainTabControl.ReleaseMouseCapture();
+                DraggingTab = null;
             }
-            
-
-            dgTeachers.ItemsSource = (IList)Application.Current.Properties[Teacher.ListName];
-            dgSubjects.ItemsSource = (IList)Application.Current.Properties[Subject.ListName];
-        }
-
-
-        private void ExecuteNewItemCommand(object sender, ExecutedRoutedEventArgs e)
-        {
-            switch (e.Parameter)
+            void MouseMoveDragTab(object sender, MouseEventArgs e)
             {
-                case Teacher teacher:
-                    NewTab(new TeacherTab(teacher, this, CommandType.@new), "New Teacher");
-                    break;
-                case Subject subject:
-                    NewTab(new SubjectTab(subject, this, CommandType.@new), "New Subject");
-                    break;
+                if (DraggingTab == null || !(e.LeftButton == MouseButtonState.Pressed))
+                {
+                    ReleaseMouse();
+                    return;
+                }
+                if (tcMainTabControl.Items.Count == 1)
+                {
+                    MoveWindow();
+                    return;
+                }
+                if (e.GetPosition(tcMainTabControl).Y >
+                    DraggingTab.Item1.TransformToAncestor(TabToContent(DraggingTab.Item1.Parent).MainPage.tcMainTabControl).Transform(new Point(0, 0)).Y + DraggingTab.Item1.ActualHeight)
+                {
+                    MouseLeaveDragTab(sender, e);
+                }
             }
-        }
-
-        private void CanExecuteNewItemCommand(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
-        }
-
-        private void ExecuteEditItemCommand(object sender, ExecutedRoutedEventArgs e)
-        {
-            switch (((DataGrid)e.Parameter).SelectedItem)
+            void MouseLeaveDragTab(object sender, MouseEventArgs e)
             {
-                case Teacher teacher:
-                    NewTab(new TeacherTab(teacher, this, CommandType.edit), "Edit Teacher");
-                    break;
-                case Subject subject:
-                    NewTab(new SubjectTab(subject, this, CommandType.edit), "Edit Subject");
-                    break;
+                if (DraggingTab == null || !(e.LeftButton == MouseButtonState.Pressed))
+                {
+                    ReleaseMouse();
+                    return;
+                }
+                if (tcMainTabControl.Items.Count == 1)
+                {
+                    MoveWindow();
+                    return;
+                }
+                TabItem tab = (TabItem)DraggingTab.Item1.Parent;
+                Vector localToMouse = (Vector)DraggingTab.Item2;
+                Vector screenToMouse = (Vector)DraggingTab.Item1.PointToScreen(DraggingTab.Item2);
+                tcMainTabControl.Items.Remove(tab);
+                TabItem newTab = new TabItem();
+                GenericHelpers.MoveElementProperties(tab, newTab, new string[] { "Header", "Content" });
+
+                //void newWindow(object sender2, EventArgs e2)
+                //{
+                MainWindow window = new MainWindow();
+                MainPage mainPage = window.GetMainPage();
+                TabToContent(newTab).MainPage = mainPage;
+                mainPage.tcMainTabControl.Items.Add(newTab);
+                window.Show();
+                Vector windowToLocal = ((FrameworkElement)newTab.Header).PointToScreen(new Point()) - ((Point)window.VectorPos().VectorFromScreen());
+                Vector screenToWindow = screenToMouse - localToMouse - windowToLocal;
+                window.SetPos(screenToWindow.VectorToScreen());
+                mainPage.DraggingTab = new Tuple<FrameworkElement, Point>((FrameworkElement)newTab.Header, Mouse.GetPosition((FrameworkElement)newTab.Header));
+                ReleaseMouse();
+                //}
             }
+            tcMainTabControl.MouseMove += MouseMoveDragTab;
+            tcMainTabControl.MouseLeave += MouseLeaveDragTab;
         }
 
-        private void CanExecuteEditItem(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count == 1;
-        }
+        public Tuple<FrameworkElement, Point> DraggingTab;
 
-        private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
-        {
-            switch (((DataGrid)e.Parameter).SelectedItem)
-            {
-                case Teacher teacher:
-                    NewTab(new TeacherTab(teacher, this, CommandType.copy), "New Teacher");
-                    break;
-                case Subject subject:
-                    NewTab(new SubjectTab(subject, this, CommandType.copy), "New Subject");
-                    break;
-            }
-           
-        }
-
-        private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count == 1;
-        }
-
-        private void ExecuteDeleteItem(object sender, ExecutedRoutedEventArgs e)
-        {
-            DataGrid grid = (DataGrid)e.Parameter;
-            int num_sel = grid.SelectedItems.Count;
-            string conf_str = num_sel == 1 ? $"'{((BaseDataClass)grid.SelectedItem).Name}'" : $"{num_sel} {grid.Tag}";
-            if (MessageBox.Show("Are you sure you want to delete " + conf_str + "?",
-                $"Delete {conf_str}?", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel)
-                == MessageBoxResult.Cancel) { return; }
-            for (int i = 0; i < grid.SelectedItems.Count;)
-            {
-                ((BaseDataClass)grid.SelectedItems[i]).Delete();
-            }
-        }
-
-        private void CanExecuteDeleteItem(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count >= 1;
-        }
-
-        public void NewTab(object page, string title, bool focus = true)
+        public void NewTab(object page, string title, bool focus = true, bool draggable = true)
         {
             Grid grid = new Grid();
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
@@ -134,15 +107,37 @@ namespace TimetablingWPF
             Grid.SetColumn(tb, 0);
             grid.Children.Add(tb);
             Button button = new Button() { Content = new TextBlock() { Text = "x" } };
-            button.Click += delegate (object sender, RoutedEventArgs e) { ((ITab)page).Cancel(); };
+            if (draggable)
+            {
+                button.Click += delegate (object sender, RoutedEventArgs e) { ((ITab)page).Cancel(); };
+            }
             Grid.SetColumn(button, 1);
             grid.Children.Add(button);
             TabItem newTab = new TabItem()
             {
-                Content = new Frame() { Content = page },
+                Content = page,
                 Header = grid
             };
             tcMainTabControl.Items.Add(newTab);
+            if (draggable)
+            {
+                void TabHeaderMouseDown(object sender, MouseButtonEventArgs e)
+                {
+                    FrameworkElement element = (FrameworkElement)sender;
+                    ITab content = TabToContent(element.Parent);
+                    content.MainPage.DraggingTab = new Tuple<FrameworkElement, Point>(element, e.GetPosition(element));
+                   // TabToContent(((FrameworkElement)sender).Parent).MainPage.tcMainTabControl.CaptureMouse();
+                }
+                void TabHeaderMouseUp(object sender, MouseButtonEventArgs e)
+                {
+                    TabToContent(((FrameworkElement)sender).Parent).MainPage.DraggingTab = null;
+                    TabToContent(((FrameworkElement)sender).Parent).MainPage.tcMainTabControl.ReleaseMouseCapture();
+                }
+
+                grid.MouseDown += TabHeaderMouseDown;
+                grid.MouseUp += TabHeaderMouseUp;
+            }
+
             if (focus) { tcMainTabControl.SelectedItem = newTab; }
         }
 
@@ -150,7 +145,7 @@ namespace TimetablingWPF
         {
             foreach (TabItem tab in tcMainTabControl.Items)
             {
-                if ((tab.Content as Frame)?.Content == page)
+                if (tab.Content == page)
                 {
                     tcMainTabControl.Items.Remove(tab);
                     return;
@@ -158,30 +153,34 @@ namespace TimetablingWPF
             }
             throw new System.ArgumentException($"Page {page} of type {page.GetType().Name} does not exist in the tab list");
         }
+        public static ITab TabToContent(object tab)
+        {
+            return (ITab)((TabItem)tab).Content;
+        }
+
+        public void NewDataClassTab(Type type)
+        {
+            tcMainTabControl.Items.Add(new DataClassTabItem(this, type) { Header = type.Name });
+        }
+
+        public void CloseDataClassTab(Type type)
+        {
+            for (int i=0; i<tcMainTabControl.Items.Count; i++)
+            {
+                DataClassTabItem tabItem = tcMainTabControl.Items[i] as DataClassTabItem;
+                if (tabItem != null && tabItem.DataType == type)
+                {
+                    tcMainTabControl.Items.RemoveAt(i);
+                    return;
+                }
+            }
+        }
     }
 
-    public class Commands
+    public interface ITab
     {
-        public static readonly RoutedUICommand NewItem = new RoutedUICommand(
-            "NewTeacher", "NewTeacher", typeof(Commands));
-        public static readonly RoutedUICommand EditItem = new RoutedUICommand(
-            "EditItem", "EditItem", typeof(Commands));
-        public static readonly RoutedUICommand DuplicateItem = new RoutedUICommand(
-            "DuplicateItem", "DuplicateItem", typeof(Commands));
-        public static readonly RoutedUICommand DeleteItem = new RoutedUICommand(
-            "DeleteItem", "DeleteItem", typeof(Commands));
-    }
-
-    public enum CommandType : byte {
-        @new,
-        edit,
-        copy
-    }
-
-    interface ITab
-    {
-        void Cancel();
         MainPage MainPage { get; set; }
+        void Cancel();
     }
 
     public class ListFormatter : IValueConverter

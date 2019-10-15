@@ -1,0 +1,61 @@
+﻿<TabItem x:Class="TimetablingWPF.DataClassTabItem"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TimetablingWPF" xmlns:dgblz="clr-namespace:Dragablz;assembly=Dragablz"
+      mc:Ignorable="d">
+    
+    <TabItem.Resources>
+        <MenuItem x:Key="miEditItem" Header="Edit item"/>
+        <MenuItem x:Key="miNewItem" Header="New item"/>
+        <MenuItem x:Key="miDeleteItem" Header="Delete selection"/>
+        <MenuItem x:Key="miDuplicateItem" Header="Delete item"/>
+        <local:ListFormatter x:Key="ListFormatter"/>
+        <Style x:Key="tbStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="HorizontalAlignment" Value="Center"/>
+        </Style>
+        <DataTemplate x:Key="NameTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Name}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="SubjectsTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subjects, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Unavailable PeriodsTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding UnavailablePeriods, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="ClassesTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="TeachersTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Teachers, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="RoomsTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Rooms, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="AssignmentsTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+    </TabItem.Resources>
+    <TabItem.CommandBindings>
+        <CommandBinding Command="local:Commands.NewItem" CanExecute="CanExecuteNewItemCommand" Executed="ExecuteNewItemCommand"/>
+        <CommandBinding Command="local:Commands.EditItem" CanExecute="CanExecuteEditItem" Executed="ExecuteEditItemCommand"/>
+        <CommandBinding Command="local:Commands.DuplicateItem" CanExecute="CanExecuteDuplicateItem" Executed="ExecuteDuplicateItem"/>
+        <CommandBinding Command="local:Commands.DeleteItem" CanExecute="CanExecuteDeleteItem" Executed="ExecuteDeleteItem"/>
+    </TabItem.CommandBindings>
+    <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
+                          SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
+        <DataGrid.ContextMenu>
+                <ContextMenu>
+                    <StaticResource ResourceKey="miNewItem"/>
+                    <Separator/>
+                    <StaticResource ResourceKey="miEditItem"/>
+                    <StaticResource ResourceKey="miDuplicateItem"/>
+                    <Separator/>
+                    <StaticResource ResourceKey="miDeleteItem"/>
+                    <Separator/>
+                </ContextMenu>
+            </DataGrid.ContextMenu>
+        </DataGrid>
+</TabItem>

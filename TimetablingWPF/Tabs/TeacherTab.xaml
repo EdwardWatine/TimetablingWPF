@@ -1,4 +1,4 @@
-﻿<Page x:Class="TimetablingWPF.TeacherTab"
+﻿<Grid x:Class="TimetablingWPF.TeacherTab"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -6,97 +6,97 @@
         xmlns:local="clr-namespace:TimetablingWPF"
         xmlns:tlkt="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
         mc:Ignorable="d"
-        Title="CheckboxPopup" FocusManager.FocusedElement="{Binding ElementName=txName}"
+        FocusManager.FocusedElement="{Binding ElementName=txName}"
+        Margin="10" HorizontalAlignment="Stretch" Name="gdMain"
         >
-    <Page.Background>
+    <Grid.Background>
         <SolidColorBrush Color="#1A1A74"/>
-    </Page.Background>
+    </Grid.Background>
 
-    <Grid Grid.Row="1" Margin="10" HorizontalAlignment="Stretch" Name="gdMain">
+
+    <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <TextBlock Grid.ColumnSpan="2" Name="tbTitle" Style="{StaticResource HeaderText}" HorizontalAlignment="Center"/>
+    <Grid Grid.Row="1">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        
-        <TextBlock Grid.ColumnSpan="2" Name="tbTitle" Style="{StaticResource HeaderText}" HorizontalAlignment="Center"/>
-        <Grid Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
-            <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
+        <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
+        <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
                      Name="txName" MinWidth="200" MinHeight="32" TextChanged="TxNameChanged"/>
-            <TextBlock HorizontalAlignment="Right" Grid.Row="1" Style="{StaticResource DialogText}" Text="Unavailable periods:"/>
-            <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,5">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Name="spPeriods"/>
-            </ScrollViewer>
-            <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="2" Grid.Column="1"/>
-        </Grid>
-        <Grid Grid.Column="1" Grid.Row="1">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        <TextBlock HorizontalAlignment="Right" Grid.Row="1" Style="{StaticResource DialogText}" Text="Unavailable periods:"/>
+        <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,5">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Name="spPeriods"/>
+        </ScrollViewer>
+        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="2" Grid.Column="1"/>
+    </Grid>
+    <Grid Grid.Column="1" Grid.Row="1">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Subjects:" Margin="0,1,0,0"/>
+        <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Subjects:" Margin="0,1,0,0"/>
-            <Grid Grid.Column="1">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Orientation="Vertical" Name="spSubjects" Margin="10,0,0,0"/>
-                </ScrollViewer>
-                <StackPanel Orientation="Horizontal" Grid.Row="1"  Margin="0,0,0,10">
-                    <local:PlaceholderComboBox x:Name="cmbxSubjects" IsEditable="True" Style="{StaticResource HorizontalMenu}" 
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical" Name="spSubjects" Margin="10,0,0,0"/>
+            </ScrollViewer>
+            <StackPanel Orientation="Horizontal" Grid.Row="1"  Margin="0,0,0,10">
+                <local:PlaceholderComboBox x:Name="cmbxSubjects" IsEditable="True" Style="{StaticResource HorizontalMenu}" 
                                                KeyDown="CmbxSubjects_KeyDown" Placeholder="-- Subject --"/>
-                    <Button Height="{Binding ElementName=cmbxSubjects, Path=ActualHeight}" Click="SubjectButtonClick">
-                        <Image Source="{StaticResource PlusIcon}"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
-            <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Assignments:" Margin="0,1,0,0"/>
-            <Grid Grid.Column="1" Grid.Row="2">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                    <StackPanel Orientation="Vertical" Name="spAssignments" Margin="10,0,0,0"/>
-                </ScrollViewer>
-                <StackPanel Orientation="Horizontal" Grid.Row="1">
-                    <local:PlaceholderComboBox x:Name="cmbxAssignmentSubject" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Subject --"/>
-                    <local:PlaceholderComboBox x:Name="cmbxAssignmentClass" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Class --"/>
-                    <tlkt:IntegerUpDown Name="iupdown" Minimum="1" Value="1" Width="50" Style="{StaticResource HorizontalMenu}"/>
-                    <Button Height="{Binding ElementName=cmbxAssignmentSubject, Path=ActualHeight}" Click="AssignmentButtonClick">
-                        <Image Source="{StaticResource PlusIcon}"/>
-                    </Button>
-                </StackPanel>
-            </Grid>
+                <Button Height="{Binding ElementName=cmbxSubjects, Path=ActualHeight}" Click="SubjectButtonClick">
+                    <Image Source="{StaticResource PlusIcon}"/>
+                </Button>
+            </StackPanel>
         </Grid>
-        <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="5*"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="5*"/>
-            </Grid.ColumnDefinitions>
-            <Button Padding="2" HorizontalAlignment="Center" FontSize="13" Click="Confirm">Confirm</Button>
-            <Button Grid.Column="2" Padding="2" HorizontalAlignment="Center" FontSize="13" Click="Cancel_Click">Cancel</Button>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Assignments:" Margin="0,1,0,0"/>
+        <Grid Grid.Column="1" Grid.Row="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                <StackPanel Orientation="Vertical" Name="spAssignments" Margin="10,0,0,0"/>
+            </ScrollViewer>
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <local:PlaceholderComboBox x:Name="cmbxAssignmentSubject" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Subject --"/>
+                <local:PlaceholderComboBox x:Name="cmbxAssignmentClass" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Class --"/>
+                <tlkt:IntegerUpDown Name="iupdown" Minimum="1" Value="1" Width="50" Style="{StaticResource HorizontalMenu}"/>
+                <Button Height="{Binding ElementName=cmbxAssignmentSubject, Path=ActualHeight}" Click="AssignmentButtonClick">
+                    <Image Source="{StaticResource PlusIcon}"/>
+                </Button>
+            </StackPanel>
         </Grid>
-
     </Grid>
-</Page>
+    <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5*"/>
+        </Grid.ColumnDefinitions>
+        <Button Padding="2" HorizontalAlignment="Center" FontSize="13" Click="Confirm">Confirm</Button>
+        <Button Grid.Column="2" Padding="2" HorizontalAlignment="Center" FontSize="13" Click="Cancel_Click">Cancel</Button>
+    </Grid>
+
+</Grid>

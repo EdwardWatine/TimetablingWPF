@@ -15,13 +15,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
+using static TimetablingWPF.VisualHelpers;
 
 namespace TimetablingWPF
 {
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class SubjectTab : Page, ITab
+    public partial class SubjectTab : Grid, ITab
     {
         public SubjectTab(Subject subject, MainPage mainPage, CommandType commandType)
         {
@@ -74,7 +75,7 @@ namespace TimetablingWPF
 
         private void AddRoom(Room room)
         {            
-            spRooms.Children.Add(Utility.VerticalMenuItem(room, RemoveRoom));
+            spRooms.Children.Add(VerticalMenuItem(room, RemoveRoom));
         }
 
         private void RemoveRoom(object sender, RoutedEventArgs e)
@@ -87,7 +88,7 @@ namespace TimetablingWPF
 
         private void AddTeacher(Teacher teacher)
         {
-            spTeachers.Children.Add(Utility.VerticalMenuItem(teacher, RemoveTeacher));
+            spTeachers.Children.Add(VerticalMenuItem(teacher, RemoveTeacher));
         }
 
         private void RemoveTeacher(object sender, RoutedEventArgs e)
@@ -99,9 +100,6 @@ namespace TimetablingWPF
         }
         private readonly Subject Subject;
         private readonly Subject OriginalSubject;
-        private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
-        private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
-        private readonly Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
         private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }
@@ -131,7 +129,7 @@ namespace TimetablingWPF
             ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
             if (ErrManager.GetNumErrors() > 0)
             {
-                Utility.ShowErrorBox("Please fix all errors!");
+                ShowErrorBox("Please fix all errors!");
                 return;
             }
             if (ErrManager.GetNumWarnings() > 0)

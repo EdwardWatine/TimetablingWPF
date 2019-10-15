@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Humanizer;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -27,24 +28,11 @@ namespace TimetablingWPF
         public MainWindow()
         {
             InitializeComponent();
-            ObservableCollection<Teacher> TestData = new ObservableCollection<Teacher>
-            {
-                new Teacher(){Name="Mr Worth" },
-                new Teacher(){Name="Mr Henley" }
-            };
-            foreach (Teacher teacher in TestData)
-            {
-                teacher.Commit();
-            }
-            ObservableCollection<Subject> TestSubjects = new ObservableCollection<Subject>() {
-                new Subject(){Name = "Science" },
-                new Subject() { Name = "Timetabling" }
-            };
-            foreach (Subject subject in TestSubjects) { subject.Commit(); }
             //Subject Science = new Subject("Science");
 
             //Room sroom = new Room("Science Rooms", 5);
-            Content = new MainPage();
+            MainPage mp = new MainPage();
+            Content = mp;
             return;
             if (AppDomain.CurrentDomain.ActivationContext == null)
             {
@@ -60,6 +48,11 @@ namespace TimetablingWPF
             Content = new FirstTime();
             return;
 
+        }
+
+        public MainPage GetMainPage()
+        {
+            return (MainPage)Content;
         }
     }
 }

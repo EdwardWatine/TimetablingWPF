@@ -57,7 +57,7 @@ namespace TimetablingWPF
         /// Holder for Name
         /// </summary>
         private string _Name;
-        protected abstract string ListNameAbstract { get; }
+        public abstract string ListNameAbstract { get; }
         private bool Commited = false;
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.
@@ -117,7 +117,7 @@ namespace TimetablingWPF
             copy.Commited = false;
             copy.PropertyChanged = null;
 
-            ApplyOnType<IEnumerable>((prop, val) => prop.SetValue(copy, ((ICloneable)val).Clone()));
+            ApplyOnType<ICollection>((prop, val) => prop.SetValue(copy, ((ICloneable)val).Clone()));
             ApplyOnType<IRelationalList>((prop, val) => val.Parent = this);
             return copy;
         }

@@ -44,7 +44,7 @@ namespace TimetablingWPF
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
         public RelationalList<Group> Groups { get; private set; } = new RelationalList<Group>("Classes");
         public const string ListName = "Classes";
-        protected override string ListNameAbstract => ListName;
+        public override string ListNameAbstract => ListName;
         private int _LessonLength;
         public int LessonLength
         {

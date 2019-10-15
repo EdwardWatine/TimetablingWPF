@@ -41,3 +41,8 @@ Grid.SetColumn(text, 1);
 
     gdSubjects.Children.Add(cbox);
 }
+
+
+
+
+

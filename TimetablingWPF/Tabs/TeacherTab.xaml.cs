@@ -15,13 +15,14 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
+using static TimetablingWPF.VisualHelpers;
 
 namespace TimetablingWPF
 {
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class TeacherTab : Page, ITab
+    public partial class TeacherTab : Grid, ITab
     {
         public TeacherTab(Teacher teacher, MainPage mainPage, CommandType commandType)
         {
@@ -61,9 +62,9 @@ namespace TimetablingWPF
                 };
                 gridWeek.ColumnDefinitions.Add(new ColumnDefinition());
                 gridWeek.RowDefinitions.Add(new RowDefinition());
-                gridWeek.Children.Add(Utility.SetInternalBorder(new TextBlock()
+                gridWeek.Children.Add(SetInternalBorder(new TextBlock()
                 {
-                    Text = Utility.WeekToString(week),
+                    Text =DataHelpers.WeekToString(week),
                     Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                     Padding = new Thickness(2),
                     TextAlignment = TextAlignment.Center
@@ -86,7 +87,7 @@ namespace TimetablingWPF
                         Padding = new Thickness(2),
                         TextAlignment = TextAlignment.Center
                     };
-                    Border dayBorder = Utility.SetInternalBorder(dayHeading);
+                    Border dayBorder = SetInternalBorder(dayHeading);
                     Grid.SetColumn(dayBorder, day + 1);
                     gridWeek.Children.Add(dayBorder);
                 }
@@ -106,7 +107,7 @@ namespace TimetablingWPF
                         Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                         Padding = new Thickness(2)
                     };
-                    Border periodBorder = Utility.SetInternalBorder(periodHeading);
+                    Border periodBorder = SetInternalBorder(periodHeading);
                     Grid.SetRow(periodBorder, periodCount + 1);
                     gridWeek.Children.Add(periodBorder);
 
@@ -126,7 +127,7 @@ namespace TimetablingWPF
                         {
                             rect.MouseLeftButtonDown += ToggleSlot;
                         }
-                        Border rectBorder = Utility.SetInternalBorder(rect);
+                        Border rectBorder = SetInternalBorder(rect);
                         Grid.SetColumn(rectBorder, day + 1);
                         Grid.SetRow(rectBorder, periodCount + 1);
                         gridWeek.Children.Add(rectBorder);
@@ -183,7 +184,7 @@ namespace TimetablingWPF
 
         private void AddSubject(Subject subject)
         {            
-            spSubjects.Children.Add(Utility.VerticalMenuItem(subject, RemoveSubject));
+            spSubjects.Children.Add(VerticalMenuItem(subject, RemoveSubject));
         }
 
         private void RemoveSubject(object sender, RoutedEventArgs e)
@@ -198,7 +199,7 @@ namespace TimetablingWPF
 
         private void AddAssignment(Assignment assignment)
         {
-            spAssignments.Children.Add(Utility.VerticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
+            spAssignments.Children.Add(VerticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
         }
 
         private void RemoveAssignment(object sender, RoutedEventArgs e)
@@ -303,7 +304,7 @@ namespace TimetablingWPF
             ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
             if (ErrManager.GetNumErrors() > 0)
             {
-                Utility.ShowErrorBox("Please fix all errors!");
+                ShowErrorBox("Please fix all errors!");
                 return;
             }
             if (ErrManager.GetNumWarnings() > 0)

@@ -104,6 +104,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Content Include="DefunctCode.txt" />
+    <Compile Include="Helpers\DataHelpers.cs" />
+    <Compile Include="Helpers\GenericHelpers.cs" />
+    <Compile Include="Helpers\DraggingExtensions.cs" />
     <Compile Include="DataClasses\Wildcard.cs" />
     <Compile Include="DataClasses\Collections.cs" />
     <Compile Include="DataClasses\Class.cs" />
@@ -112,6 +115,10 @@
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />
     <Compile Include="ErrorManager.cs" />
+    <Compile Include="DataClassTabItem.xaml.cs">
+      <DependentUpon>DataClassTabItem.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Helpers\VisualHelpers.cs" />
     <Compile Include="Tabs\SubjectTab.xaml.cs">
       <DependentUpon>SubjectTab.xaml</DependentUpon>
     </Compile>
@@ -132,6 +139,10 @@
     <Page Include="CheckboxDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="DataClassTabItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\SubjectTab.xaml">
       <Generator>MSBuild:Compile</Generator>

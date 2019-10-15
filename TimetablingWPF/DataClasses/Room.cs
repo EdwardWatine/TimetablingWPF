@@ -37,6 +37,6 @@ namespace TimetablingWPF
         public RelationalList<Subject> Subjects { get; private set; }
 
         public const string ListName = "Rooms";
-        protected override string ListNameAbstract => ListName;
+        public override string ListNameAbstract => ListName;
     }
 }

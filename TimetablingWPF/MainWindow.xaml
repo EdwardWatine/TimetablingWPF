@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimetablingWPF"
         mc:Ignorable="d" 
-        Title="MainWindow" WindowStartupLocation="CenterScreen"
+        Title="MainWindow" x:Uid='WindowStartupLocation="CenterScreen"'
         >
     
 </Window>
