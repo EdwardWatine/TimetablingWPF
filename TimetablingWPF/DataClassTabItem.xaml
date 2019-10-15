@@ -10,7 +10,7 @@
         <MenuItem x:Key="miEditItem" Header="Edit item"/>
         <MenuItem x:Key="miNewItem" Header="New item"/>
         <MenuItem x:Key="miDeleteItem" Header="Delete selection"/>
-        <MenuItem x:Key="miDuplicateItem" Header="Delete item"/>
+        <MenuItem x:Key="miDuplicateItem" Header="Duplicate item"/>
         <local:ListFormatter x:Key="ListFormatter"/>
         <Style x:Key="tbStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="10"/>

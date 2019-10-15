@@ -16,6 +16,11 @@ namespace TimetablingWPF
             //System.Windows.Media.GetD
         }
 
+        public static Vector ToVector(this Point point)
+        {
+            return (Vector)point;
+        }
+
         public static Vector VectorToScreen(this Vector vector)
         {
             PresentationSource source = PresentationSource.FromVisual(Application.Current.MainWindow);

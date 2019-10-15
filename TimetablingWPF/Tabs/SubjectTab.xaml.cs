@@ -32,7 +32,7 @@ namespace TimetablingWPF
             CommandType = commandType;
             OriginalSubject = subject;
             Subject = commandType == CommandType.@new ? subject : (Subject)subject.Clone();
-            tbTitle.Text = "Create a new Teacher";
+            tbTitle.Text = "Create a new Subject";
             txName.Text = subject.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxRooms.ItemsSource = (IEnumerable<Room>)Application.Current.Properties[Room.ListName];
