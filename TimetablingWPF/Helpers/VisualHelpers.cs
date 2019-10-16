@@ -46,9 +46,13 @@ namespace TimetablingWPF
             sp.Children.Add(img);
             return sp;
         }
-        public static void ShowErrorBox(string msg)
+        public static void ShowErrorBox(string msg, string title = "Error")
         {
-            MessageBox.Show(msg, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            MessageBox.Show(msg, title, MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+        public static MessageBoxResult ShowWarningBox(string msg, string title = "Warning")
+        {
+            return MessageBox.Show(msg, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel);
         }
     }
 }

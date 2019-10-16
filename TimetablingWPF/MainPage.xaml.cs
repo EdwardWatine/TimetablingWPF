@@ -97,9 +97,17 @@ namespace TimetablingWPF
             {
                 ReleaseMouse();
             }
+            void MouseEnter(object sender, MouseEventArgs e)
+            {
+                if (tcMainTabControl.IsMouseCaptureWithin)
+                {
+
+                }
+            }
             tcMainTabControl.MouseLeftButtonUp += MouseUp;
             tcMainTabControl.MouseMove += MouseMoveDragTab;
             tcMainTabControl.MouseLeave += MouseLeaveDragTab;
+            tcMainTabControl.MouseEnter += MouseEnter;
         }
 
         public Tuple<FrameworkElement, Point> DraggingTab;

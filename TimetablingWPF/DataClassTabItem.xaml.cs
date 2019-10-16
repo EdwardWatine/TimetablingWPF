@@ -126,10 +126,8 @@ namespace TimetablingWPF
             DataGrid grid = (DataGrid)e.Parameter;
             int num_sel = grid.SelectedItems.Count;
             string conf_str = num_sel == 1 ? $"'{((BaseDataClass)grid.SelectedItem).Name}'" : $"{num_sel} {grid.Tag}";
-            if (MessageBox.Show("Are you sure you want to delete " + conf_str + "?",
-                $"Delete {conf_str}?", MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel)
-                == MessageBoxResult.Cancel) { return; }
-            for (int i = 0; i < grid.SelectedItems.Count;)
+            if (VisualHelpers.ShowWarningBox("Are you sure you want to delete " + conf_str + "?", $"Delete {conf_str}?") == MessageBoxResult.Cancel) { return; }
+            for (int i = 0; i < grid.SelectedItems.Count; i++)
             {
                 ((BaseDataClass)grid.SelectedItems[i]).Delete();
             }

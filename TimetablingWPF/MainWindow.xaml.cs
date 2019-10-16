@@ -54,5 +54,20 @@ namespace TimetablingWPF
         {
             return (MainPage)Content;
         }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            foreach (TabItem tab in GetMainPage().tcMainTabControl.Items)
+            {
+                if (!(tab is DataClassTabItem))
+                {
+                    if (VisualHelpers.ShowWarningBox("Data has not been saved. Close Window?", "Data Unsaved") == MessageBoxResult.Cancel)
+                    {
+                        e.Cancel = true;
+                    }
+                }
+                return;
+            }
+        }
     }
 }
