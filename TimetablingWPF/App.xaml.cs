@@ -27,6 +27,7 @@ namespace TimetablingWPF
             Properties[Room.ListName] = new InternalObservableCollection<Room>();
             Properties[Class.ListName] = new InternalObservableCollection<Class>();
             Properties[Subject.ListName] = new InternalObservableCollection<Subject>();
+            Properties[Group.ListName] = new InternalObservableCollection<Group>();
             Properties[TimetableStructure.ListName] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
             {
                 new TimetableStructurePeriod("1", true),
@@ -52,7 +53,7 @@ namespace TimetablingWPF
             };
             foreach (Subject subject in TestSubjects) { subject.Commit(); }
             MainWindow window = new MainWindow();
-            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject) })
+            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Class) })
             {
                 window.GetMainPage().NewDataClassTab(type);
             }

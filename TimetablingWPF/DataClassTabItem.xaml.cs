@@ -42,7 +42,8 @@ namespace TimetablingWPF
             Dictionary<string, string[]> columns = new Dictionary<string, string[]>()
             {
                 { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
-                { "Subject", new string[]{"Teachers", "Rooms" } }
+                { "Subject", new string[]{"Teachers", "Rooms" } },
+                { "Class", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Groups" } }
             };
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
@@ -76,6 +77,10 @@ namespace TimetablingWPF
             if (type == typeof(Subject))
             {
                 MainPage.NewTab(new SubjectTab(new Subject(), MainPage, CommandType.@new), "New Subject");
+            }
+            if (type == typeof(Class))
+            {
+                MainPage.NewTab(new ClassTab(new Class(), MainPage, CommandType.@new), "New Class");
             }
         }
 

@@ -19,6 +19,13 @@
         <DataTemplate x:Key="NameTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Name}"/>
         </DataTemplate>
+        <DataTemplate x:Key="Lessons Per CycleTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding LessonsPerCycle}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="Lesson LengthTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding LessonLength}"/>
+        </DataTemplate>
+        
         <DataTemplate x:Key="SubjectsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subjects, Converter={StaticResource ListFormatter}}"/>
         </DataTemplate>

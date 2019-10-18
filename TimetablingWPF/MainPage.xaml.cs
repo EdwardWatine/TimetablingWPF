@@ -170,7 +170,7 @@ namespace TimetablingWPF
 
         public void NewDataClassTab(Type type)
         {
-            tcMainTabControl.Items.Add(new DataClassTabItem(this, type) { Header = type.Name });
+            tcMainTabControl.Items.Add(new DataClassTabItem(this, type) { Header = type.Name.Pluralize() });
         }
 
         public void CloseDataClassTab(Type type)

@@ -119,6 +119,9 @@
       <DependentUpon>DataClassTabItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\VisualHelpers.cs" />
+    <Compile Include="Tabs\ClassTab.xaml.cs">
+      <DependentUpon>ClassTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\SubjectTab.xaml.cs">
       <DependentUpon>SubjectTab.xaml</DependentUpon>
     </Compile>
@@ -141,6 +144,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DataClassTabItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\ClassTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

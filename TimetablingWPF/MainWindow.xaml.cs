@@ -30,7 +30,7 @@ namespace TimetablingWPF
             InitializeComponent();
             //Subject Science = new Subject("Science");
 
-            //Room sroom = new Room("Science Rooms", 5);
+            //Room sgroup = new Room("Science Rooms", 5);
             MainPage mp = new MainPage();
             Content = mp;
             return;

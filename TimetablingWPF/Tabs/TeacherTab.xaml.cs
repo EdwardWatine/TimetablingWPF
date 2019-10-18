@@ -64,7 +64,7 @@ namespace TimetablingWPF
                 gridWeek.RowDefinitions.Add(new RowDefinition());
                 gridWeek.Children.Add(SetInternalBorder(new TextBlock()
                 {
-                    Text =DataHelpers.WeekToString(week),
+                    Text = DataHelpers.WeekToString(week),
                     Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                     Padding = new Thickness(2),
                     TextAlignment = TextAlignment.Center
@@ -271,7 +271,7 @@ namespace TimetablingWPF
             ComboBox cmbx = (ComboBox)sender;
             Subject subject = (Subject)cmbx.SelectedItem;
             IEnumerable<Class> all_classes = (IEnumerable<Class>)Application.Current.Properties[Class.ListName];
-            if (subject != null)
+            if (subject == null)
             {
                 cmbxAssignmentClass.ItemsSource = all_classes;
                 return;
