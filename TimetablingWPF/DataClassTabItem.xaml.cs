@@ -45,27 +45,29 @@ namespace TimetablingWPF
                 { "Subject", new string[]{"Teachers", "Rooms" } },
                 { "Class", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Groups" } }
             };
+            HashSet<string> shortval = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length" };
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
                 CanUserSort = true,
                 SortMemberPath = "Name",
                 Width = new DataGridLength(1, DataGridLengthUnitType.Star),
+                MinWidth = 20,
                 Header = "Name",
                 CellTemplate = (DataTemplate)Resources["NameTemplate"]
-            });
-            int width = columns[type.Name].Length;
+            }); ;
+            int width = new HashSet<string>(columns[type.Name]).Except(shortval).Count();
             foreach (string column in columns[type.Name])
             {
                 dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
                 {
-                    Width = new DataGridLength(width, DataGridLengthUnitType.Star),
+                    Width = new DataGridLength(width, shortval.Contains(column) ? DataGridLengthUnitType.Auto : DataGridLengthUnitType.Star),
                     Header = column,
                     CellTemplate = (DataTemplate)Resources[$"{column}Template"]
                 });
             }
         }
         public MainPage MainPage { get; set; }
-        public readonly Type DataType;
+        public Type DataType { get; }
         private void ExecuteNewItemCommand(object sender, ExecutedRoutedEventArgs e)
         {
             Type type = (Type)e.Parameter;
@@ -148,7 +150,7 @@ namespace TimetablingWPF
             return;
         }
     }
-    public class Commands
+    public static class Commands
     {
         public static readonly RoutedUICommand NewItem = new RoutedUICommand(
             "NewTeacher", "NewTeacher", typeof(Commands));

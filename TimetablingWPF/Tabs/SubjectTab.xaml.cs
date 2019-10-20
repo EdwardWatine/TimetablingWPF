@@ -35,13 +35,13 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Subject";
             txName.Text = subject.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxRooms.ItemsSource = (IEnumerable<Room>)Application.Current.Properties[Room.ListName];
+            cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
             cmbxTeachers.ItemsSource = (IEnumerable<Teacher>)Application.Current.Properties[Teacher.ListName];
             //Errors
 
-            foreach (Room room in Subject.Rooms)
+            foreach (Group group in Subject.Groups)
             {
-                AddRoom(room);
+                AddGroup(group);
             }
             foreach (Teacher teacher in Subject.Teachers)
             {
@@ -49,17 +49,17 @@ namespace TimetablingWPF
             }
         }
 
-        private void RoomButtonClick(object sender, RoutedEventArgs e)
+        private void GroupButtonClick(object sender, RoutedEventArgs e)
         {
             
-            Room room = (Room)cmbxRooms.SelectedItem;
-            if (room == null)
+            Group group = (Group)cmbxGroups.SelectedItem;
+            if (group == null)
             {
                 return;
             }
-            AddRoom(room);
-            cmbxRooms.SelectedItem = room;
-            Subject.Rooms.Add(room);
+            AddGroup(group);
+            cmbxGroups.SelectedItem = group;
+            Subject.Groups.Add(group);
         }
 
         private void TeacherButtonClick(object sender, RoutedEventArgs e)
@@ -73,17 +73,17 @@ namespace TimetablingWPF
             Subject.Teachers.Add(teacher);
         }
 
-        private void AddRoom(Room room)
+        private void AddGroup(Group group)
         {            
-            spRooms.Children.Add(VerticalMenuItem(room, RemoveRoom));
+            spGroups.Children.Add(VerticalMenuItem(group, RemoveGroup));
         }
 
-        private void RemoveRoom(object sender, RoutedEventArgs e)
+        private void RemoveGroup(object sender, RoutedEventArgs e)
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Room room = (Room)sp.Tag;
-            Subject.Rooms.Remove(room);
-            spRooms.Children.Remove(sp);
+            Group group = (Group)sp.Tag;
+            Subject.Groups.Remove(group);
+            spGroups.Children.Remove(sp);
         }
 
         private void AddTeacher(Teacher teacher)

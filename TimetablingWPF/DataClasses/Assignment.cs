@@ -16,7 +16,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Holds data about a timetabling slot
     /// </summary>
-    public struct TimetableSlot
+    public struct TimetableSlot : IEquatable<TimetableSlot>
     {
         public int Week, Day, Period;
         public TimetableSlot(int week, int day, int period)
@@ -27,9 +27,37 @@ namespace TimetablingWPF
         }
         public override string ToString()
         {
-            ;
-            TimetableStructure structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
             return $"{DataHelpers.WeekToString(Week)} {DataHelpers.DayToString(Day)} P{DataHelpers.PeriodNumToPeriod(Period).Name}";
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (!(obj is TimetableSlot))
+            {
+                return false;
+            }
+            TimetableSlot slot = (TimetableSlot)obj;
+            return Equals(slot);
+        }
+
+        public override int GetHashCode()
+        {
+            return new Tuple<int, int, int>(Week, Day, Period).GetHashCode();
+        }
+
+        public static bool operator ==(TimetableSlot left, TimetableSlot right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(TimetableSlot left, TimetableSlot right)
+        {
+            return !(left == right);
+        }
+
+        public bool Equals(TimetableSlot slot)
+        {
+            return slot.Week == Week && slot.Day == Day && slot.Period == Period;
         }
     }
     /// <summary>
@@ -37,17 +65,18 @@ namespace TimetablingWPF
     /// </summary>
     public class Assignment
     {
-        public Teacher Teacher;
-        public Class Class;
-        public int Periods;
+        public Teacher Teacher { get; private set; }
+        public Class Class { get; private set; }
+        public int Periods { get; }
+
         /// <summary>
         /// The string representation of this object from a teacher's perspective
         /// </summary>
-        public string TeacherString;
+        public string TeacherString { get; }
         /// <summary>
         /// The string representation of this object from a class' perspective
         /// </summary>
-        public string ClassString;
+        public string ClassString { get; }
         /// <summary>
         /// A constructor for when the class is not known
         /// </summary>

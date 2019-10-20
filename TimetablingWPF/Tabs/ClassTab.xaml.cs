@@ -30,7 +30,7 @@ namespace TimetablingWPF
             MainPage = mainPage;
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
-            OriginalClass = @class;
+            OriginalClass = @class ?? throw new ArgumentNullException(nameof(@class));
             Class = commandType == CommandType.@new ? @class : (Class)@class.Clone();
             tbTitle.Text = "Create a new Class";
             txName.Text = @class.Name;
@@ -82,6 +82,7 @@ namespace TimetablingWPF
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
             Group group = (Group)sp.Tag;
+            Class.Groups.Remove(group);
             spGroups.Children.Remove(sp);
         }
 

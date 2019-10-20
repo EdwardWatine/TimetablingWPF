@@ -61,18 +61,18 @@
                 </Button>
             </StackPanel>
         </Grid>
-        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Rooms:"/>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Groups:"/>
         <Grid Grid.Column="1" Grid.Row="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                <StackPanel Orientation="Vertical" Name="spRooms" Margin="10,0,0,0"/>
+                <StackPanel Orientation="Vertical" Name="spGroups" Margin="10,0,0,0"/>
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="1">
-                <local:PlaceholderComboBox x:Name="cmbxRooms" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Room --"/>
-                <Button Height="{Binding ElementName=cmbxRooms, Path=ActualHeight}" Click="RoomButtonClick">
+                <local:PlaceholderComboBox x:Name="cmbxGroups" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Group --"/>
+                <Button Height="{Binding ElementName=cmbxGroups, Path=ActualHeight}" Click="GroupButtonClick">
                     <Image Source="{StaticResource PlusIcon}"/>
                 </Button>
             </StackPanel>

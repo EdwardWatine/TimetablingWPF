@@ -40,7 +40,7 @@ namespace TimetablingWPF
                     Source = (ImageSource)Application.Current.Resources["CrossIcon"],
                     Tag = @object,
                     Cursor = Cursors.Hand,
-                    Margin = new Thickness(-5,0,0,0)
+                    Margin = new Thickness(-5, 0, 0, 0)
                 };
                 img.SetBinding(Image.HeightProperty, binding);
                 img.MouseDown += @event;
