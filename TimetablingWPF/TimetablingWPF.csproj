@@ -46,6 +46,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <NoWarn>CA1062;CA1303</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -135,9 +136,9 @@
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\DoubleMenu.xaml.cs">
+    <Content Include="UserControls\DoubleMenu.xaml.cs">
       <DependentUpon>DoubleMenu.xaml</DependentUpon>
-    </Compile>
+    </Content>
     <Compile Include="Tabs\TeacherTab.xaml.cs">
       <DependentUpon>TeacherTab.xaml</DependentUpon>
     </Compile>
@@ -166,10 +167,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\DoubleMenu.xaml">
+    <Content Include="UserControls\DoubleMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
-    </Page>
+    </Content>
     <Page Include="FirstTime.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

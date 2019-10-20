@@ -26,19 +26,19 @@ namespace TimetablingWPF
             InitializeComponent();
         }
 
-        public static DependencyProperty PlaceholderProperty =
+        public static readonly DependencyProperty PlaceholderProperty =
             DependencyProperty.Register("Placeholder", typeof(string), typeof(PlaceholderComboBox));
 
-        public static DependencyProperty ItemsSourceProperty =
+        public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(PlaceholderComboBox));
 
-        public static DependencyProperty SelectedItemProperty =
+        public static readonly DependencyProperty SelectedItemProperty =
             DependencyProperty.Register("SelectedItem", typeof(object), typeof(PlaceholderComboBox));
 
-        public static DependencyProperty IsReadOnlyProperty =
+        public static readonly DependencyProperty IsReadOnlyProperty =
             DependencyProperty.Register("IsReadOnly", typeof(bool), typeof(PlaceholderComboBox));
-
-        public static DependencyProperty IsEditableProperty =
+         
+        public static readonly DependencyProperty IsEditableProperty =
             DependencyProperty.Register("IsEditable", typeof(bool), typeof(PlaceholderComboBox));
 
         public string Placeholder

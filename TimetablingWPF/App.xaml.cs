@@ -25,7 +25,7 @@ namespace TimetablingWPF
             Properties["APPLICATION_NAME"] = "Timetabler";
             Properties[Teacher.ListName] = new InternalObservableCollection<Teacher>();
             Properties[Room.ListName] = new InternalObservableCollection<Room>();
-            Properties[Class.ListName] = new InternalObservableCollection<Class>();
+            Properties[Band.ListName] = new InternalObservableCollection<Band>();
             Properties[Subject.ListName] = new InternalObservableCollection<Subject>();
             Properties[Group.ListName] = new InternalObservableCollection<Group>();
             Properties[TimetableStructure.ListName] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
@@ -53,7 +53,7 @@ namespace TimetablingWPF
             };
             foreach (Subject subject in TestSubjects) { subject.Commit(); }
             MainWindow window = new MainWindow();
-            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Class) })
+            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Band) })
             {
                 window.GetMainPage().NewDataClassTab(type);
             }
@@ -83,7 +83,6 @@ namespace TimetablingWPF
                 catch (Exception e)
                 {
                     VisualHelpers.ShowErrorBox(e.Message);
-                    throw e;
                 }
             }
         }
@@ -100,7 +99,6 @@ namespace TimetablingWPF
                 catch (Exception e)
                 {
                     VisualHelpers.ShowErrorBox(e.Message);
-                    throw e;
                 }
             }
         }

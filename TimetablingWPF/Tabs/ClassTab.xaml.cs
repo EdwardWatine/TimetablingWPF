@@ -24,16 +24,16 @@ namespace TimetablingWPF
     /// </summary>
     public partial class ClassTab : Grid, ITab
     {
-        public ClassTab(Class @class, MainPage mainPage, CommandType commandType)
+        public ClassTab(Band band, MainPage mainPage, CommandType commandType)
         {
             InitializeComponent();
             MainPage = mainPage;
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
-            OriginalClass = @class ?? throw new ArgumentNullException(nameof(@class));
-            Class = commandType == CommandType.@new ? @class : (Class)@class.Clone();
+            OriginalClass = band ?? throw new ArgumentNullException(nameof(band));
+            Class = commandType == CommandType.@new ? band : (Band)band.Clone();
             tbTitle.Text = "Create a new Class";
-            txName.Text = @class.Name;
+            txName.Text = band.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
             cmbxSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
@@ -98,8 +98,8 @@ namespace TimetablingWPF
             Class.Assignments.Remove(assignment);
             spAssignments.Children.Remove(sp);
         }
-        private readonly Class Class;
-        private readonly Class OriginalClass;
+        private readonly Band Class;
+        private readonly Band OriginalClass;
         private readonly Error HAS_EMPTY_NAME = new Error("Assignment does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }

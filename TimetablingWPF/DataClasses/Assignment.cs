@@ -66,7 +66,7 @@ namespace TimetablingWPF
     public class Assignment
     {
         public Teacher Teacher { get; private set; }
-        public Class Class { get; private set; }
+        public Band Class { get; private set; }
         public int Periods { get; }
 
         /// <summary>
@@ -93,9 +93,9 @@ namespace TimetablingWPF
         /// </summary>
         /// <param name="class"></param>
         /// <param name="periods"></param>
-        public Assignment(Class @class, int periods)
+        public Assignment(Band band, int periods)
         {
-            Class = @class;
+            Class = band;
             Periods = periods;
             TeacherString = $"{Class}: {Periods}";
         }
@@ -117,15 +117,15 @@ namespace TimetablingWPF
         /// <summary>
         /// Creates references to this assignment in the teacher and class assignments list
         /// </summary>
-        /// <param name="@class"></param>
+        /// <param name="band"></param>
         /// <exception cref="InvalidOperationException">This will be thrown if the class is already defined</exception>
-        public void Commit(Class @class)
+        public void Commit(Band band)
         {
             if (Teacher == null)
             {
                 throw new InvalidOperationException("Commit should be called with a teacher, as the teacher has not been set");
             }
-            Class = @class;
+            Class = band;
             Teacher.Assignments.Add(this);
             Class.Assignments.Add(this);
         }

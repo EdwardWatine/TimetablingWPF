@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace TimetablingWPF
 {
-    public interface IRelationalList
+    public interface IRelationalCollection
     {
         object Parent { get; set; }
         string OtherClassProperty { get; set; }
@@ -71,7 +71,7 @@ namespace TimetablingWPF
     /// A list which reflects updates in itself with the list in the added class
     /// </summary>
     /// <typeparam name="T">The type of the objects in this list</typeparam>
-    public class RelationalList<T> : InternalObservableCollection<T>, IRelationalList where T : INotifyPropertyChanged
+    public class RelationalCollection<T> : InternalObservableCollection<T>, IRelationalCollection where T : INotifyPropertyChanged
     {
         /// <summary>
         /// The object to which this list belongs
@@ -86,14 +86,14 @@ namespace TimetablingWPF
         /// </summary>
         /// <param name="otherClassProperty"><see cref="OtherClassProperty"/></param>
         /// <param name="parent"><see cref="Parent"/></param>
-        public RelationalList(string otherClassProperty,
+        public RelationalCollection(string otherClassProperty,
             BaseDataClass parent = null)
         {
             OtherClassProperty = otherClassProperty;
             Parent = parent;
         }
 
-        public RelationalList(string otherClassProperty,
+        public RelationalCollection(string otherClassProperty,
             IEnumerable<T> collection, BaseDataClass parent = null) : base(collection)
         {
             OtherClassProperty = otherClassProperty;
@@ -124,7 +124,7 @@ namespace TimetablingWPF
         }
         public override object Clone()
         {
-            return new RelationalList<T>(OtherClassProperty, this) { Parent = Parent };
+            return new RelationalCollection<T>(OtherClassProperty, this) { Parent = Parent };
         }
     }
 }

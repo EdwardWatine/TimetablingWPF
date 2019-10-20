@@ -23,7 +23,7 @@ namespace TimetablingWPF
 
         public BaseDataClass()
         {
-            ApplyOnType<IRelationalList>((prop, val) => val.Parent = this);
+            ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this);
             void SubscribeToCollectionChange(System.Reflection.PropertyInfo prop, INotifyCollectionChanged val)
             {
                 void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -96,18 +96,18 @@ namespace TimetablingWPF
             return ReferenceEquals(this, obj) || obj.GetType() == typeof(Wildcard);
         }
         /// <summary>
-        /// Will remove all instances of self from <see cref="RelationalList{T}"/>. Will then remove self from the properties list
+        /// Will remove all instances of self from <see cref="RelationalCollection{T}"/>. Will then remove self from the properties list
         /// </summary>
         public void Delete()
         {
-            void delete(System.Reflection.PropertyInfo prop, IRelationalList val)
+            void delete(System.Reflection.PropertyInfo prop, IRelationalCollection val)
             {
                 foreach (object @object in (IEnumerable)val)
                 {
                     ((IList)@object.GetType().GetProperty(val.OtherClassProperty).GetValue(@object)).Remove(this);
                 }
             }
-            ApplyOnType<IRelationalList>(delete);
+            ApplyOnType<IRelationalCollection>(delete);
             ((IList)Application.Current.Properties[ListNameAbstract]).Remove(this);
         }
 
@@ -118,7 +118,7 @@ namespace TimetablingWPF
             copy.PropertyChanged = null;
 
             ApplyOnType<ICollection>((prop, val) => prop.SetValue(copy, ((ICloneable)val).Clone()));
-            ApplyOnType<IRelationalList>((prop, val) => val.Parent = this);
+            ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this);
             return copy;
         }
 

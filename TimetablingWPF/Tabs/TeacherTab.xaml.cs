@@ -37,7 +37,7 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
             cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
             cmbxAssignmentSubject.ItemsSource = cmbxSubjects.ItemsSource;
-            cmbxAssignmentClass.ItemsSource = (IEnumerable<Class>)Application.Current.Properties[Class.ListName];
+            cmbxAssignmentClass.ItemsSource = (IEnumerable<Band>)Application.Current.Properties[Band.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
             ErrManager.AddError(HAS_NO_PERIODS, Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods);
@@ -170,13 +170,13 @@ namespace TimetablingWPF
 
         private void AssignmentButtonClick(object sender, RoutedEventArgs e)
         {
-            Class @class = (Class)cmbxAssignmentClass.SelectedItem;
+            Band band = (Band)cmbxAssignmentClass.SelectedItem;
             int? periods = iupdown.Value;
-            if (@class == null || periods == null)
+            if (band == null || periods == null)
             {
                 return;
             }
-            Assignment assignment = new Assignment(@class, (int)periods);
+            Assignment assignment = new Assignment(band, (int)periods);
             AddAssignment(assignment);
             ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
             Teacher.Assignments.Add(assignment);
@@ -270,13 +270,13 @@ namespace TimetablingWPF
         {
             ComboBox cmbx = (ComboBox)sender;
             Subject subject = (Subject)cmbx.SelectedItem;
-            IEnumerable<Class> all_classes = (IEnumerable<Class>)Application.Current.Properties[Class.ListName];
+            IEnumerable<Band> all_classes = (IEnumerable<Band>)Application.Current.Properties[Band.ListName];
             if (subject == null)
             {
                 cmbxAssignmentClass.ItemsSource = all_classes;
                 return;
             }
-            IEnumerable<Class> classes = from @class in all_classes where @class.Subject == subject select @class;
+            IEnumerable<Band> classes = from band in all_classes where band.Subject == subject select band;
             cmbxAssignmentClass.ItemsSource = classes;
         }
 

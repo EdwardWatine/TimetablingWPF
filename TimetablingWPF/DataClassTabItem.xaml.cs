@@ -80,9 +80,9 @@ namespace TimetablingWPF
             {
                 MainPage.NewTab(new SubjectTab(new Subject(), MainPage, CommandType.@new), "New Subject");
             }
-            if (type == typeof(Class))
+            if (type == typeof(Band))
             {
-                MainPage.NewTab(new ClassTab(new Class(), MainPage, CommandType.@new), "New Class");
+                MainPage.NewTab(new ClassTab(new Band(), MainPage, CommandType.@new), "New Class");
             }
         }
 
@@ -162,7 +162,7 @@ namespace TimetablingWPF
             "DeleteItem", "DeleteItem", typeof(Commands));
     }
 
-    public enum CommandType : byte
+    public enum CommandType
     {
         @new,
         edit,
