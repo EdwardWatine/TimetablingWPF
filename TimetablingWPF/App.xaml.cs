@@ -8,10 +8,10 @@ using System.Windows;
 using System.IO;
 using Humanizer;
 using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Input;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace TimetablingWPF
 {
@@ -25,7 +25,7 @@ namespace TimetablingWPF
             Properties["APPLICATION_NAME"] = "Timetabler";
             Properties[Teacher.ListName] = new InternalObservableCollection<Teacher>();
             Properties[Room.ListName] = new InternalObservableCollection<Room>();
-            Properties[Band.ListName] = new InternalObservableCollection<Band>();
+            Properties[Form.ListName] = new InternalObservableCollection<Form>();
             Properties[Subject.ListName] = new InternalObservableCollection<Subject>();
             Properties[Group.ListName] = new InternalObservableCollection<Group>();
             Properties[TimetableStructure.ListName] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
@@ -53,9 +53,9 @@ namespace TimetablingWPF
             };
             foreach (Subject subject in TestSubjects) { subject.Commit(); }
             MainWindow window = new MainWindow();
-            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Band) })
+            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Form) })
             {
-                window.GetMainPage().NewDataClassTab(type);
+                window.GetMainPage().NewDataSetTab(type);
             }
             window.Show();
         }

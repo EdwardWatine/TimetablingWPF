@@ -59,7 +59,7 @@ namespace TimetablingWPF
         {
             foreach (TabItem tab in GetMainPage().tcMainTabControl.Items)
             {
-                if (!(tab is DataClassTabItem))
+                if (!(tab is DataSetTabItem))
                 {
                     if (VisualHelpers.ShowWarningBox("Data has not been saved. Close Window?", "Data Unsaved") == MessageBoxResult.Cancel)
                     {

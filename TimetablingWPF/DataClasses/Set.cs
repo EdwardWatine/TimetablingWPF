@@ -13,7 +13,7 @@ using System.Collections.Specialized;
 
 namespace TimetablingWPF
 {
-    public class Band : BaseDataClass
+    public class Form : BaseDataClass
     {
         private Subject _Subject;
         public Subject Subject
@@ -42,9 +42,9 @@ namespace TimetablingWPF
             }
         }
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
-        public RelationalCollection<Group> Groups { get; private set; } = new RelationalCollection<Group>("Classes");
-        public const string ListName = "Classes";
-        public override string ListNameAbstract => ListName;
+        public RelationalCollection<Group> Groups { get; private set; } = new RelationalCollection<Group>("Setes");
+        public const string ListName = "Setes";
+        protected override string ListNameAbstract => ListName;
         private int _LessonLength;
         public int LessonLength
         {

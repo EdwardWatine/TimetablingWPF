@@ -22,18 +22,18 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for AssignmentTab.xaml
     /// </summary>
-    public partial class ClassTab : Grid, ITab
+    public partial class FormTab : Grid, ITab
     {
-        public ClassTab(Band band, MainPage mainPage, CommandType commandType)
+        public FormTab(Form form, MainPage mainPage, CommandType commandType)
         {
             InitializeComponent();
             MainPage = mainPage;
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
-            OriginalClass = band ?? throw new ArgumentNullException(nameof(band));
-            Class = commandType == CommandType.@new ? band : (Band)band.Clone();
-            tbTitle.Text = "Create a new Class";
-            txName.Text = band.Name;
+            OriginalSet = form ?? throw new ArgumentNullException(nameof(form));
+            Form = commandType == CommandType.@new ? form : (Form)form.Clone();
+            tbTitle.Text = "Create a new Form";
+            txName.Text = form.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
             cmbxSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
@@ -70,7 +70,7 @@ namespace TimetablingWPF
             }
             Assignment assignment = new Assignment(teacher, (int)periods);
             AddAssignment(assignment);
-            Class.Assignments.Add(assignment);
+            Form.Assignments.Add(assignment);
         }
 
         private void AddGroup(Group group)
@@ -82,7 +82,7 @@ namespace TimetablingWPF
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
             Group group = (Group)sp.Tag;
-            Class.Groups.Remove(group);
+            Form.Groups.Remove(group);
             spGroups.Children.Remove(sp);
         }
 
@@ -95,11 +95,11 @@ namespace TimetablingWPF
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
             Assignment assignment = (Assignment)sp.Tag;
-            Class.Assignments.Remove(assignment);
+            Form.Assignments.Remove(assignment);
             spAssignments.Children.Remove(sp);
         }
-        private readonly Band Class;
-        private readonly Band OriginalClass;
+        private readonly Form Form;
+        private readonly Form OriginalSet;
         private readonly Error HAS_EMPTY_NAME = new Error("Assignment does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }
@@ -154,13 +154,13 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            Class.Name = txName.Text;
+            Form.Name = txName.Text;
 
             if (CommandType == CommandType.edit) {
-                OriginalClass.Recommit(Class);
+                OriginalSet.Recommit(Form);
             } else
             {
-                Class.Commit();
+                Form.Commit();
             }
             
             MainPage.CloseTab(this);

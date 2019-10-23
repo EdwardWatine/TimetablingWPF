@@ -13,7 +13,7 @@ namespace TimetablingWPF
     public interface IRelationalCollection
     {
         object Parent { get; set; }
-        string OtherClassProperty { get; set; }
+        string OtherSetProperty { get; set; }
     };
     public class ObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>, ICloneable
     {
@@ -68,7 +68,7 @@ namespace TimetablingWPF
         }
     }
     /// <summary>
-    /// A list which reflects updates in itself with the list in the added class
+    /// A list which reflects updates in itself with the list in the added form
     /// </summary>
     /// <typeparam name="T">The type of the objects in this list</typeparam>
     public class RelationalCollection<T> : InternalObservableCollection<T>, IRelationalCollection where T : INotifyPropertyChanged
@@ -80,23 +80,23 @@ namespace TimetablingWPF
         /// <summary>
         /// Holds the field name of the object of type T which holds the RelationalList which will hold the parent
         /// </summary>
-        public string OtherClassProperty { get; set; }
+        public string OtherSetProperty { get; set; }
         /// <summary>
-        /// The class constructor
+        /// The form constructor
         /// </summary>
-        /// <param name="otherClassProperty"><see cref="OtherClassProperty"/></param>
+        /// <param name="otherSetProperty"><see cref="OtherSetProperty"/></param>
         /// <param name="parent"><see cref="Parent"/></param>
-        public RelationalCollection(string otherClassProperty,
+        public RelationalCollection(string otherSetProperty,
             BaseDataClass parent = null)
         {
-            OtherClassProperty = otherClassProperty;
+            OtherSetProperty = otherSetProperty;
             Parent = parent;
         }
 
-        public RelationalCollection(string otherClassProperty,
+        public RelationalCollection(string otherSetProperty,
             IEnumerable<T> collection, BaseDataClass parent = null) : base(collection)
         {
-            OtherClassProperty = otherClassProperty;
+            OtherSetProperty = otherSetProperty;
             Parent = parent;
         }
         /// <summary>
@@ -107,24 +107,24 @@ namespace TimetablingWPF
         {
             if (Parent == null)
             {
-                throw new InvalidOperationException("Parent is not set");
+                throw new InvalidOperationException("Parent is not form");
             }
             base.Add(item);
 
-            ((IList)item.GetType().GetProperty(OtherClassProperty).GetValue(item)).Add(Parent);
+            ((IList)item.GetType().GetProperty(OtherSetProperty).GetValue(item)).Add(Parent);
         }
         public new void Remove(T item)
         {
             if (Parent == null)
             {
-                throw new InvalidOperationException("Parent is not set");
+                throw new InvalidOperationException("Parent is not form");
             }
             base.Remove(item);
-            ((IList)item.GetType().GetProperty(OtherClassProperty).GetValue(item)).Remove(Parent);
+            ((IList)item.GetType().GetProperty(OtherSetProperty).GetValue(item)).Remove(Parent);
         }
         public override object Clone()
         {
-            return new RelationalCollection<T>(OtherClassProperty, this) { Parent = Parent };
+            return new RelationalCollection<T>(OtherSetProperty, this) { Parent = Parent };
         }
     }
 }

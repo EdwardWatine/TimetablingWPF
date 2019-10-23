@@ -20,7 +20,7 @@
     </Page.Background>
     <Page.Resources>
 
-        <local:URIFormatter x:Key="URIFormatter"/>
+        <local:URISetatter x:Key="URISetatter"/>
         <Style x:Key="HyperlinkStyle" TargetType="Hyperlink">
             <Style.Triggers>
 
@@ -138,8 +138,8 @@
                             </InlineUIContainer>         
                             <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding}">
                                 <TextBlock x:Name="fpath" 
-                                           Text="{Binding Converter={StaticResource URIFormatter}, ConverterParameter=filename}"
-                                           ToolTip="{Binding Converter={StaticResource URIFormatter}}"/>
+                                           Text="{Binding Converter={StaticResource URISetatter}, ConverterParameter=filename}"
+                                           ToolTip="{Binding Converter={StaticResource URISetatter}}"/>
                             </Hyperlink>
                         </TextBlock>
                     </DataTemplate>

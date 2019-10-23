@@ -79,7 +79,7 @@
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="1">
                 <local:PlaceholderComboBox x:Name="cmbxAssignmentSubject" Style="{StaticResource HorizontalMenu}" Placeholder="-- Subject --"/>
-                <local:PlaceholderComboBox x:Name="cmbxAssignmentClass" Style="{StaticResource HorizontalMenu}" Placeholder="-- Class --"/>
+                <local:PlaceholderComboBox x:Name="cmbxAssignmentForm" Style="{StaticResource HorizontalMenu}" Placeholder="-- Form --"/>
                 <tlkt:IntegerUpDown Name="iupdown" Minimum="1" Value="1" Width="50" Style="{StaticResource HorizontalMenu}"/>
                 <Button Height="{Binding ElementName=cmbxAssignmentSubject, Path=ActualHeight}" Click="AssignmentButtonClick">
                     <Image Source="{StaticResource PlusIcon}"/>

@@ -1,4 +1,4 @@
-﻿<TabItem x:Class="TimetablingWPF.DataClassTabItem"
+﻿<TabItem x:Class="TimetablingWPF.DataSetTabItem"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -32,7 +32,7 @@
         <DataTemplate x:Key="Unavailable PeriodsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding UnavailablePeriods, Converter={StaticResource ListFormatter}}"/>
         </DataTemplate>
-        <DataTemplate x:Key="ClassesTemplate">
+        <DataTemplate x:Key="SetesTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
         </DataTemplate>
         <DataTemplate x:Key="TeachersTemplate">

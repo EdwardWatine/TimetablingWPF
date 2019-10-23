@@ -36,8 +36,8 @@ namespace TimetablingWPF
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
-            cmbxAssignmentSubject.ItemsSource = cmbxSubjects.ItemsSource;
-            cmbxAssignmentClass.ItemsSource = (IEnumerable<Band>)Application.Current.Properties[Band.ListName];
+            cmbxAssignmentSubject.ItemsSource = GenericHelpers.InsertAndReturn(cmbxSubjects.ItemsSource, BaseDataClass.Wildcard);
+            cmbxAssignmentForm.ItemsSource = (IEnumerable<Form>)Application.Current.Properties[Form.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
             ErrManager.AddError(HAS_NO_PERIODS, Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods);
@@ -170,13 +170,13 @@ namespace TimetablingWPF
 
         private void AssignmentButtonClick(object sender, RoutedEventArgs e)
         {
-            Band band = (Band)cmbxAssignmentClass.SelectedItem;
+            Form form = (Form)cmbxAssignmentForm.SelectedItem;
             int? periods = iupdown.Value;
-            if (band == null || periods == null)
+            if (form == null || periods == null)
             {
                 return;
             }
-            Assignment assignment = new Assignment(band, (int)periods);
+            Assignment assignment = new Assignment(form, (int)periods);
             AddAssignment(assignment);
             ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
             Teacher.Assignments.Add(assignment);
@@ -269,15 +269,15 @@ namespace TimetablingWPF
         private void CmbxAssignmentsSubjectsSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBox cmbx = (ComboBox)sender;
-            Subject subject = (Subject)cmbx.SelectedItem;
-            IEnumerable<Band> all_classes = (IEnumerable<Band>)Application.Current.Properties[Band.ListName];
+            object subject = (object)cmbx.SelectedItem;
+            IEnumerable<Form> all_forms = (IEnumerable<Form>)Application.Current.Properties[Form.ListName];
             if (subject == null)
             {
-                cmbxAssignmentClass.ItemsSource = all_classes;
+                cmbxAssignmentForm.ItemsSource = all_forms;
                 return;
             }
-            IEnumerable<Band> classes = from band in all_classes where band.Subject == subject select band;
-            cmbxAssignmentClass.ItemsSource = classes;
+            IEnumerable<Form> setes = from form in all_forms where form.Subject == subject select form;
+            cmbxAssignmentForm.ItemsSource = setes;
         }
 
         private void TxNameChanged(object sender, TextChangedEventArgs e)

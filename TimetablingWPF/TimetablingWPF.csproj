@@ -115,9 +115,8 @@
     <Compile Include="Helpers\DataHelpers.cs" />
     <Compile Include="Helpers\GenericHelpers.cs" />
     <Compile Include="Helpers\DraggingExtensions.cs" />
-    <Compile Include="DataClasses\Wildcard.cs" />
     <Compile Include="DataClasses\Collections.cs" />
-    <Compile Include="DataClasses\Class.cs" />
+    <Compile Include="DataClasses\Set.cs" />
     <Compile Include="DataClasses\Teacher Subject Group.cs" />
     <Compile Include="DataClasses\Room.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
@@ -223,6 +222,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />

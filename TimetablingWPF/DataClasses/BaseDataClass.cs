@@ -15,7 +15,7 @@ namespace TimetablingWPF
 {
 #pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     /// <summary>
-    /// Base class for all data objects
+    /// Base form for all data objects
     /// </summary>
     public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable
 #pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
@@ -57,8 +57,9 @@ namespace TimetablingWPF
         /// Holder for Name
         /// </summary>
         private string _Name;
-        public abstract string ListNameAbstract { get; }
+        protected abstract string ListNameAbstract { get; }
         private bool Commited = false;
+        public const string Wildcard = "Any";
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.
         /// </summary>
@@ -93,7 +94,7 @@ namespace TimetablingWPF
         }
         public override bool Equals(object obj)
         {
-            return ReferenceEquals(this, obj) || obj.GetType() == typeof(Wildcard);
+            return ReferenceEquals(this, obj) || ReferenceEquals(obj, Wildcard);
         }
         /// <summary>
         /// Will remove all instances of self from <see cref="RelationalCollection{T}"/>. Will then remove self from the properties list
@@ -104,7 +105,7 @@ namespace TimetablingWPF
             {
                 foreach (object @object in (IEnumerable)val)
                 {
-                    ((IList)@object.GetType().GetProperty(val.OtherClassProperty).GetValue(@object)).Remove(this);
+                    ((IList)@object.GetType().GetProperty(val.OtherSetProperty).GetValue(@object)).Remove(this);
                 }
             }
             ApplyOnType<IRelationalCollection>(delete);

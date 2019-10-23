@@ -52,7 +52,7 @@ namespace TimetablingWPF
 
         public static bool operator !=(TimetableSlot left, TimetableSlot right)
         {
-            return !(left == right);
+            return !left.Equals(right);
         }
 
         public bool Equals(TimetableSlot slot)
@@ -61,12 +61,12 @@ namespace TimetablingWPF
         }
     }
     /// <summary>
-    /// Represents an assignment between a class and a teacher
+    /// Represents an assignment between a form and a teacher
     /// </summary>
     public class Assignment
     {
         public Teacher Teacher { get; private set; }
-        public Band Class { get; private set; }
+        public Form Form { get; private set; }
         public int Periods { get; }
 
         /// <summary>
@@ -74,11 +74,11 @@ namespace TimetablingWPF
         /// </summary>
         public string TeacherString { get; }
         /// <summary>
-        /// The string representation of this object from a class' perspective
+        /// The string representation of this object from a form' perspective
         /// </summary>
-        public string ClassString { get; }
+        public string SetString { get; }
         /// <summary>
-        /// A constructor for when the class is not known
+        /// A constructor for when the form is not known
         /// </summary>
         /// <param name="teacher"></param>
         /// <param name="periods"></param>
@@ -86,53 +86,53 @@ namespace TimetablingWPF
         {
             Teacher = teacher;
             Periods = periods;
-            ClassString = $"{Teacher}: {Periods}";
+            SetString = $"{Teacher}: {Periods}";
         }
         /// <summary>
         /// A constructor for when the teacher is not known
         /// </summary>
-        /// <param name="class"></param>
+        /// <param name="form"></param>
         /// <param name="periods"></param>
-        public Assignment(Band band, int periods)
+        public Assignment(Form form, int periods)
         {
-            Class = band;
+            Form = form;
             Periods = periods;
-            TeacherString = $"{Class}: {Periods}";
+            TeacherString = $"{Form}: {Periods}";
         }
         /// <summary>
-        /// Creates references to this assignment in the teacher and class assignments list
+        /// Creates references to this assignment in the teacher and form assignments list
         /// </summary>
         /// <param name="teacher"></param>
         /// <exception cref="System.InvalidOperationException">This will be thrown if the teacher is already defined</exception>
         public void Commit(Teacher teacher)
         {
-            if (Class == null)
+            if (Form == null)
             {
-                throw new InvalidOperationException("Commit should be called with a class, as the class has not been set");
+                throw new InvalidOperationException("Commit should be called with a form, as the form has not been form");
             }
             Teacher = teacher;
             Teacher.Assignments.Add(this);
-            Class.Assignments.Add(this);
+            Form.Assignments.Add(this);
         }
         /// <summary>
-        /// Creates references to this assignment in the teacher and class assignments list
+        /// Creates references to this assignment in the teacher and form assignments list
         /// </summary>
-        /// <param name="band"></param>
-        /// <exception cref="InvalidOperationException">This will be thrown if the class is already defined</exception>
-        public void Commit(Band band)
+        /// <param name="form"></param>
+        /// <exception cref="InvalidOperationException">This will be thrown if the form is already defined</exception>
+        public void Commit(Form form)
         {
             if (Teacher == null)
             {
-                throw new InvalidOperationException("Commit should be called with a teacher, as the teacher has not been set");
+                throw new InvalidOperationException("Commit should be called with a teacher, as the teacher has not been form");
             }
-            Class = band;
+            Form = form;
             Teacher.Assignments.Add(this);
-            Class.Assignments.Add(this);
+            Form.Assignments.Add(this);
         }
 
         public new string ToString()
         {
-            return $"{Teacher}: {Class} ({Periods})";
+            return $"{Teacher}: {Form} ({Periods})";
         }
     }
 }

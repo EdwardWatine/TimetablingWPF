@@ -168,16 +168,16 @@ namespace TimetablingWPF
             return (ITab)((TabItem)tab).Content;
         }
 
-        public void NewDataClassTab(Type type)
+        public void NewDataSetTab(Type type)
         {
-            tcMainTabControl.Items.Add(new DataClassTabItem(this, type) { Header = type.Name.Pluralize() });
+            tcMainTabControl.Items.Add(new DataSetTabItem(this, type) { Header = type.Name.Pluralize() });
         }
 
-        public void CloseDataClassTab(Type type)
+        public void CloseDataSetTab(Type type)
         {
             for (int i=0; i<tcMainTabControl.Items.Count; i++)
             {
-                DataClassTabItem tabItem = tcMainTabControl.Items[i] as DataClassTabItem;
+                DataSetTabItem tabItem = tcMainTabControl.Items[i] as DataSetTabItem;
                 if (tabItem != null && tabItem.DataType == type)
                 {
                     tcMainTabControl.Items.RemoveAt(i);

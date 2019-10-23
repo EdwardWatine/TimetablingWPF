@@ -77,7 +77,7 @@ namespace TimetablingWPF
             string fpath = FileDialog();
             if (fpath == null) { return; }
             CheckboxDialog cbDialog = new CheckboxDialog(Application.Current.MainWindow, new string[] {
-                "Subjects", "Teachers", "Rooms", "Classes", "\n", "Bands", "Timetables"});
+                "Subjects", "Teachers", "Rooms", "Setes", "\n", "Sets", "Timetables"});
             if (cbDialog.ShowDialog() != true)
             {
                 return;
@@ -111,7 +111,7 @@ namespace TimetablingWPF
         }
     }
 
-    public class URIFormatter : IValueConverter
+    public class URISetatter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {

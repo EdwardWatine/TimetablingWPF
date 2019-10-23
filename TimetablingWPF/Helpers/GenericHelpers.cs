@@ -1,5 +1,6 @@
 ﻿using Humanizer;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -22,6 +23,13 @@ namespace TimetablingWPF
         public static string Pluralize(this string word, int number)
         {
             return number == 1 ? word : word.Pluralize();
+        }
+
+        public static IList<object> InsertAndReturn(IEnumerable enumerable, object toInsert, int index = 0)
+        {
+            IList<object> list = enumerable.Cast<object>().ToList();
+            list.Insert(index, toInsert);
+            return new List<object>(list);
         }
     }
 }

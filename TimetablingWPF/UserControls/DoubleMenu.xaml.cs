@@ -63,7 +63,7 @@ namespace TimetablingWPF
             {
                 return _Columns;
             }
-            set
+            form
             {
                 _Columns = value;
                 UpdateColumns();

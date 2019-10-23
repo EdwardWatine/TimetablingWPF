@@ -21,9 +21,9 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for MainPage.xaml
     /// </summary>
-    public partial class DataClassTabItem : TabItem, ITab
+    public partial class DataSetTabItem : TabItem, ITab
     {
-        public DataClassTabItem(MainPage mainPage, Type type)
+        public DataSetTabItem(MainPage mainPage, Type type)
         {
             InitializeComponent();
             MainPage = mainPage;
@@ -42,8 +42,8 @@ namespace TimetablingWPF
             Dictionary<string, string[]> columns = new Dictionary<string, string[]>()
             {
                 { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
-                { "Subject", new string[]{"Teachers", "Rooms" } },
-                { "Class", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Groups" } }
+                { "Subject", new string[]{"Teachers", "Groups" } },
+                { "Form", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Groups" } }
             };
             HashSet<string> shortval = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length" };
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
@@ -80,9 +80,9 @@ namespace TimetablingWPF
             {
                 MainPage.NewTab(new SubjectTab(new Subject(), MainPage, CommandType.@new), "New Subject");
             }
-            if (type == typeof(Band))
+            if (type == typeof(Form))
             {
-                MainPage.NewTab(new ClassTab(new Band(), MainPage, CommandType.@new), "New Class");
+                MainPage.NewTab(new FormTab(new Form(), MainPage, CommandType.@new), "New Form");
             }
         }
 

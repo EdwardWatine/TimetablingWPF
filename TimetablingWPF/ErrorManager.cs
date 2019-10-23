@@ -111,11 +111,11 @@ namespace TimetablingWPF
                     break;
             }
         }
-        private Dictionary<Error, StackPanel> Errors = new Dictionary<Error, StackPanel>();
+        private readonly Dictionary<Error, StackPanel> Errors = new Dictionary<Error, StackPanel>();
         private int NumErrors = 0;
         public int GetNumErrors() { return NumErrors; }
         private int NumWarnings = 0;
         public int GetNumWarnings() { return NumWarnings; }
-        private Panel Parent;
+        private readonly Panel Parent;
     }
 }

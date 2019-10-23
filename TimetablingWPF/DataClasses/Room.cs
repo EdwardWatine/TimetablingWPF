@@ -19,7 +19,6 @@ namespace TimetablingWPF
         {
             Name = name;
             Quantity = quantity;
-            Subjects = new RelationalCollection<Subject>("Rooms", this);
         }
         private int _Quantity;
         public int Quantity
@@ -34,9 +33,9 @@ namespace TimetablingWPF
                 }
             }
         }
-        public RelationalCollection<Subject> Subjects { get; private set; }
+        public RelationalCollection<Group> Groups { get; private set; } = new RelationalCollection<Group>("Rooms");
 
         public const string ListName = "Rooms";
-        public override string ListNameAbstract => ListName;
+        protected override string ListNameAbstract => ListName;
     }
 }
