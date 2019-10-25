@@ -132,6 +132,9 @@
     <Compile Include="Tabs\SubjectTab.xaml.cs">
       <DependentUpon>SubjectTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\GroupTab.xaml.cs">
+      <DependentUpon>GroupTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
@@ -159,6 +162,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\SubjectTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\GroupTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

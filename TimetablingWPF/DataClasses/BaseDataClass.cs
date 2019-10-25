@@ -28,7 +28,7 @@ namespace TimetablingWPF
             {
                 void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
                 {
-                    if (e.Action != NotifyCollectionChangedAction.Replace)
+                    if (e.NewItems != null && e.OldItems != null && e.NewItems[0] != e.OldItems[0])
                     {
                         NotifyPropertyChanged(prop.Name);
                         return;
