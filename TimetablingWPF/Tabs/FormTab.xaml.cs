@@ -35,7 +35,6 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Form";
             txName.Text = form.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
             cmbxSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
             cmbxAssignmentSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectSelectionChanged;
@@ -43,21 +42,21 @@ namespace TimetablingWPF
             //Errors
         }
 
-        private void GroupButtonClick(object sender, RoutedEventArgs e)
+        private void SubjectButtonClick(object sender, RoutedEventArgs e)
         {
             
-            Group group = (Group)cmbxGroups.SelectedItem;
-            if (group == null)
+            Subject subject = (Subject)cmbxSubject.SelectedItem;
+            if (subject == null)
             {
-                if (string.IsNullOrWhiteSpace(cmbxGroups.Text))
+                if (string.IsNullOrWhiteSpace(cmbxSubject.Text))
                 {
                     return;
                 }
-                group = new Group() { Name = cmbxGroups.Text.Trim() };
-                group.Commit();
+                subject = new Subject() { Name = cmbxSubject.Text.Trim() };
+                subject.Commit();
             }
-            AddGroup(group);
-            cmbxGroups.SelectedItem = group;
+            AddSubject(subject);
+            cmbxSubject.SelectedItem = subject;
         }
 
         private void AssignmentButtonClick(object sender, RoutedEventArgs e)
@@ -73,17 +72,17 @@ namespace TimetablingWPF
             Form.Assignments.Add(assignment);
         }
 
-        private void AddGroup(Group group)
+        private void AddSubject(Subject subject)
         {            
-            spGroups.Children.Add(VerticalMenuItem(group, RemoveGroup));
+            spSubject.Children.Add(VerticalMenuItem(subject, RemoveSubject));
         }
 
-        private void RemoveGroup(object sender, RoutedEventArgs e)
+        private void RemoveSubject(object sender, RoutedEventArgs e)
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Group group = (Group)sp.Tag;
-            Form.Groups.Remove(group);
-            spGroups.Children.Remove(sp);
+            Subject subject = (Subject)sp.Tag;
+            Form.Subjects.Remove(subject);
+            spSubject.Children.Remove(sp);
         }
 
         private void AddAssignment(Assignment assignment)

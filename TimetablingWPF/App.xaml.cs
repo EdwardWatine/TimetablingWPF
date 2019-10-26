@@ -53,7 +53,7 @@ namespace TimetablingWPF
             };
             foreach (Subject subject in TestSubjects) { subject.Commit(); }
             MainWindow window = new MainWindow();
-            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Form) })
+            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Form), typeof(Group) })
             {
                 window.GetMainPage().NewDataSetTab(type);
             }

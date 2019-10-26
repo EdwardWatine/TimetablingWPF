@@ -77,7 +77,7 @@ namespace TimetablingWPF
             string fpath = FileDialog();
             if (fpath == null) { return; }
             CheckboxDialog cbDialog = new CheckboxDialog(Application.Current.MainWindow, new string[] {
-                "Subjects", "Teachers", "Rooms", "Setes", "\n", "Sets", "Timetables"});
+                "Subjects", "Teachers", "Rooms", "Forms", "\n", "Sets", "Timetables"});
             if (cbDialog.ShowDialog() != true)
             {
                 return;

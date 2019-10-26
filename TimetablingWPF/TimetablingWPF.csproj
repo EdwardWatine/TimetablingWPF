@@ -116,7 +116,7 @@
     <Compile Include="Helpers\GenericHelpers.cs" />
     <Compile Include="Helpers\DraggingExtensions.cs" />
     <Compile Include="DataClasses\Collections.cs" />
-    <Compile Include="DataClasses\Set.cs" />
+    <Compile Include="DataClasses\Form.cs" />
     <Compile Include="DataClasses\Teacher Subject Group.cs" />
     <Compile Include="DataClasses\Room.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
@@ -126,8 +126,8 @@
       <DependentUpon>DataClassTabItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\VisualHelpers.cs" />
-    <Compile Include="Tabs\ClassTab.xaml.cs">
-      <DependentUpon>ClassTab.xaml</DependentUpon>
+    <Compile Include="Tabs\FormTab.xaml.cs">
+      <DependentUpon>FormTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tabs\SubjectTab.xaml.cs">
       <DependentUpon>SubjectTab.xaml</DependentUpon>
@@ -157,7 +157,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\ClassTab.xaml">
+    <Page Include="Tabs\FormTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

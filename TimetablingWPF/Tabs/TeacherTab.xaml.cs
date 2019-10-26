@@ -276,7 +276,7 @@ namespace TimetablingWPF
                 cmbxAssignmentForm.ItemsSource = all_forms;
                 return;
             }
-            IEnumerable<Form> setes = from form in all_forms where form.Subject == subject select form;
+            IEnumerable<Form> setes = from form in all_forms where form.Subjects.Contains(subject) select form;
             cmbxAssignmentForm.ItemsSource = setes;
         }
 

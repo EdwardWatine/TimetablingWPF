@@ -43,7 +43,8 @@ namespace TimetablingWPF
             {
                 { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
                 { "Subject", new string[]{"Teachers", "Groups" } },
-                { "Form", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Groups" } }
+                { "Form", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Groups" } },
+                { "Group", new string[]{"Subjects", "Rooms" } }
             };
             HashSet<string> shortval = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length" };
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
@@ -83,6 +84,10 @@ namespace TimetablingWPF
             if (type == typeof(Form))
             {
                 MainPage.NewTab(new FormTab(new Form(), MainPage, CommandType.@new), "New Form");
+            }
+            if (type == typeof(Group))
+            {
+                MainPage.NewTab(new GroupTab(new Group(), MainPage, CommandType.@new), "New Group");
             }
         }
 

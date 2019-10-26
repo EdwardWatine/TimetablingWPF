@@ -37,11 +37,7 @@
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
         <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
                      Name="txName" MinWidth="200" MinHeight="32" TextChanged="TxNameChanged"/>
-        <TextBlock HorizontalAlignment="Right" Grid.Row="1" Style="{StaticResource DialogText}" Text="Unavailable periods:"/>
-        <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,5">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Name="spPeriods"/>
-        </ScrollViewer>
-        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="2" Grid.Column="1"/>
+        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="1" Grid.Column="1"/>
     </Grid>
     <Grid Grid.Column="1" Grid.Row="1">
         <Grid.ColumnDefinitions>
@@ -62,25 +58,24 @@
                 <StackPanel Orientation="Vertical" Name="spSubjects" Margin="10,0,0,0"/>
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="1"  Margin="0,0,0,10">
-                <local:PlaceholderComboBox x:Name="cmbxSubjects" IsEditable="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Subject --"/>
-                <Button Height="{Binding ElementName=cmbxSubjects, Path=ActualHeight}" Click="SubjectButtonClick">
+                <local:PlaceholderComboBox x:Name="cmbxSubject" IsEditable="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Subject --"/>
+                <Button Height="{Binding ElementName=cmbxSubject, Path=ActualHeight}" Click="SubjectButtonClick">
                     <Image Source="{StaticResource PlusIcon}"/>
                 </Button>
             </StackPanel>
         </Grid>
-        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Forms:"/>
+        <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Rooms:"/>
         <Grid Grid.Column="1" Grid.Row="2">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                <StackPanel Orientation="Vertical" Name="spForms" Margin="10,0,0,0"/>
+                <StackPanel Orientation="Vertical" Name="spRooms" Margin="10,0,0,0"/>
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="1">
-                <local:PlaceholderComboBox x:Name="cmbxFormSubject" Style="{StaticResource HorizontalMenu}" Placeholder="-- Subject --"/>
-                <local:PlaceholderComboBox x:Name="cmbxForm" Style="{StaticResource HorizontalMenu}" Placeholder="-- Form --"/>
-                <Button Height="{Binding ElementName=cmbxFormSubject, Path=ActualHeight}" Click="AssignmentButtonClick">
+                <local:PlaceholderComboBox x:Name="cmbxRoom" Style="{StaticResource HorizontalMenu}" Placeholder="-- Room --"/>
+                <Button Height="{Binding ElementName=cmbxRoom, Path=ActualHeight}" Click="RoomButtonClick">
                     <Image Source="{StaticResource PlusIcon}"/>
                 </Button>
             </StackPanel>

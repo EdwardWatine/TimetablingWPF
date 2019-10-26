@@ -15,19 +15,6 @@ namespace TimetablingWPF
 {
     public class Form : BaseDataClass
     {
-        private Subject _Subject;
-        public Subject Subject
-        {
-            get { return _Subject; }
-            set
-            {
-                if (value != _Subject)
-                {
-                    _Subject = value;
-                    NotifyPropertyChanged("Subject");
-                }
-            }
-        }
         private int _LessonsPerCycle;
         public int LessonsPerCycle
         {
@@ -41,9 +28,9 @@ namespace TimetablingWPF
                 }
             }
         }
+        public RelationalCollection<Subject> Subjects { get; private set; } = new RelationalCollection<Subject>("Forms");
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
-        public RelationalCollection<Group> Groups { get; private set; } = new RelationalCollection<Group>("Setes");
-        public const string ListName = "Setes";
+        public const string ListName = "Forms";
         protected override string ListNameAbstract => ListName;
         private int _LessonLength;
         public int LessonLength
