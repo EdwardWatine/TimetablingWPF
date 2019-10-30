@@ -100,14 +100,12 @@ namespace TimetablingWPF
         }
         private readonly Subject Subject;
         private readonly Subject OriginalSubject;
-        private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }
         private CommandType CommandType;
 
         private void TxNameChanged(object sender, TextChangedEventArgs e)
         {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -126,7 +124,6 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");

@@ -36,7 +36,6 @@ namespace TimetablingWPF
             txName.Text = room.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
-            cmbxTeachers.ItemsSource = (IEnumerable<Teacher>)Application.Current.Properties[Teacher.ListName];
             //Errors
         }
 
@@ -53,15 +52,6 @@ namespace TimetablingWPF
             Room.Groups.Add(group);
         }
 
-        private void TeacherButtonClick(object sender, RoutedEventArgs e)
-        {
-            Teacher teacher = (Teacher)cmbxTeachers.SelectedItem;
-            if (teacher == null)
-            {
-                return;
-            }
-            AddTeacher(teacher);
-        }
 
         private void AddGroup(Group group)
         {            
@@ -76,27 +66,14 @@ namespace TimetablingWPF
             spGroups.Children.Remove(sp);
         }
 
-        private void AddTeacher(Teacher teacher)
-        {
-            spTeachers.Children.Add(VerticalMenuItem(teacher, RemoveTeacher));
-        }
-
-        private void RemoveTeacher(object sender, RoutedEventArgs e)
-        {
-            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Teacher teacher = (Teacher)sp.Tag;
-            spTeachers.Children.Remove(sp);
-        }
         private readonly Room Room;
         private readonly Room OriginalRoom;
-        private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }
         private CommandType CommandType;
 
         private void TxNameChanged(object sender, TextChangedEventArgs e)
         {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -115,7 +92,6 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");

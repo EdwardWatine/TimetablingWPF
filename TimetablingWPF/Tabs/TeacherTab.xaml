@@ -36,7 +36,7 @@
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
         <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
-                     Name="txName" MinWidth="200" MinHeight="32" TextChanged="TxNameChanged"/>
+                     Name="txName" MinWidth="200" MinHeight="32"/>
         <TextBlock HorizontalAlignment="Right" Grid.Row="1" Style="{StaticResource DialogText}" Text="Unavailable periods:"/>
         <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,5">
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Name="spPeriods"/>

@@ -88,9 +88,6 @@ namespace TimetablingWPF
         private readonly Group OriginalGroup;
         public MainPage MainPage { get; set; }
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
-        private readonly Error HAS_NO_PERIODS = new Error("Group has no periods", ErrorType.Warning);
-        private readonly Error NOT_ENOUGH_PERIODS = new Error("Group does not have enough free periods", ErrorType.Error);
-        private readonly Error HAS_EMPTY_NAME = new Error("Group does not have a name", ErrorType.Error);
         private readonly ErrorManager ErrManager;
         private CommandType CommandType;
 
@@ -112,11 +109,6 @@ namespace TimetablingWPF
         {
         }
 
-        private void TxNameChanged(object sender, TextChangedEventArgs e)
-        {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
-        }
-
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             Cancel();
@@ -133,7 +125,6 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");

@@ -40,9 +40,9 @@ namespace TimetablingWPF
             cmbxAssignmentForm.ItemsSource = (IEnumerable<Form>)Application.Current.Properties[Form.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
-            ErrManager.AddError(HAS_NO_PERIODS, Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods);
-            ErrManager.AddError(NOT_ENOUGH_PERIODS);
-            ErrManager.AddError(HAS_EMPTY_NAME);
+            HAS_EMPTY_NAME = new Error(txName, o => string.IsNullOrWhiteSpace(((TextBox)o).Text),
+                o => "Teacher has no name.", ErrorType.Error);
+            txName.TextChanged += delegate (object sender, TextChangedEventArgs e) { ErrManager.ErrorUpdate(HAS_EMPTY_NAME); };
 
             foreach (Subject subject in Teacher.Subjects)
             {
@@ -178,7 +178,6 @@ namespace TimetablingWPF
             }
             Assignment assignment = new Assignment(form, (int)periods);
             AddAssignment(assignment);
-            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
             Teacher.Assignments.Add(assignment);
         }
 
@@ -194,7 +193,6 @@ namespace TimetablingWPF
             Subject subject = (Subject)element.Tag;
             Teacher.Subjects.Remove(subject);
             spSubjects.Children.Remove(sp);
-            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
         }
 
         private void AddAssignment(Assignment assignment)
@@ -214,9 +212,9 @@ namespace TimetablingWPF
         private readonly Teacher OriginalTeacher;
         public MainPage MainPage { get; set; }
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
-        private readonly Error HAS_NO_PERIODS = new Error("Teacher has no periods", ErrorType.Warning);
-        private readonly Error NOT_ENOUGH_PERIODS = new Error("Teacher does not have enough free periods", ErrorType.Error);
-        private readonly Error HAS_EMPTY_NAME = new Error("Teacher does not have a name", ErrorType.Error);
+        private readonly Error HAS_NO_PERIODS;
+        private readonly Error NOT_ENOUGH_PERIODS;
+        private readonly Error HAS_EMPTY_NAME;
         private readonly ErrorManager ErrManager;
         private CommandType CommandType;
 
@@ -248,8 +246,6 @@ namespace TimetablingWPF
             {
                 Teacher.UnavailablePeriods.Remove(tag.Item1);
             }
-            ErrManager.UpdateError(HAS_NO_PERIODS, Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods);
-            ErrManager.UpdateError(NOT_ENOUGH_PERIODS, (Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count) < Teacher.Assignments.Sum(x => x.Periods));
         }
 
         private void CmbxSubjects_KeyDown(object sender, KeyEventArgs e)
@@ -280,11 +276,6 @@ namespace TimetablingWPF
             cmbxAssignmentForm.ItemsSource = setes;
         }
 
-        private void TxNameChanged(object sender, TextChangedEventArgs e)
-        {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
-        }
-
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             Cancel();
@@ -301,7 +292,6 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
-            ErrManager.UpdateError(HAS_EMPTY_NAME, string.IsNullOrWhiteSpace(txName.Text));
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");

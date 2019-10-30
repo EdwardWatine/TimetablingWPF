@@ -15,15 +15,45 @@ namespace TimetablingWPF
     }
     class Error
     {
-        public Error(string message, ErrorType errorType)
+        public Error(object object1, object object2,
+            Func<object, object, bool> errorFunc, 
+            Func<object, object, string> messageFunc,
+            ErrorType errorType)
         {
             ErrorType = errorType;
-            IsError = false;
-            Message = message;
+            Object1 = object1;
+            Object2 = object2;
+            MessageFunc = messageFunc;
+            ErrorFunc = errorFunc;
         }
+
+        public Error(object object1,
+            Func<object, bool> errorFunc,
+            Func<object, string> messageFunc,
+            ErrorType errorType)
+        {
+            ErrorType = errorType;
+            Object1 = object1;
+            Object2 = null;
+            MessageFunc = (o1, o2) => messageFunc(o1);
+            ErrorFunc = (o1, o2) => errorFunc(o1);
+        }
+
+        public string GetMessage()
+        {
+            return IsTriggered() ? string.Empty : MessageFunc(Object1, Object2);
+        }
+
+        public bool IsTriggered()
+        {
+            return ErrorFunc(Object1, Object2);
+        }
+
         public ErrorType ErrorType { get; }
-        public bool IsError;
-        public string Message { get; set; }
+        private readonly object Object1;
+        private readonly object Object2;
+        private readonly Func<object, object, string> MessageFunc;
+        private readonly Func<object, object, bool> ErrorFunc;
     }
     class ErrorManager
     {
@@ -31,13 +61,14 @@ namespace TimetablingWPF
         {
             Parent = parent;
         }
-        public void AddError(Error error, bool isError = false)
+        private void AddError(Error error)
         {
-            ErrorType errorType = error.ErrorType;
-            if (error.IsError)
+            if (Errors.ContainsKey(error))
             {
-                AddNum(true, error.ErrorType);
+                return;
             }
+            ErrorType errorType = error.ErrorType;
+            bool isError = error.IsTriggered();
             StackPanel sp = new StackPanel()
             {
                 Orientation = Orientation.Horizontal,
@@ -66,7 +97,7 @@ namespace TimetablingWPF
             {
                 Content = new TextBlock()
                 {
-                    Text = error.Message,
+                    Text = error.GetMessage(),
                     Foreground = colour,
                     VerticalAlignment = VerticalAlignment.Center,
                     TextWrapping = TextWrapping.Wrap
@@ -77,45 +108,21 @@ namespace TimetablingWPF
             Errors[error] = sp;
             Parent.Children.Add(sp);
         }
-        public void UpdateError(Error error, bool isError)
+        public void ErrorUpdate(Error error)
         {
-            if (error.IsError^isError)
-            {
-                error.IsError = isError;
-
-                if (!Errors.TryGetValue(error, out StackPanel sp))
-                {
-                    return;
-                }
-                if (isError)
-                {
-                    sp.Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    sp.Visibility = Visibility.Collapsed;
-                }
-                AddNum(isError, error.ErrorType);
-            }
-        }
-        private void AddNum(bool isError, ErrorType errorType)
-        {
-            int change = isError ? 1 : -1;
-            switch (errorType)
-            {
-                case ErrorType.Warning:
-                    NumWarnings += change;
-                    break;
-                default:
-                    NumErrors += change;
-                    break;
-            }
+            AddError(error);
+            StackPanel sp = Errors[error];
+            sp.Visibility = error.IsTriggered() ? Visibility.Visible : Visibility.Collapsed;
         }
         private readonly Dictionary<Error, StackPanel> Errors = new Dictionary<Error, StackPanel>();
-        private int NumErrors = 0;
-        public int GetNumErrors() { return NumErrors; }
-        private int NumWarnings = 0;
-        public int GetNumWarnings() { return NumWarnings; }
+        public int GetNumErrors()
+        {
+            return Errors.Sum(kvpair => kvpair.Key.IsTriggered() && kvpair.Key.ErrorType == ErrorType.Error ? 1 : 0);
+        }
+        public int GetNumWarnings()
+        {
+            return Errors.Sum(kvpair => kvpair.Key.IsTriggered() && kvpair.Key.ErrorType == ErrorType.Warning ? 1 : 0);
+        }
         private readonly Panel Parent;
     }
 }

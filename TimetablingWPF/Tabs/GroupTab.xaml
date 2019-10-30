@@ -36,7 +36,7 @@
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
         <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
-                     Name="txName" MinWidth="200" MinHeight="32" TextChanged="TxNameChanged"/>
+                     Name="txName" MinWidth="200" MinHeight="32"/>
         <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="1" Grid.Column="1"/>
     </Grid>
     <Grid Grid.Column="1" Grid.Row="1">

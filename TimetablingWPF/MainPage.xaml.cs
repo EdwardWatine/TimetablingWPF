@@ -29,7 +29,6 @@ namespace TimetablingWPF
             Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
             Application.Current.MainWindow.SizeToContent = SizeToContent.Manual;
             InitializeComponent();
-            TabHistory.Push((TabItem)tcMainTabControl.SelectedItem);
             void MoveWindow()
             {
                 Vector vector = Mouse.GetPosition(tcMainTabControl) - DraggingTab.Item2;
@@ -73,6 +72,7 @@ namespace TimetablingWPF
                 Vector localToMouse = DraggingTab.Item2.ToVector();
                 Vector screenToMouse = DraggingTab.Item1.PointToScreen(DraggingTab.Item2).ToVector();
                 tcMainTabControl.Items.Remove(tab);
+                TabHistory.Clear();
                 TabItem newTab = new TabItem();
                 GenericHelpers.MoveElementProperties(tab, newTab, new string[] { "Header", "Content" });
 
@@ -82,6 +82,7 @@ namespace TimetablingWPF
                 MainPage mainPage = window.GetMainPage();
                 TabToContent(newTab).MainPage = mainPage;
                 mainPage.tcMainTabControl.Items.Add(newTab);
+                mainPage.TabHistory.Push(newTab);
                 window.Show();
                 Vector windowToLocal = ((FrameworkElement)newTab.Header).PointToScreen(new Point()).ToVector() - window.VectorPos().VectorFromScreen();
                 Vector screenToWindow = screenToMouse - localToMouse - windowToLocal;
@@ -135,7 +136,7 @@ namespace TimetablingWPF
                 }
 
                 grid.MouseLeftButtonDown += TabHeaderMouseDown;
-                grid.MouseLeftButtonUp += ManualChange;
+                grid.MouseLeftButtonDown += ManualChange;
             }
 
             if (focus)
@@ -147,7 +148,7 @@ namespace TimetablingWPF
 
         public void CloseTab(object page)
         {
-            TabItem currentTab = TabHistory.Peek();
+            TabItem currentTab = TabHistory.FirstOrDefault();
             foreach (TabItem tab in tcMainTabControl.Items)
             {
                 if (tab.Content == page)
@@ -156,7 +157,7 @@ namespace TimetablingWPF
                     if (tab == currentTab)
                     {
                         TabHistory.Pop();
-                        tcMainTabControl.SelectedItem = TabHistory.Peek();
+                        tcMainTabControl.SelectedItem = TabHistory.FirstOrDefault();
                     }
                     if (tcMainTabControl.Items.Count == 0 && Application.Current.Windows.Count > 1)
                     {
@@ -165,7 +166,7 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            throw new System.ArgumentException($"Page {page} of type {page.GetType().Name} does not exist in the tab list");
+            throw new ArgumentException($"Page {page} of type {page.GetType().Name} does not exist in the tab list");
         }
         public static ITab TabToContent(object tab)
         {
@@ -177,6 +178,10 @@ namespace TimetablingWPF
             TextBlock header = new TextBlock() { Text = type.Name.Pluralize() };
             header.MouseLeftButtonUp += ManualChange;
             tcMainTabControl.Items.Add(new DataSetTabItem(this, type) { Header = header });
+            if (tcMainTabControl.Items.Count == 1)
+            {
+                TabHistory.Push((TabItem)tcMainTabControl.Items[0]);
+            }
         }
 
         public void CloseDataSetTab(Type type)
@@ -186,6 +191,12 @@ namespace TimetablingWPF
                 if (tcMainTabControl.Items[i] is DataSetTabItem tabItem && tabItem.DataType == type)
                 {
                     tcMainTabControl.Items.RemoveAt(i);
+                    if (TabHistory.FirstOrDefault() == tabItem)
+                    {
+                        TabHistory.Pop();
+                        tcMainTabControl.SelectedItem = TabHistory.FirstOrDefault();
+                    }
+
                     return;
                 }
             }
@@ -193,7 +204,7 @@ namespace TimetablingWPF
 
         private void ManualChange(object sender, MouseButtonEventArgs e)
         {
-            if (tcMainTabControl.SelectedItem != TabHistory.Peek())
+            if (tcMainTabControl.SelectedItem != TabHistory.FirstOrDefault())
             {
                 TabHistory.Clear();
                 TabHistory.Push((TabItem)tcMainTabControl.SelectedItem);
