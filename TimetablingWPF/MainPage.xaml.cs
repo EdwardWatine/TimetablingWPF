@@ -29,7 +29,7 @@ namespace TimetablingWPF
             Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
             Application.Current.MainWindow.SizeToContent = SizeToContent.Manual;
             InitializeComponent();
-
+            TabHistory.Push((TabItem)tcMainTabControl.SelectedItem);
             void MoveWindow()
             {
                 Vector vector = Mouse.GetPosition(tcMainTabControl) - DraggingTab.Item2;
@@ -97,20 +97,13 @@ namespace TimetablingWPF
             {
                 ReleaseMouse();
             }
-            void MouseEnter(object sender, MouseEventArgs e)
-            {
-                if (tcMainTabControl.IsMouseCaptureWithin)
-                {
-
-                }
-            }
             tcMainTabControl.MouseLeftButtonUp += MouseUp;
             tcMainTabControl.MouseMove += MouseMoveDragTab;
             tcMainTabControl.MouseLeave += MouseLeaveDragTab;
-            tcMainTabControl.MouseEnter += MouseEnter;
         }
 
-        public Tuple<FrameworkElement, Point> DraggingTab;
+        public Tuple<FrameworkElement, Point> DraggingTab { get; set; }
+        public Stack<TabItem> TabHistory { get; } = new Stack<TabItem>();
 
         public void NewTab(object page, string title, bool focus = true, bool draggable = true)
         {
@@ -142,18 +135,29 @@ namespace TimetablingWPF
                 }
 
                 grid.MouseLeftButtonDown += TabHeaderMouseDown;
+                grid.MouseLeftButtonUp += ManualChange;
             }
 
-            if (focus) { tcMainTabControl.SelectedItem = newTab; }
+            if (focus)
+            {
+                tcMainTabControl.SelectedItem = newTab;
+                TabHistory.Push(newTab);
+            }
         }
 
         public void CloseTab(object page)
         {
+            TabItem currentTab = TabHistory.Peek();
             foreach (TabItem tab in tcMainTabControl.Items)
             {
                 if (tab.Content == page)
                 {
                     tcMainTabControl.Items.Remove(tab);
+                    if (tab == currentTab)
+                    {
+                        TabHistory.Pop();
+                        tcMainTabControl.SelectedItem = TabHistory.Peek();
+                    }
                     if (tcMainTabControl.Items.Count == 0 && Application.Current.Windows.Count > 1)
                     {
                         Window.GetWindow(this).Close();
@@ -170,19 +174,29 @@ namespace TimetablingWPF
 
         public void NewDataSetTab(Type type)
         {
-            tcMainTabControl.Items.Add(new DataSetTabItem(this, type) { Header = type.Name.Pluralize() });
+            TextBlock header = new TextBlock() { Text = type.Name.Pluralize() };
+            header.MouseLeftButtonUp += ManualChange;
+            tcMainTabControl.Items.Add(new DataSetTabItem(this, type) { Header = header });
         }
 
         public void CloseDataSetTab(Type type)
         {
             for (int i=0; i<tcMainTabControl.Items.Count; i++)
             {
-                DataSetTabItem tabItem = tcMainTabControl.Items[i] as DataSetTabItem;
-                if (tabItem != null && tabItem.DataType == type)
+                if (tcMainTabControl.Items[i] is DataSetTabItem tabItem && tabItem.DataType == type)
                 {
                     tcMainTabControl.Items.RemoveAt(i);
                     return;
                 }
+            }
+        }
+
+        private void ManualChange(object sender, MouseButtonEventArgs e)
+        {
+            if (tcMainTabControl.SelectedItem != TabHistory.Peek())
+            {
+                TabHistory.Clear();
+                TabHistory.Push((TabItem)tcMainTabControl.SelectedItem);
             }
         }
     }

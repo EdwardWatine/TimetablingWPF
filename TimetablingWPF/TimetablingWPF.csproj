@@ -129,6 +129,9 @@
     <Compile Include="Tabs\FormTab.xaml.cs">
       <DependentUpon>FormTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\RoomTab.xaml.cs">
+      <DependentUpon>RoomTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\SubjectTab.xaml.cs">
       <DependentUpon>SubjectTab.xaml</DependentUpon>
     </Compile>
@@ -158,6 +161,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Tabs\FormTab.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Tabs\RoomTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
