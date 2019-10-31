@@ -67,7 +67,7 @@ namespace TimetablingWPF
     {
         public Teacher Teacher { get; private set; }
         public Form Form { get; private set; }
-        public int Periods { get; }
+        public int LessonCount { get; }
         public Subject Subject { get; private set; }
 
         /// <summary>
@@ -86,9 +86,9 @@ namespace TimetablingWPF
         public Assignment(Teacher teacher, int periods, Subject subject)
         {
             Teacher = teacher;
-            Periods = periods;
+            LessonCount = periods;
             Subject = subject;
-            SetString = $"{Teacher} - {Subject}: {Periods}";
+            SetString = $"{Teacher} - {Subject}: {LessonCount}";
         }
         /// <summary>
         /// A constructor for when the teacher is not known
@@ -98,9 +98,9 @@ namespace TimetablingWPF
         public Assignment(Form form, int periods, Subject subject)
         {
             Form = form;
-            Periods = periods;
+            LessonCount = periods;
             Subject = subject;
-            TeacherString = $"{Form} - {Subject}: {Periods}";
+            TeacherString = $"{Form} - {Subject}: {LessonCount}";
         }
         /// <summary>
         /// Creates references to this assignment in the teacher and form assignments list
@@ -135,7 +135,7 @@ namespace TimetablingWPF
 
         public new string ToString()
         {
-            return $"{Teacher} - {Subject}: {Form} ({Periods})";
+            return $"{Teacher} - {Subject}: {Form} ({LessonCount})";
         }
     }
 }

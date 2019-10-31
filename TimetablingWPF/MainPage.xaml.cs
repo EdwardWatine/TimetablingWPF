@@ -230,8 +230,8 @@ namespace TimetablingWPF
             {
                 return "None";
             }
-            IEnumerable<object> enumerable = ((IList)value).Cast<object>();
-            return string.Join(", ", enumerable);
+            IEnumerable<object> enumerable = ((IEnumerable)value).Cast<object>();
+            return GenericHelpers.FormatEnumerable(enumerable);
         }
         public object ConvertBack(object value, Type targetType, object paramter, System.Globalization.CultureInfo culture)
         {

@@ -14,9 +14,15 @@ namespace TimetablingWPF
         Error = 0,
         Warning = 1
     }
+
+    class ErrorData
+    {
+        public object Data { get; set; }
+    }
+
     class Error
     {
-        public Error(ErrorManager em, Func<bool> errorFunc, Func<string> messageFunc, ErrorType errorType, bool? state = null)
+        public Error(ErrorManager em, Func<ErrorData, bool> errorFunc, Func<ErrorData, string> messageFunc, ErrorType errorType, bool? state = null)
         {
             ErrorType = errorType;
             MessageFunc = messageFunc;
@@ -26,11 +32,12 @@ namespace TimetablingWPF
         }
         public string GetMessage()
         {
-            return IsTriggered() ? MessageFunc() : string.Empty;
+            return MessageFunc(errorData);
         }
         public bool IsTriggered()
         {
-            return ErrorFunc();
+            errorData = new ErrorData();
+            return ErrorFunc(errorData);
         }
         public void UpdateError()
         {
@@ -46,9 +53,10 @@ namespace TimetablingWPF
         }
 
         public ErrorType ErrorType { get; }
-        private readonly Func<string> MessageFunc;
-        private readonly Func<bool> ErrorFunc;
+        private readonly Func<ErrorData, string> MessageFunc;
+        private readonly Func<ErrorData, bool> ErrorFunc;
         private readonly ErrorManager ErrManager;
+        private ErrorData errorData;
     }
     class ErrorManager
     {
@@ -108,7 +116,10 @@ namespace TimetablingWPF
         {
             StackPanel sp = Errors[error];
             sp.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
-            ((TextBlock)sp.Tag).Text = state ? error.GetMessage() : string.Empty;
+            if (state)
+            {
+                ((TextBlock)sp.Tag).Text = state ? error.GetMessage() : string.Empty;
+            }
         }
         private readonly Dictionary<Error, StackPanel> Errors = new Dictionary<Error, StackPanel>();
         public int GetNumErrors()

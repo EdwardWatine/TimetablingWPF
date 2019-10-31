@@ -31,5 +31,10 @@ namespace TimetablingWPF
             list.Insert(index, toInsert);
             return new List<object>(list);
         }
+
+        public static string FormatEnumerable(IEnumerable<object> enumerable)
+        {
+            return string.Join(", ", enumerable);
+        }
     }
 }

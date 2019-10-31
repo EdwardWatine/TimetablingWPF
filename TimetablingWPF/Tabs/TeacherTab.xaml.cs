@@ -18,6 +18,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
+using static TimetablingWPF.GenericHelpers;
 
 namespace TimetablingWPF
 {
@@ -42,37 +43,65 @@ namespace TimetablingWPF
             cmbxAssignmentForm.ItemsSource = (IEnumerable<Form>)Application.Current.Properties[Form.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
-            HAS_EMPTY_NAME = new Error(ErrManager, () => string.IsNullOrWhiteSpace(txName.Text),
-                () => "Teacher has no name.", ErrorType.Error, false);
+            HAS_EMPTY_NAME = new Error(ErrManager, (e) => string.IsNullOrWhiteSpace(txName.Text),
+                (e) => "Teacher has no name.", ErrorType.Error, false);
             txName.TextChanged += delegate (object sender, TextChangedEventArgs e) { HAS_EMPTY_NAME.UpdateError(); };
 
-            HAS_NO_PERIODS = new Error(ErrManager, () => Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods,
-                () => "Teacher has no free periods.", ErrorType.Warning);
+            HAS_NO_PERIODS = new Error(ErrManager, (e) => Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods,
+                (e) => "Teacher has no free periods.", ErrorType.Warning);
             HAS_NO_PERIODS.BindCollection(Teacher.UnavailablePeriods);
 
             NOT_ENOUGH_PERIODS = new Error(ErrManager,
-                () => Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.Periods),
-                () => $"Teacher has fewer free periods ({Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count}) than assigned periods " +
-                $"({Teacher.Assignments.Sum(x => x.Periods)}).", ErrorType.Error);
+                (e) => Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.LessonCount),
+                (e) => $"Teacher has fewer free periods ({Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count}) than assigned periods " +
+                $"({Teacher.Assignments.Sum(x => x.LessonCount)}).", ErrorType.Error);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.UnavailablePeriods);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.Assignments);
 
-            SUBJECT_ASSIGNMENT_MISMATCH = new Error(ErrManager,
-                () =>
-                {
-                    HashSet<Subject> assignmentSubjects = Teacher.Assignments.Select(a => a.Subject).ToHashSet();
-                    assignmentSubjects.SymmetricExceptWith(Teacher.Subjects);
-                    return assignmentSubjects.Any();
-                },
-                () =>
+            SUBJECT_NO_ASSIGNMENT = new Error(ErrManager,
+                (e) =>
                 {
                     IEnumerable<Subject> subjectMismatches = Teacher.Subjects.Except(Teacher.Assignments.Select(a => a.Subject));
-                    IEnumerable<Assignment> assignmentMismatches = Teacher.Assignments.Where(a => !Teacher.Subjects.Contains(a.Subject));
-                    return $"The following Subjects have no assignments: {string.Join(", ", subjectMismatches)}.\n" +
-                    $"The following Assignments have a subject that the teacher does not have {string.Join(", ", assignmentMismatches)}.";
+                    e.Data = subjectMismatches;
+                    return subjectMismatches.Any();
+                },
+                (e) =>
+                {
+                    IEnumerable<Subject> data = (IEnumerable<Subject>)e.Data;
+                    return $"The following Subjects have no assignments: {FormatEnumerable(data)}.";
                 }, ErrorType.Warning);
-            SUBJECT_ASSIGNMENT_MISMATCH.BindCollection(Teacher.Assignments);
-            SUBJECT_ASSIGNMENT_MISMATCH.BindCollection(Teacher.Subjects);
+            SUBJECT_NO_ASSIGNMENT.BindCollection(Teacher.Assignments);
+            SUBJECT_NO_ASSIGNMENT.BindCollection(Teacher.Subjects);
+
+            ASSIGNMENT_NO_SUBJECT = new Error(ErrManager,
+                (e) =>
+                {
+                    IEnumerable<Assignment> assignmentMismatches = Teacher.Assignments.Where(a => !Teacher.Subjects.Contains(a.Subject));
+                    e.Data = assignmentMismatches;
+                    return assignmentMismatches.Any();
+                },
+                (e) =>
+                {
+                    IEnumerable<Assignment> data = (IEnumerable<Assignment>)e.Data;
+                    return $"The following Assignments have a subject that the teacher does not have: {FormatEnumerable(data)}.";
+                }, ErrorType.Warning);
+            ASSIGNMENT_NO_SUBJECT.BindCollection(Teacher.Assignments);
+            ASSIGNMENT_NO_SUBJECT.BindCollection(Teacher.Subjects);
+
+            NOT_ENOUGH_FORM_SLOTS = new Error(ErrManager,
+                (e) =>
+                {
+                    IEnumerable<Lesson> lessons = Teacher.Assignments.Select(a => a.Form.Lessons.Where(l => l.Subject == a.Subject).Single());
+                    IEnumerable<Tuple<Form, Subject>> errors = lessons.Where(l => l.LessonsPerCycle < l.Form.Assignments.Where(a => a.Subject == l.Subject).Sum(a => a.LessonCount)).Select(l => new Tuple<Form, Subject>(l.Form, l.Subject));
+                    e.Data = errors;
+                    return errors.Any();
+                },
+                (e) =>
+                {
+                    IEnumerable<Tuple<Form, Subject>> errors = (IEnumerable<Tuple<Form, Subject>>)e.Data;
+                    return $"The following combinations of Form/Subjects have more lessons than have been allocated to it: {FormatEnumerable(errors.Select(t => $"{t.Item1}/{t.Item2}"))}.";
+                }, ErrorType.Error);
+            NOT_ENOUGH_FORM_SLOTS.BindCollection(Teacher.Assignments);
 
             foreach (Subject subject in Teacher.Subjects)
             {
@@ -201,22 +230,29 @@ namespace TimetablingWPF
         private void AssignmentButtonClick(object sender, RoutedEventArgs e)
         {
             Form form = (Form)cmbxAssignmentForm.SelectedItem;
-            int? periods = iupdown.Value;
-            if (form == null || periods == null)
+            int? lessons = iupdown.Value;
+            Subject subject = (Subject)cmbxAssignmentSubject.SelectedItem;
+            if (form == null || lessons == null)
             {
                 return;
             }
-            Assignment assignment = new Assignment(form, (int)periods, (Subject)cmbxAssignmentSubject.SelectedItem);
+            Assignment old = Teacher.Assignments.Where(a => a.Subject == subject && a.Form == form).SingleOrDefault();
+            if (old != null)
+            {
+                if (old.LessonCount == lessons) { return; }
+                RemoveAssignment(old);
+            }
+            Assignment assignment = new Assignment(form, (int)lessons, subject);
             AddAssignment(assignment);
             Teacher.Assignments.Add(assignment);
         }
 
         private void AddSubject(Subject subject)
         {            
-            spSubjects.Children.Add(VerticalMenuItem(subject, RemoveSubject));
+            spSubjects.Children.Add(VerticalMenuItem(subject, RemoveSubjectClick));
         }
 
-        private void RemoveSubject(object sender, RoutedEventArgs e)
+        private void RemoveSubjectClick(object sender, RoutedEventArgs e)
         {
             FrameworkElement element = (FrameworkElement)sender;
             StackPanel sp = (StackPanel)element.Parent;
@@ -227,10 +263,10 @@ namespace TimetablingWPF
 
         private void AddAssignment(Assignment assignment)
         {
-            spAssignments.Children.Add(VerticalMenuItem(assignment, RemoveAssignment, assignment.TeacherString));
+            spAssignments.Children.Add(VerticalMenuItem(assignment, RemoveAssignmentClick, assignment.TeacherString));
         }
 
-        private void RemoveAssignment(object sender, RoutedEventArgs e)
+        private void RemoveAssignmentClick(object sender, RoutedEventArgs e)
         {
             FrameworkElement element = (FrameworkElement)sender;
             StackPanel sp = (StackPanel)element.Parent;
@@ -238,18 +274,31 @@ namespace TimetablingWPF
             Teacher.Assignments.Remove(assignment);
             spAssignments.Children.Remove(sp);
         }
+
+        private void RemoveAssignment(Assignment assignment)
+        {
+            foreach (FrameworkElement sp in spAssignments.Children)
+            {
+                if ((Assignment)sp.Tag == assignment)
+                {
+                    spAssignments.Children.Remove(sp);
+                    Teacher.Assignments.Remove(assignment);
+                    return;
+                }
+            }
+        }
         private readonly Teacher Teacher;
         private readonly Teacher OriginalTeacher;
         public MainPage MainPage { get; set; }
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
         private readonly Error HAS_NO_PERIODS;
         private readonly Error NOT_ENOUGH_PERIODS;
-        private readonly Error SUBJECT_ASSIGNMENT_MISMATCH;
+        private readonly Error SUBJECT_NO_ASSIGNMENT;
         private readonly Error ASSIGNMENT_NO_SUBJECT;
         private readonly Error NOT_ENOUGH_FORM_SLOTS;
         private readonly Error HAS_EMPTY_NAME;
         private readonly ErrorManager ErrManager;
-        private CommandType CommandType;
+        private readonly CommandType CommandType;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -263,7 +312,6 @@ namespace TimetablingWPF
             }
 
         }
-
 
         private void ToggleSlot(object sender, MouseButtonEventArgs e)
         {
@@ -305,7 +353,7 @@ namespace TimetablingWPF
                 cmbxAssignmentForm.ItemsSource = all_forms;
                 return;
             }
-            IEnumerable<Form> setes = from form in all_forms where form.Subjects.Contains(subject) select form;
+            IEnumerable<Form> setes = from form in all_forms where form.Lessons.Select(l => l.Subject).Contains(subject) select form;
             cmbxAssignmentForm.ItemsSource = setes;
         }
 
@@ -325,6 +373,7 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
+            HAS_EMPTY_NAME.UpdateError();
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");

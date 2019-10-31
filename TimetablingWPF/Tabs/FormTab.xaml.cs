@@ -81,7 +81,6 @@ namespace TimetablingWPF
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
             Subject subject = (Subject)sp.Tag;
-            Form.Subjects.Remove(subject);
             spSubject.Children.Remove(sp);
         }
 
