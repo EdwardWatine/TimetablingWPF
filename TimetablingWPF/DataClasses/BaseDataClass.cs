@@ -13,12 +13,10 @@ using System.Collections.Specialized;
 
 namespace TimetablingWPF
 {
-#pragma warning disable CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     /// <summary>
     /// Base form for all data objects
     /// </summary>
     public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable
-#pragma warning restore CS0659 // Type overrides Object.Equals(object o) but does not override Object.GetHashCode()
     {
 
         public BaseDataClass()
@@ -133,6 +131,15 @@ namespace TimetablingWPF
                     action(prop, (T)val);
                 }
             };
+        }
+
+        public static bool operator ==(BaseDataClass left, BaseDataClass right)
+        {
+            return left.Equals(right);
+        }
+        public static bool operator !=(BaseDataClass left, BaseDataClass right)
+        {
+            return !left.Equals(right);
         }
     }
 }

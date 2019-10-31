@@ -68,13 +68,14 @@ namespace TimetablingWPF
         public Teacher Teacher { get; private set; }
         public Form Form { get; private set; }
         public int Periods { get; }
+        public Subject Subject { get; private set; }
 
         /// <summary>
         /// The string representation of this object from a teacher's perspective
         /// </summary>
         public string TeacherString { get; }
         /// <summary>
-        /// The string representation of this object from a form' perspective
+        /// The string representation of this object from a form's perspective
         /// </summary>
         public string SetString { get; }
         /// <summary>
@@ -82,22 +83,24 @@ namespace TimetablingWPF
         /// </summary>
         /// <param name="teacher"></param>
         /// <param name="periods"></param>
-        public Assignment(Teacher teacher, int periods)
+        public Assignment(Teacher teacher, int periods, Subject subject)
         {
             Teacher = teacher;
             Periods = periods;
-            SetString = $"{Teacher}: {Periods}";
+            Subject = subject;
+            SetString = $"{Teacher} - {Subject}: {Periods}";
         }
         /// <summary>
         /// A constructor for when the teacher is not known
         /// </summary>
         /// <param name="form"></param>
         /// <param name="periods"></param>
-        public Assignment(Form form, int periods)
+        public Assignment(Form form, int periods, Subject subject)
         {
             Form = form;
             Periods = periods;
-            TeacherString = $"{Form}: {Periods}";
+            Subject = subject;
+            TeacherString = $"{Form} - {Subject}: {Periods}";
         }
         /// <summary>
         /// Creates references to this assignment in the teacher and form assignments list
@@ -108,7 +111,7 @@ namespace TimetablingWPF
         {
             if (Form == null)
             {
-                throw new InvalidOperationException("Commit should be called with a form, as the form has not been form");
+                throw new InvalidOperationException("Commit should be called with a form, as the form has not been set");
             }
             Teacher = teacher;
             Teacher.Assignments.Add(this);
@@ -123,7 +126,7 @@ namespace TimetablingWPF
         {
             if (Teacher == null)
             {
-                throw new InvalidOperationException("Commit should be called with a teacher, as the teacher has not been form");
+                throw new InvalidOperationException("Commit should be called with a teacher, as the teacher has not been set");
             }
             Form = form;
             Teacher.Assignments.Add(this);
@@ -132,7 +135,7 @@ namespace TimetablingWPF
 
         public new string ToString()
         {
-            return $"{Teacher}: {Form} ({Periods})";
+            return $"{Teacher} - {Subject}: {Form} ({Periods})";
         }
     }
 }

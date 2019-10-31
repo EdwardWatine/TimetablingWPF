@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,45 +16,39 @@ namespace TimetablingWPF
     }
     class Error
     {
-        public Error(object object1, object object2,
-            Func<object, object, bool> errorFunc, 
-            Func<object, object, string> messageFunc,
-            ErrorType errorType)
+        public Error(ErrorManager em, Func<bool> errorFunc, Func<string> messageFunc, ErrorType errorType, bool? state = null)
         {
             ErrorType = errorType;
-            Object1 = object1;
-            Object2 = object2;
             MessageFunc = messageFunc;
             ErrorFunc = errorFunc;
+            ErrManager = em;
+            em.AddError(this, state ?? IsTriggered());
         }
-
-        public Error(object object1,
-            Func<object, bool> errorFunc,
-            Func<object, string> messageFunc,
-            ErrorType errorType)
-        {
-            ErrorType = errorType;
-            Object1 = object1;
-            Object2 = null;
-            MessageFunc = (o1, o2) => messageFunc(o1);
-            ErrorFunc = (o1, o2) => errorFunc(o1);
-        }
-
         public string GetMessage()
         {
-            return IsTriggered() ? string.Empty : MessageFunc(Object1, Object2);
+            return IsTriggered() ? MessageFunc() : string.Empty;
         }
-
         public bool IsTriggered()
         {
-            return ErrorFunc(Object1, Object2);
+            return ErrorFunc();
+        }
+        public void UpdateError()
+        {
+            ErrManager.UpdateError(this, IsTriggered());
+        }
+        public void SetErrorState(bool state)
+        {
+            ErrManager.UpdateError(this, state);
+        }
+        public void BindCollection(INotifyCollectionChanged collection)
+        {
+            collection.CollectionChanged += delegate (object o, NotifyCollectionChangedEventArgs e) { UpdateError(); };
         }
 
         public ErrorType ErrorType { get; }
-        private readonly object Object1;
-        private readonly object Object2;
-        private readonly Func<object, object, string> MessageFunc;
-        private readonly Func<object, object, bool> ErrorFunc;
+        private readonly Func<string> MessageFunc;
+        private readonly Func<bool> ErrorFunc;
+        private readonly ErrorManager ErrManager;
     }
     class ErrorManager
     {
@@ -61,19 +56,18 @@ namespace TimetablingWPF
         {
             Parent = parent;
         }
-        private void AddError(Error error)
+        public void AddError(Error error, bool state)
         {
             if (Errors.ContainsKey(error))
             {
                 return;
             }
             ErrorType errorType = error.ErrorType;
-            bool isError = error.IsTriggered();
             StackPanel sp = new StackPanel()
             {
                 Orientation = Orientation.Horizontal,
                 Height = 50,
-                Visibility = isError ? Visibility.Visible : Visibility.Collapsed
+                Visibility = state ? Visibility.Visible : Visibility.Collapsed
             };
             ImageSource source;
             SolidColorBrush colour;
@@ -93,26 +87,28 @@ namespace TimetablingWPF
                 VerticalAlignment = VerticalAlignment.Stretch,
                 Source = source
             });
+            TextBlock tb = new TextBlock()
+            {
+                Text = state ? error.GetMessage() : string.Empty,
+                Foreground = colour,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextWrapping = TextWrapping.Wrap
+            };
+            sp.Tag = tb;
             sp.Children.Add(new ScrollViewer()
             {
-                Content = new TextBlock()
-                {
-                    Text = error.GetMessage(),
-                    Foreground = colour,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    TextWrapping = TextWrapping.Wrap
-                },
+                Content = tb,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
             });
             Errors[error] = sp;
             Parent.Children.Add(sp);
         }
-        public void ErrorUpdate(Error error)
+        public void UpdateError(Error error, bool state)
         {
-            AddError(error);
             StackPanel sp = Errors[error];
-            sp.Visibility = error.IsTriggered() ? Visibility.Visible : Visibility.Collapsed;
+            sp.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
+            ((TextBlock)sp.Tag).Text = state ? error.GetMessage() : string.Empty;
         }
         private readonly Dictionary<Error, StackPanel> Errors = new Dictionary<Error, StackPanel>();
         public int GetNumErrors()

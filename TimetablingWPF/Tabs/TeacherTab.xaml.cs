@@ -1,7 +1,9 @@
 ﻿using Humanizer;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -36,13 +38,41 @@ namespace TimetablingWPF
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
-            cmbxAssignmentSubject.ItemsSource = GenericHelpers.InsertAndReturn(cmbxSubjects.ItemsSource, BaseDataClass.Wildcard);
+            cmbxAssignmentSubject.ItemsSource = cmbxSubjects.ItemsSource;
             cmbxAssignmentForm.ItemsSource = (IEnumerable<Form>)Application.Current.Properties[Form.ListName];
             cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectsSelectionChanged;
 
-            HAS_EMPTY_NAME = new Error(txName, o => string.IsNullOrWhiteSpace(((TextBox)o).Text),
-                o => "Teacher has no name.", ErrorType.Error);
-            txName.TextChanged += delegate (object sender, TextChangedEventArgs e) { ErrManager.ErrorUpdate(HAS_EMPTY_NAME); };
+            HAS_EMPTY_NAME = new Error(ErrManager, () => string.IsNullOrWhiteSpace(txName.Text),
+                () => "Teacher has no name.", ErrorType.Error, false);
+            txName.TextChanged += delegate (object sender, TextChangedEventArgs e) { HAS_EMPTY_NAME.UpdateError(); };
+
+            HAS_NO_PERIODS = new Error(ErrManager, () => Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods,
+                () => "Teacher has no free periods.", ErrorType.Warning);
+            HAS_NO_PERIODS.BindCollection(Teacher.UnavailablePeriods);
+
+            NOT_ENOUGH_PERIODS = new Error(ErrManager,
+                () => Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.Periods),
+                () => $"Teacher has fewer free periods ({Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count}) than assigned periods " +
+                $"({Teacher.Assignments.Sum(x => x.Periods)}).", ErrorType.Error);
+            NOT_ENOUGH_PERIODS.BindCollection(Teacher.UnavailablePeriods);
+            NOT_ENOUGH_PERIODS.BindCollection(Teacher.Assignments);
+
+            SUBJECT_ASSIGNMENT_MISMATCH = new Error(ErrManager,
+                () =>
+                {
+                    HashSet<Subject> assignmentSubjects = Teacher.Assignments.Select(a => a.Subject).ToHashSet();
+                    assignmentSubjects.SymmetricExceptWith(Teacher.Subjects);
+                    return assignmentSubjects.Any();
+                },
+                () =>
+                {
+                    IEnumerable<Subject> subjectMismatches = Teacher.Subjects.Except(Teacher.Assignments.Select(a => a.Subject));
+                    IEnumerable<Assignment> assignmentMismatches = Teacher.Assignments.Where(a => !Teacher.Subjects.Contains(a.Subject));
+                    return $"The following Subjects have no assignments: {string.Join(", ", subjectMismatches)}.\n" +
+                    $"The following Assignments have a subject that the teacher does not have {string.Join(", ", assignmentMismatches)}.";
+                }, ErrorType.Warning);
+            SUBJECT_ASSIGNMENT_MISMATCH.BindCollection(Teacher.Assignments);
+            SUBJECT_ASSIGNMENT_MISMATCH.BindCollection(Teacher.Subjects);
 
             foreach (Subject subject in Teacher.Subjects)
             {
@@ -176,7 +206,7 @@ namespace TimetablingWPF
             {
                 return;
             }
-            Assignment assignment = new Assignment(form, (int)periods);
+            Assignment assignment = new Assignment(form, (int)periods, (Subject)cmbxAssignmentSubject.SelectedItem);
             AddAssignment(assignment);
             Teacher.Assignments.Add(assignment);
         }
@@ -214,6 +244,9 @@ namespace TimetablingWPF
         private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
         private readonly Error HAS_NO_PERIODS;
         private readonly Error NOT_ENOUGH_PERIODS;
+        private readonly Error SUBJECT_ASSIGNMENT_MISMATCH;
+        private readonly Error ASSIGNMENT_NO_SUBJECT;
+        private readonly Error NOT_ENOUGH_FORM_SLOTS;
         private readonly Error HAS_EMPTY_NAME;
         private readonly ErrorManager ErrManager;
         private CommandType CommandType;

@@ -114,7 +114,8 @@
     <Content Include="DefunctCode.txt" />
     <Compile Include="Helpers\DataHelpers.cs" />
     <Compile Include="Helpers\GenericHelpers.cs" />
-    <Compile Include="Helpers\DraggingExtensions.cs" />
+    <Compile Include="Helpers\GenericExtensions.cs" />
+    <Compile Include="Helpers\VisualExtensions.cs" />
     <Compile Include="DataClasses\Collections.cs" />
     <Compile Include="DataClasses\Form.cs" />
     <Compile Include="DataClasses\Teacher Subject Group.cs" />

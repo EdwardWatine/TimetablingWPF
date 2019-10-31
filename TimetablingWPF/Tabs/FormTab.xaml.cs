@@ -67,7 +67,7 @@ namespace TimetablingWPF
             {
                 return;
             }
-            Assignment assignment = new Assignment(teacher, (int)periods);
+            Assignment assignment = new Assignment(teacher, (int)periods, (Subject)cmbxAssignmentSubject.SelectedItem);
             AddAssignment(assignment);
             Form.Assignments.Add(assignment);
         }
