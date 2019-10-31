@@ -30,8 +30,6 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:" Margin="5,0,5,15"/>
@@ -41,11 +39,7 @@
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Year:" Grid.Row="1" Margin="5,0,5,15"/>
         <local:PlaceholderComboBox x:Name="cmbxYear" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Left" Placeholder="-- Year Group --"
                                    Width="{Binding ElementName=txName, Path=ActualWidth}" Margin="0,0,0,15"/>
-        <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Lessons per cycle:" Grid.Row="2" Margin="0,0,5,5"/>
-        <tlkt:IntegerUpDown Name="iupdownPerCycle" Minimum="1" Value="1" Grid.Column="1" Grid.Row="2" Width="50" Margin="0,0,0,5" HorizontalAlignment="Left"/>
-        <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Lesson length:" Grid.Row="3"/>
-        <tlkt:IntegerUpDown Name="iupdownLength" Minimum="1" Value="1" Grid.Column="1" Grid.Row="3" Width="50" HorizontalAlignment="Left" Margin="0,0,0,5"/>
-        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="4" Grid.Column="1" Margin="0,5,0,0"/>
+        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="2" Grid.Column="1" Margin="0,5,0,0"/>
     </Grid>
     <Grid Grid.Column="1" Grid.Row="1">
         <Grid.ColumnDefinitions>
@@ -56,7 +50,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Groups:" Margin="0,1,0,0"/>
+        <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Lessons:" Margin="0,1,0,0"/>
         <Grid Grid.Column="1" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
@@ -65,11 +59,17 @@
             <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
                 <StackPanel Orientation="Vertical" Name="spSubject" Margin="10,0,0,0"/>
             </ScrollViewer>
-            <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,10">
+            <StackPanel Orientation="Vertical">
                 <local:PlaceholderComboBox x:Name="cmbxSubject" IsEditable="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Subject --"/>
-                <Button Height="{Binding ElementName=cmbxSubject, Path=ActualHeight}" Click="SubjectButtonClick">
-                    <Image Source="{StaticResource PlusIcon}"/>
-                </Button>
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Lessons per cycle:" Margin="0" FontSize="14" Padding="6"/>
+                    <tlkt:IntegerUpDown Name="iupdownPerCycle" Minimum="1" Value="1" Grid.Column="1" Grid.Row="2" Width="50"/>
+                    <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Lesson length:" Margin="0" FontSize="14" Padding="6"/>
+                    <tlkt:IntegerUpDown Name="iupdownLength" Minimum="1" Value="1" Grid.Column="1" Grid.Row="3" Width="50" HorizontalAlignment="Left"/>
+                    <Button Grid.Row="1" Grid.Column="2" Height="{Binding ElementName=cmbxSubject, Path=ActualHeight}" Click="SubjectButtonClick" Margin="10,0,0,0">
+                        <Image Source="{StaticResource PlusIcon}"/>
+                    </Button>
+                </StackPanel>
             </StackPanel>
         </Grid>
         <TextBlock Grid.Row="1" HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Assignments:"/>
