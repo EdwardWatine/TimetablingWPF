@@ -10,19 +10,19 @@ using System.Windows.Media;
 
 namespace TimetablingWPF
 {
-    enum ErrorType : byte {
+    public enum ErrorType : byte {
         Error = 0,
         Warning = 1
     }
 
-    class ErrorData
+    public class ErrorData
     {
         public object Data { get; set; }
     }
 
-    class Error
+    public class ErrorContainer
     {
-        public Error(ErrorManager em, Func<ErrorData, bool> errorFunc, Func<ErrorData, string> messageFunc, ErrorType errorType, bool? state = null)
+        public ErrorContainer(ErrorManager em, Func<ErrorData, bool> errorFunc, Func<ErrorData, string> messageFunc, ErrorType errorType, bool? state = null)
         {
             ErrorType = errorType;
             MessageFunc = messageFunc;
@@ -58,13 +58,13 @@ namespace TimetablingWPF
         private readonly ErrorManager ErrManager;
         private ErrorData errorData;
     }
-    class ErrorManager
+    public class ErrorManager
     {
         public ErrorManager(Panel parent)
         {
             Parent = parent;
         }
-        public void AddError(Error error, bool state)
+        public void AddError(ErrorContainer error, bool state)
         {
             if (Errors.ContainsKey(error))
             {
@@ -112,7 +112,7 @@ namespace TimetablingWPF
             Errors[error] = sp;
             Parent.Children.Add(sp);
         }
-        public void UpdateError(Error error, bool state)
+        public void UpdateError(ErrorContainer error, bool state)
         {
             StackPanel sp = Errors[error];
             sp.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
@@ -121,7 +121,7 @@ namespace TimetablingWPF
                 ((TextBlock)sp.Tag).Text = state ? error.GetMessage() : string.Empty;
             }
         }
-        private readonly Dictionary<Error, StackPanel> Errors = new Dictionary<Error, StackPanel>();
+        private readonly Dictionary<ErrorContainer, StackPanel> Errors = new Dictionary<ErrorContainer, StackPanel>();
         public int GetNumErrors()
         {
             return Errors.Sum(kvpair => kvpair.Key.IsTriggered() && kvpair.Key.ErrorType == ErrorType.Error ? 1 : 0);

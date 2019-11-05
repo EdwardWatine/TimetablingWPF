@@ -32,24 +32,26 @@ namespace TimetablingWPF
             CommandType = commandType;
             OriginalRoom = room;
             Room = commandType == CommandType.@new ? room : (Room)room.Clone();
+            Room.Freeze();
             tbTitle.Text = "Create a new Room";
             txName.Text = room.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
-            //Errors
+
+            HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Room");
         }
 
         private void GroupButtonClick(object sender, RoutedEventArgs e)
         {
-            
-            Group group = (Group)cmbxGroups.SelectedItem;
-            if (group == null)
+
+            Group group = cmbxGroups.GetObject<Group>();
+            if (group != null && !Room.Groups.Contains(group))
             {
-                return;
+                group.Commit();
+                AddGroup(group);
+                cmbxGroups.SelectedItem = group;
+                Room.Groups.Add(group);
             }
-            AddGroup(group);
-            cmbxGroups.SelectedItem = group;
-            Room.Groups.Add(group);
         }
 
 
@@ -68,13 +70,10 @@ namespace TimetablingWPF
 
         private readonly Room Room;
         private readonly Room OriginalRoom;
+        private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }
-        private CommandType CommandType;
-
-        private void TxNameChanged(object sender, TextChangedEventArgs e)
-        {
-        }
+        private readonly CommandType CommandType;
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -92,6 +91,7 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
+            HAS_NO_NAME.UpdateError();
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");
@@ -106,7 +106,9 @@ namespace TimetablingWPF
                 }
             }
             Room.Name = txName.Text;
-
+            Room.Critical = checkCritical.IsChecked ?? false;
+            Room.Quantity = iupdown.Value ?? 0;
+            Room.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalRoom.Recommit(Room);
             } else

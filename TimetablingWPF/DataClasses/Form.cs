@@ -16,7 +16,19 @@ namespace TimetablingWPF
     public class Form : BaseDataClass
     {
         public ObservableCollection<Lesson> Lessons { get; private set; } = new ObservableCollection<Lesson>();
-        public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
+        private int _year;
+        public int YearGroup
+        {
+            get { return _year; }
+            set
+            {
+                if (value != _year)
+                {
+                    _year = value;
+                    NotifyPropertyChanged("YearGroup");
+                }
+            }
+        }
         public const string ListName = "Forms";
         protected override string ListNameAbstract => ListName;
     }

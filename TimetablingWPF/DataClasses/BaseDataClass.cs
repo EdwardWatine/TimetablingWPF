@@ -16,7 +16,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Base form for all data objects
     /// </summary>
-    public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable
+    public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable, IFreezable
     {
 
         public BaseDataClass()
@@ -26,10 +26,9 @@ namespace TimetablingWPF
             {
                 void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
                 {
-                    if (e.NewItems != null && e.OldItems != null && e.NewItems[0] != e.OldItems[0])
+                    if (e.NewItems != null && e.OldItems != null && e.NewItems[0] != e.OldItems[0] && !((IFreezable)sender).Frozen)
                     {
                         NotifyPropertyChanged(prop.Name);
-                        return;
                     }
                 }
                 val.CollectionChanged += Val_CollectionChanged;
@@ -41,12 +40,12 @@ namespace TimetablingWPF
 
         public string Name
         {
-            get { return _Name; }
+            get { return _name; }
             set
             {
-                if (value != _Name)
+                if (value != _name)
                 {
-                    _Name = value;
+                    _name = value;
                     NotifyPropertyChanged("Name");
                 }
             }
@@ -54,10 +53,11 @@ namespace TimetablingWPF
         /// <summary>
         /// Holder for Name
         /// </summary>
-        private string _Name;
+        private string _name;
         protected abstract string ListNameAbstract { get; }
         private bool Commited = false;
         public const string Wildcard = "Any";
+        public bool Frozen { get; private set; } = false;
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.
         /// </summary>
@@ -121,6 +121,17 @@ namespace TimetablingWPF
             return copy;
         }
 
+        public void Freeze()
+        {
+            Frozen = true;
+            ApplyOnType<IFreezable>((prop, val) => val.Freeze());
+        }
+        public void Unfreeze()
+        {
+            Frozen = false;
+            ApplyOnType<IFreezable>((prop, val) => val.Unfreeze());
+        }
+
         private void ApplyOnType<T>(Action<System.Reflection.PropertyInfo, T> action)
         {
             foreach (System.Reflection.PropertyInfo prop in GetType().GetProperties())
@@ -133,13 +144,21 @@ namespace TimetablingWPF
             };
         }
 
-        public static bool operator ==(BaseDataClass left, BaseDataClass right)
+        public static bool operator ==(BaseDataClass left, object right)
         {
+            if (left is null)
+            {
+                if (right is null)
+                {
+                    return true;
+                }
+                return false;
+            }
             return left.Equals(right);
         }
-        public static bool operator !=(BaseDataClass left, BaseDataClass right)
+        public static bool operator !=(BaseDataClass left, object right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
     }
 }

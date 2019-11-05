@@ -30,96 +30,51 @@ namespace TimetablingWPF
             MainPage = mainPage;
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
-            OriginalSet = form ?? throw new ArgumentNullException(nameof(form));
+            OriginalForm = form;
             Form = commandType == CommandType.@new ? form : (Form)form.Clone();
+            Form.Freeze();
             tbTitle.Text = "Create a new Form";
             txName.Text = form.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
-            cmbxAssignmentSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
-            cmbxAssignmentSubject.comboBox.SelectionChanged += CmbxAssignmentsSubjectSelectionChanged;
-            cmbxAssignmentTeacher.ItemsSource = (IEnumerable<Teacher>)Application.Current.Properties[Teacher.ListName];
+            cmbxLesson.ItemsSource = (IEnumerable<Lesson>)Application.Current.Properties[Lesson.ListName];
+            cmbxYear.ItemsSource = (IEnumerable<YearGroup>)Application.Current.Properties[YearGroup.ListName];
+            HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Fomr");
+            HAS_NO_YEAR = new ErrorContainer(ErrManager, (e) => cmbxYear.SelectedItem == null, (e) => "No year group has been selected.", ErrorType.Error, false);
+            cmbxYear.comboBox.SelectionChanged += delegate (object o, SelectionChangedEventArgs e) { HAS_NO_YEAR.UpdateError(); };
             //Errors
         }
 
-        private void SubjectButtonClick(object sender, RoutedEventArgs e)
+        private void LessonButtonClick(object sender, RoutedEventArgs e)
         {
-            
-            Subject subject = (Subject)cmbxSubject.SelectedItem;
-            if (subject == null)
+
+            Lesson lesson = (Lesson)cmbxLesson.SelectedItem;
+            if (lesson != null && !Form.Lessons.Contains(lesson))
             {
-                if (string.IsNullOrWhiteSpace(cmbxSubject.Text))
-                {
-                    return;
-                }
-                subject = new Subject() { Name = cmbxSubject.Text.Trim() };
-                subject.Commit();
+                Form.Lessons.Add(lesson);
+                AddLesson(lesson);
             }
-            AddSubject(subject);
-            cmbxSubject.SelectedItem = subject;
         }
 
-        private void AssignmentButtonClick(object sender, RoutedEventArgs e)
-        {
-            Teacher teacher = (Teacher)cmbxAssignmentTeacher.SelectedItem;
-            int? periods = iupdownAssignment.Value;
-            if (teacher == null || periods == null)
-            {
-                return;
-            }
-            Assignment assignment = new Assignment(teacher, (int)periods, (Subject)cmbxAssignmentSubject.SelectedItem);
-            AddAssignment(assignment);
-            Form.Assignments.Add(assignment);
-        }
-
-        private void AddSubject(Subject subject)
+        private void AddLesson(Lesson lesson)
         {            
-            spSubject.Children.Add(VerticalMenuItem(subject, RemoveSubject));
+            spLessons.Children.Add(VerticalMenuItem(lesson, RemoveLesson));
         }
 
-        private void RemoveSubject(object sender, RoutedEventArgs e)
+        private void RemoveLesson(object sender, RoutedEventArgs e)
         {
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Subject subject = (Subject)sp.Tag;
-            spSubject.Children.Remove(sp);
+            Lesson lesson = (Lesson)sp.Tag;
+            spLessons.Children.Remove(sp);
+            Form.Lessons.Remove(lesson);
         }
 
-        private void AddAssignment(Assignment assignment)
-        {
-            spAssignments.Children.Add(VerticalMenuItem(assignment, RemoveAssignment));
-        }
-
-        private void RemoveAssignment(object sender, RoutedEventArgs e)
-        {
-            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Assignment assignment = (Assignment)sp.Tag;
-            Form.Assignments.Remove(assignment);
-            spAssignments.Children.Remove(sp);
-        }
         private readonly Form Form;
-        private readonly Form OriginalSet;
+        private readonly Form OriginalForm;
+        private readonly ErrorContainer HAS_NO_YEAR;
+        private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }
         private readonly CommandType CommandType;
-
-        private void CmbxAssignmentsSubjectSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            ComboBox cmbx = (ComboBox)sender;
-            Subject subject = (Subject)cmbxAssignmentSubject.SelectedItem;
-            IEnumerable<Teacher> all_teachers = (IEnumerable<Teacher>)Application.Current.Properties[Teacher.ListName];
-            if (subject == null)
-            {
-                cmbxAssignmentTeacher.ItemsSource = all_teachers;
-                return;
-            }
-            IEnumerable<Teacher> teachers = from teacher in all_teachers where teacher.Subjects.Contains(subject) select teacher;
-            cmbxAssignmentTeacher.ItemsSource = teachers;
-        }
-
-        private void TxNameChanged(object sender, TextChangedEventArgs e)
-        {
-        }
-
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             Cancel();
@@ -136,6 +91,8 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
+            HAS_NO_NAME.UpdateError();
+            HAS_NO_YEAR.UpdateError();
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");
@@ -150,9 +107,9 @@ namespace TimetablingWPF
                 }
             }
             Form.Name = txName.Text;
-
+            Form.Unfreeze();
             if (CommandType == CommandType.edit) {
-                OriginalSet.Recommit(Form);
+                OriginalForm.Recommit(Form);
             } else
             {
                 Form.Commit();

@@ -13,11 +13,30 @@ using System.Collections.Specialized;
 
 namespace TimetablingWPF
 {
-    public struct Lesson
+    public class Lesson : BaseDataClass
     {
+        public Lesson(Form form, Subject subject, int numLessons, int length)
+        {
+            Form = form;
+            LessonsPerCycle = numLessons;
+            LessonLength = length;
+            Subject = subject;
+        }
         public Form Form { get; }
         public int LessonsPerCycle { get; }
         public int LessonLength { get; }
         public Subject Subject { get; }
+        public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
+        public const string ListName = "Lessons";
+        protected override string ListNameAbstract => ListName;
+
+        public override void Commit()
+        {
+            foreach (Assignment assignment in Assignments)
+            {
+                assignment.Teacher.Assignments.Add(assignment);
+            }
+            base.Commit();
+        }
     }
 }

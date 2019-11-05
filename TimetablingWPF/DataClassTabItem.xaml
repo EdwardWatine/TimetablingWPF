@@ -25,14 +25,16 @@
         <DataTemplate x:Key="Lesson LengthTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding LessonLength}"/>
         </DataTemplate>
-        
         <DataTemplate x:Key="SubjectsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subjects, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="SubjectTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subject}"/>
         </DataTemplate>
         <DataTemplate x:Key="Unavailable PeriodsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding UnavailablePeriods, Converter={StaticResource ListFormatter}}"/>
         </DataTemplate>
-        <DataTemplate x:Key="SetesTemplate">
+        <DataTemplate x:Key="AssignmentsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
         </DataTemplate>
         <DataTemplate x:Key="TeachersTemplate">
@@ -41,8 +43,14 @@
         <DataTemplate x:Key="RoomsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Rooms, Converter={StaticResource ListFormatter}}"/>
         </DataTemplate>
-        <DataTemplate x:Key="AssignmentsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
+        <DataTemplate x:Key="Year GroupTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding YearGroup}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="QuantityTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Quantity}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="CriticalTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Critical}"/>
         </DataTemplate>
     </TabItem.Resources>
     <TabItem.CommandBindings>

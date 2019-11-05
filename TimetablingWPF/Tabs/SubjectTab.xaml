@@ -33,7 +33,7 @@
         </Grid.RowDefinitions>
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
         <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
-                     Name="txName" MinWidth="200" MinHeight="32" TextChanged="TxNameChanged"/>
+                     Name="txName" MinWidth="200" MinHeight="32"/>
         <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="1" Grid.Column="1"/>
     </Grid>
     <Grid Grid.Column="1" Grid.Row="1">
@@ -55,7 +55,7 @@
                 <StackPanel Orientation="Vertical" Name="spTeachers" Margin="10,0,0,0"/>
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="0,0,0,10">
-                <local:PlaceholderComboBox x:Name="cmbxTeachers" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Teacher --"/>
+                <local:PlaceholderComboBox x:Name="cmbxTeachers" IsEditable="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Teacher --"/>
                 <Button Height="{Binding ElementName=cmbxTeachers, Path=ActualHeight}" Click="TeacherButtonClick">
                     <Image Source="{StaticResource PlusIcon}"/>
                 </Button>
@@ -71,7 +71,7 @@
                 <StackPanel Orientation="Vertical" Name="spGroups" Margin="10,0,0,0"/>
             </ScrollViewer>
             <StackPanel Orientation="Horizontal" Grid.Row="1">
-                <local:PlaceholderComboBox x:Name="cmbxGroups" IsReadOnly="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Group --"/>
+                <local:PlaceholderComboBox x:Name="cmbxGroups" IsEditable="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Group --"/>
                 <Button Height="{Binding ElementName=cmbxGroups, Path=ActualHeight}" Click="GroupButtonClick">
                     <Image Source="{StaticResource PlusIcon}"/>
                 </Button>

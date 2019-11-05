@@ -76,6 +76,19 @@ namespace TimetablingWPF
             get => comboBox.Text;
             set => comboBox.Text = value;
         }
+
+        public T GetObject<T>() where T : BaseDataClass, new()
+        {
+            if (SelectedItem == null)
+            {
+                if (string.IsNullOrWhiteSpace(Text) || !IsEditable || IsReadOnly)
+                {
+                    return null;
+                }
+                return new T() { Name = Text };
+            }
+            return (T)SelectedItem;
+        }
     }
 
     public class BoxToVisibilityConverter : IMultiValueConverter
@@ -90,4 +103,6 @@ namespace TimetablingWPF
             throw new NotImplementedException();
         }
     }
+
+    
 }

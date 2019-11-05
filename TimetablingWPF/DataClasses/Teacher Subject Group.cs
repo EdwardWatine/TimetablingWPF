@@ -7,6 +7,14 @@
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
         public const string ListName = "Teachers";
         protected override string ListNameAbstract => ListName;
+        public override void Commit()
+        {
+            foreach (Assignment assignment in Assignments)
+            {
+                assignment.Lesson.Assignments.Add(assignment);
+            }
+            base.Commit();
+        }
     }
 
     public class Subject : BaseDataClass

@@ -61,81 +61,41 @@ namespace TimetablingWPF
         }
     }
     /// <summary>
-    /// Represents an assignment between a form and a teacher
+    /// Represents an assignment between a lesson and a teacher
     /// </summary>
     public class Assignment
     {
-        public Teacher Teacher { get; private set; }
-        public Form Form { get; private set; }
+        public Teacher Teacher { get; }
+        public Lesson Lesson { get; }
         public int LessonCount { get; }
-        public Subject Subject { get; private set; }
 
         /// <summary>
         /// The string representation of this object from a teacher's perspective
         /// </summary>
         public string TeacherString { get; }
         /// <summary>
-        /// The string representation of this object from a form's perspective
+        /// The string representation of this object from a lesson's perspective
         /// </summary>
-        public string SetString { get; }
+        public string LessonString { get; }
         /// <summary>
-        /// A constructor for when the form is not known
+        /// A constructor for when the lesson is not known
         /// </summary>
         /// <param name="teacher"></param>
         /// <param name="periods"></param>
-        public Assignment(Teacher teacher, int periods, Subject subject)
+        public Assignment(Teacher teacher, Lesson lesson, int periods)
         {
             Teacher = teacher;
+            Lesson = lesson;
             LessonCount = periods;
-            Subject = subject;
-            SetString = $"{Teacher} - {Subject}: {LessonCount}";
+            LessonString = $"{Teacher} ({LessonCount})";
+            TeacherString = $"{Lesson} ({LessonCount})";
         }
         /// <summary>
-        /// A constructor for when the teacher is not known
+        /// Creates references to this assignment in the teacher and lesson assignments list
         /// </summary>
-        /// <param name="form"></param>
-        /// <param name="periods"></param>
-        public Assignment(Form form, int periods, Subject subject)
+        public override string ToString()
         {
-            Form = form;
-            LessonCount = periods;
-            Subject = subject;
-            TeacherString = $"{Form} - {Subject}: {LessonCount}";
-        }
-        /// <summary>
-        /// Creates references to this assignment in the teacher and form assignments list
-        /// </summary>
-        /// <param name="teacher"></param>
-        /// <exception cref="System.InvalidOperationException">This will be thrown if the teacher is already defined</exception>
-        public void Commit(Teacher teacher)
-        {
-            if (Form == null)
-            {
-                throw new InvalidOperationException("Commit should be called with a form, as the form has not been set");
-            }
-            Teacher = teacher;
-            Teacher.Assignments.Add(this);
-            Form.Assignments.Add(this);
-        }
-        /// <summary>
-        /// Creates references to this assignment in the teacher and form assignments list
-        /// </summary>
-        /// <param name="form"></param>
-        /// <exception cref="InvalidOperationException">This will be thrown if the form is already defined</exception>
-        public void Commit(Form form)
-        {
-            if (Teacher == null)
-            {
-                throw new InvalidOperationException("Commit should be called with a teacher, as the teacher has not been set");
-            }
-            Form = form;
-            Teacher.Assignments.Add(this);
-            Form.Assignments.Add(this);
-        }
-
-        public new string ToString()
-        {
-            return $"{Teacher} - {Subject}: {Form} ({LessonCount})";
+            return $"{Teacher} - {Lesson} ({LessonCount})";
         }
     }
 }

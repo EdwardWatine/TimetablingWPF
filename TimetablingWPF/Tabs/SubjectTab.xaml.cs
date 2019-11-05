@@ -32,12 +32,15 @@ namespace TimetablingWPF
             CommandType = commandType;
             OriginalSubject = subject;
             Subject = commandType == CommandType.@new ? subject : (Subject)subject.Clone();
+            Subject.Freeze();
             tbTitle.Text = "Create a new Subject";
             txName.Text = subject.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
             cmbxTeachers.ItemsSource = (IEnumerable<Teacher>)Application.Current.Properties[Teacher.ListName];
             //Errors
+
+            HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Subject");
 
             foreach (Group group in Subject.Groups)
             {
@@ -51,26 +54,27 @@ namespace TimetablingWPF
 
         private void GroupButtonClick(object sender, RoutedEventArgs e)
         {
-            
-            Group group = (Group)cmbxGroups.SelectedItem;
-            if (group == null)
+
+            Group group = cmbxGroups.GetObject<Group>();
+            if (group != null && !Subject.Groups.Contains(group))
             {
-                return;
+                group.Commit();
+                AddGroup(group);
+                cmbxGroups.SelectedItem = group;
+                Subject.Groups.Add(group);
             }
-            AddGroup(group);
-            cmbxGroups.SelectedItem = group;
-            Subject.Groups.Add(group);
         }
 
         private void TeacherButtonClick(object sender, RoutedEventArgs e)
         {
-            Teacher teacher = (Teacher)cmbxTeachers.SelectedItem;
-            if (teacher == null)
+            Teacher teacher = cmbxTeachers.GetObject<Teacher>();
+            if (teacher != null && !Subject.Teachers.Contains(teacher))
             {
-                return;
+                teacher.Commit();
+                AddTeacher(teacher);
+                cmbxTeachers.SelectedItem = teacher;
+                Subject.Teachers.Add(teacher);
             }
-            AddTeacher(teacher);
-            Subject.Teachers.Add(teacher);
         }
 
         private void AddGroup(Group group)
@@ -100,13 +104,10 @@ namespace TimetablingWPF
         }
         private readonly Subject Subject;
         private readonly Subject OriginalSubject;
+        private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
         public MainPage MainPage { get; set; }
-        private CommandType CommandType;
-
-        private void TxNameChanged(object sender, TextChangedEventArgs e)
-        {
-        }
+        private readonly CommandType CommandType;
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -124,6 +125,7 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
+            HAS_NO_NAME.UpdateError();
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");
@@ -138,7 +140,7 @@ namespace TimetablingWPF
                 }
             }
             Subject.Name = txName.Text;
-
+            Subject.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalSubject.Recommit(Subject);
             } else

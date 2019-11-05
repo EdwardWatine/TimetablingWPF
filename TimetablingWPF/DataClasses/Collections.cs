@@ -15,6 +15,13 @@ namespace TimetablingWPF
         object Parent { get; set; }
         string OtherSetProperty { get; set; }
     };
+
+    public interface IFreezable
+    {
+        bool Frozen { get; }
+        void Freeze();
+        void Unfreeze();
+    }
     public class ObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>, ICloneable
     {
         public ObservableCollection() { }
@@ -71,7 +78,7 @@ namespace TimetablingWPF
     /// A list which reflects updates in itself with the list in the added form
     /// </summary>
     /// <typeparam name="T">The type of the objects in this list</typeparam>
-    public class RelationalCollection<T> : InternalObservableCollection<T>, IRelationalCollection where T : INotifyPropertyChanged
+    public class RelationalCollection<T> : InternalObservableCollection<T>, IRelationalCollection, IFreezable where T : INotifyPropertyChanged
     {
         /// <summary>
         /// The object to which this list belongs
@@ -107,24 +114,52 @@ namespace TimetablingWPF
         {
             if (Parent == null)
             {
-                throw new InvalidOperationException("Parent is not form");
+                throw new InvalidOperationException("Parent is not set");
             }
             base.Add(item);
-
+            if (Frozen)
+            {
+                frozenAddElements.Add(item);
+                return;
+            }
             ((IList)item.GetType().GetProperty(OtherSetProperty).GetValue(item)).Add(Parent);
         }
         public new void Remove(T item)
         {
             if (Parent == null)
             {
-                throw new InvalidOperationException("Parent is not form");
+                throw new InvalidOperationException("Parent is not set");
             }
             base.Remove(item);
+            if (Frozen)
+            {
+                frozenRemoveElements.Add(item);
+                return;
+            }
             ((IList)item.GetType().GetProperty(OtherSetProperty).GetValue(item)).Remove(Parent);
+        }
+        public void Freeze()
+        {
+            Frozen = true;
+        }
+        public void Unfreeze()
+        {
+            Frozen = false;
+            foreach (T element in frozenAddElements)
+            {
+                ((IList)element.GetType().GetProperty(OtherSetProperty).GetValue(element)).Add(Parent);
+            }
+            foreach (T element in frozenRemoveElements)
+            {
+                ((IList)element.GetType().GetProperty(OtherSetProperty).GetValue(element)).Remove(Parent);
+            }
         }
         public override object Clone()
         {
             return new RelationalCollection<T>(OtherSetProperty, this) { Parent = Parent };
         }
+        public bool Frozen { get; private set; } = false;
+        private readonly IList<T> frozenAddElements = new List<T>();
+        private readonly IList<T> frozenRemoveElements = new List<T>();
     }
 }

@@ -74,7 +74,7 @@ namespace TimetablingWPF
                 tcMainTabControl.Items.Remove(tab);
                 TabHistory.Clear();
                 TabItem newTab = new TabItem();
-                GenericHelpers.MoveElementProperties(tab, newTab, new string[] { "Header", "Content" });
+                GenericHelpers.MoveElementProperties(tab, newTab, new DependencyProperty[] { HeaderedContentControl.HeaderProperty, ContentControl.ContentProperty });
 
                 //void newWindow(object sender2, EventArgs e2)
                 //{

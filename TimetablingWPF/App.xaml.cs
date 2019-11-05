@@ -23,11 +23,13 @@ namespace TimetablingWPF
         public App()
         {
             Properties["APPLICATION_NAME"] = "Timetabler";
+            Properties["USER_TYPES"] = new Type[] { typeof(Teacher), typeof(Subject), typeof(Lesson), typeof(Form), typeof(Group), typeof(Room) };
             Properties[Teacher.ListName] = new InternalObservableCollection<Teacher>();
             Properties[Room.ListName] = new InternalObservableCollection<Room>();
             Properties[Form.ListName] = new InternalObservableCollection<Form>();
             Properties[Subject.ListName] = new InternalObservableCollection<Subject>();
             Properties[Group.ListName] = new InternalObservableCollection<Group>();
+            Properties[YearGroup.ListName] = new List<YearGroup>() { new YearGroup("8") };
             Properties[TimetableStructure.ListName] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
             {
                 new TimetableStructurePeriod("1", true),
@@ -53,7 +55,7 @@ namespace TimetablingWPF
             };
             foreach (Subject subject in TestSubjects) { subject.Commit(); }
             MainWindow window = new MainWindow();
-            foreach (Type type in new Type[] { typeof(Teacher), typeof(Subject), typeof(Form), typeof(Group) })
+            foreach (Type type in (Type[])Properties["USER_TYPES"])
             {
                 window.GetMainPage().NewDataSetTab(type);
             }

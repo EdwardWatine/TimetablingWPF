@@ -5,18 +5,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
 
 namespace TimetablingWPF
 {
     public static class GenericHelpers
     {
-        public static void MoveElementProperties(object @in, object @out, string[] props)
+        public static void MoveElementProperties(DependencyObject @in, DependencyObject @out, DependencyProperty[] props)
         {
-            foreach (string prop in props)
+            foreach (DependencyProperty prop in props)
             {
-                object holder = @in.GetType().GetProperty(prop).GetValue(@in);
-                @in.GetType().GetProperty(prop).SetValue(@in, null);
-                @out.GetType().GetProperty(prop).SetValue(@out, holder);
+                object holder = @in.GetValue(prop);
+                @in.SetValue(prop, null);
+                @out.SetValue(prop, holder);
             }
         }
 
@@ -35,6 +37,14 @@ namespace TimetablingWPF
         public static string FormatEnumerable(IEnumerable<object> enumerable)
         {
             return string.Join(", ", enumerable);
+        }
+
+        public static ErrorContainer GenerateNameError(ErrorManager em, TextBox box, string type)
+        {
+            ErrorContainer ec = new ErrorContainer(em, (e) => string.IsNullOrWhiteSpace(box.Text),
+                (e) => $"{type} has no name.", ErrorType.Error, false);
+            box.TextChanged += delegate (object sender, TextChangedEventArgs e) { ec.UpdateError(); };
+            return ec;
         }
     }
 }

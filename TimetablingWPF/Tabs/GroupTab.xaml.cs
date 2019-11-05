@@ -31,43 +31,39 @@ namespace TimetablingWPF
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalGroup = group;
-            Group = (Group)group.Clone();
+            Group = commandType == CommandType.@new ? group : (Group)group.Clone();
+            Group.Freeze();
             tbTitle.Text = "Create a new Group";
             txName.Text = group.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
             cmbxRoom.ItemsSource = (IEnumerable<Form>)Application.Current.Properties[Form.ListName];
 
-
+            HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Group");
         }
 
         private void SubjectButtonClick(object sender, RoutedEventArgs e)
         {
-            
-            Subject subject = (Subject)cmbxSubject.SelectedItem;
-            if (subject == null)
+
+            Subject subject = cmbxSubject.GetObject<Subject>();
+            if (subject != null && !Group.Subjects.Contains(subject))
             {
-                if (string.IsNullOrWhiteSpace(cmbxSubject.Text))
-                {
-                    return;
-                }
-                subject = new Subject() { Name = cmbxSubject.Text.Trim() };
                 subject.Commit();
+                AddSubject(subject);
+                cmbxSubject.SelectedItem = subject;
+                Group.Subjects.Add(subject);
             }
-            else
-            {
-                if (Group.Subjects.Contains(subject))
-                {
-                    return;
-                }
-            }
-            AddSubject(subject);
-            cmbxSubject.SelectedItem = subject;
-            Group.Subjects.Add(subject);
         }
 
         private void RoomButtonClick(object sender, RoutedEventArgs e)
         {
+            Room room = (Room)cmbxRoom.SelectedItem;
+            if (room != null && !Group.Rooms.Contains(room))
+            {
+                AddRoom(room);
+                cmbxRoom.SelectedItem = room;
+                Group.Rooms.Add(room);
+            }
         }
 
         private void AddSubject(Subject subject)
@@ -83,31 +79,26 @@ namespace TimetablingWPF
             Group.Subjects.Remove(subject);
             spSubjects.Children.Remove(sp);
         }
+        private void AddRoom(Room subject)
+        {            
+            spRooms.Children.Add(VerticalMenuItem(subject, RemoveRoom));
+        }
+
+        private void RemoveRoom(object sender, RoutedEventArgs e)
+        {
+            FrameworkElement element = (FrameworkElement)sender;
+            StackPanel sp = (StackPanel)element.Parent;
+            Room room = (Room)element.Tag;
+            Group.Rooms.Remove(room);
+            spRooms.Children.Remove(sp);
+        }
 
         private readonly Group Group;
         private readonly Group OriginalGroup;
-        public MainPage MainPage { get; set; }
-        private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
+        private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
-        private CommandType CommandType;
-
-        private void CmbxSubjects_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Return)
-            {
-                SubjectButtonClick(null, null);
-            }
-            if (e.Key == Key.Escape)
-            {
-                cmbxSubject.SelectedItem = null;
-                cmbxSubject.Text = "";
-                Keyboard.ClearFocus();
-            }
-        }
-
-        private void SubjectButtonClick(object sender, SelectionChangedEventArgs e)
-        {
-        }
+        public MainPage MainPage { get; set; }
+        private readonly CommandType CommandType;
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -125,6 +116,7 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
+            HAS_NO_NAME.UpdateError();
             if (ErrManager.GetNumErrors() > 0)
             {
                 ShowErrorBox("Please fix all errors!");
@@ -132,14 +124,14 @@ namespace TimetablingWPF
             }
             if (ErrManager.GetNumWarnings() > 0)
             {
-                if (System.Windows.MessageBox.Show("There are warnings. Do you want to continue?", "Warning", 
+                if (System.Windows.MessageBox.Show("There are warnings. Do you want to continue?", "Warning",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
                 {
                     return;
                 }
             }
             Group.Name = txName.Text;
-
+            Group.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalGroup.Recommit(Group);
             } else

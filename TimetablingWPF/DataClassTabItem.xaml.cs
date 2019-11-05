@@ -39,14 +39,7 @@ namespace TimetablingWPF
             attachCommand($"miDuplicateItem", Commands.DuplicateItem, dgMainDataGrid);
 
             dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type.GetField("ListName").GetValue(type)];
-            Dictionary<string, string[]> columns = new Dictionary<string, string[]>()
-            {
-                { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
-                { "Subject", new string[]{"Teachers", "Groups" } },
-                { "Form", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Groups" } },
-                { "Group", new string[]{"Subjects", "Rooms" } }
-            };
-            HashSet<string> shortval = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length" };
+            
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
                 CanUserSort = true,
@@ -56,12 +49,13 @@ namespace TimetablingWPF
                 Header = "Name",
                 CellTemplate = (DataTemplate)Resources["NameTemplate"]
             }); ;
-            int width = new HashSet<string>(columns[type.Name]).Except(shortval).Count();
-            foreach (string column in columns[type.Name])
+            int width = new HashSet<string>(Columns[type.Name]).Except(Shortcols).Count();
+            width = width == 1 ? 4 : width;
+            foreach (string column in Columns[type.Name])
             {
                 dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
                 {
-                    Width = new DataGridLength(width, shortval.Contains(column) ? DataGridLengthUnitType.Auto : DataGridLengthUnitType.Star),
+                    Width = new DataGridLength(width, Shortcols.Contains(column) ? DataGridLengthUnitType.Auto : DataGridLengthUnitType.Star),
                     Header = column,
                     CellTemplate = (DataTemplate)Resources[$"{column}Template"]
                 });
@@ -69,26 +63,32 @@ namespace TimetablingWPF
         }
         public MainPage MainPage { get; set; }
         public Type DataType { get; }
+        private readonly Dictionary<Type, Type> TypeTab = new Dictionary<Type, Type>()
+        {
+            {typeof(Subject), typeof(SubjectTab) },
+            {typeof(Teacher), typeof(TeacherTab) },
+            {typeof(Lesson), typeof(LessonTab) },
+            {typeof(Group), typeof(GroupTab) },
+            {typeof(Form), typeof(FormTab) },
+            {typeof(Room), typeof(RoomTab) }
+
+        };
+        private readonly Dictionary<string, string[]> Columns = new Dictionary<string, string[]>()
+            {
+                { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
+                { "Subject", new string[]{"Teachers", "Groups" } },
+                { "Lesson", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments" } },
+                { "Group", new string[]{"Subjects", "Rooms" } },
+                { "Form", new string[]{"Year Group", "Lessons" } },
+                { "Room", new string[]{"Quantity", "Critical", "Groups"} }
+            };
+        private readonly HashSet<string> Shortcols = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length", "Quantity", "Critical", "Subject", "Year Group" };
         private void ExecuteNewItemCommand(object sender, ExecutedRoutedEventArgs e)
         {
             Type type = (Type)e.Parameter;
-            if (type == typeof(Teacher))
-            {
-                MainPage.NewTab(new TeacherTab(new Teacher(), MainPage, CommandType.@new), "New Teacher");
-                return;
-            }
-            if (type == typeof(Subject))
-            {
-                MainPage.NewTab(new SubjectTab(new Subject(), MainPage, CommandType.@new), "New Subject");
-            }
-            if (type == typeof(Form))
-            {
-                MainPage.NewTab(new FormTab(new Form(), MainPage, CommandType.@new), "New Form");
-            }
-            if (type == typeof(Group))
-            {
-                MainPage.NewTab(new GroupTab(new Group(), MainPage, CommandType.@new), "New Group");
-            }
+            MainPage.NewTab(
+                Activator.CreateInstance(TypeTab[type], new object[] { Activator.CreateInstance(type), MainPage, CommandType.@new }),
+                $"New {type.Name}");
         }
 
         private void CanExecuteNewItemCommand(object sender, CanExecuteRoutedEventArgs e)
@@ -98,15 +98,12 @@ namespace TimetablingWPF
 
         private void ExecuteEditItemCommand(object sender, ExecutedRoutedEventArgs e)
         {
-            switch (((DataGrid)e.Parameter).SelectedItem)
-            {
-                case Teacher teacher:
-                    MainPage.NewTab(new TeacherTab(teacher, MainPage, CommandType.edit), "Edit Teacher");
-                    break;
-                case Subject subject:
-                    MainPage.NewTab(new SubjectTab(subject, MainPage, CommandType.edit), "Edit Subject");
-                    break;
-            }
+            object item = (((DataGrid)e.Parameter).SelectedItem);
+            Type type = item.GetType();
+            MainPage.NewTab(
+                Activator.CreateInstance(type, new object[] { item, MainPage, CommandType.edit }),
+                $"Edit {type.Name}");
+
         }
 
         private void CanExecuteEditItem(object sender, CanExecuteRoutedEventArgs e)
@@ -116,15 +113,11 @@ namespace TimetablingWPF
 
         private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
         {
-            switch (((DataGrid)e.Parameter).SelectedItem)
-            {
-                case Teacher teacher:
-                    MainPage.NewTab(new TeacherTab(teacher, MainPage, CommandType.copy), "New Teacher");
-                    break;
-                case Subject subject:
-                    MainPage.NewTab(new SubjectTab(subject, MainPage, CommandType.copy), "New Subject");
-                    break;
-            }
+            object item = (((DataGrid)e.Parameter).SelectedItem);
+            Type type = item.GetType();
+            MainPage.NewTab(
+                Activator.CreateInstance(type, new object[] { item, MainPage, CommandType.edit }),
+                $"Edit {type.Name}");
 
         }
 

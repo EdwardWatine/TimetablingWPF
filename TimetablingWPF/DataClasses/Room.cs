@@ -15,21 +15,29 @@ namespace TimetablingWPF
 {
     public class Room : BaseDataClass
     {
-        public Room(string name, int quantity)
-        {
-            Name = name;
-            Quantity = quantity;
-        }
-        private int _Quantity;
+        private int _quantity;
         public int Quantity
         {
-            get { return _Quantity; }
+            get { return _quantity; }
             set
             {
-                if (value != _Quantity)
+                if (value != _quantity)
                 {
-                    _Quantity = value;
+                    _quantity = value;
                     NotifyPropertyChanged("Quantity");
+                }
+            }
+        }
+        private bool _critical;
+        public bool Critical
+        {
+            get { return _critical; }
+            set
+            {
+                if (value != _critical)
+                {
+                    _critical = value;
+                    NotifyPropertyChanged("Critical");
                 }
             }
         }
