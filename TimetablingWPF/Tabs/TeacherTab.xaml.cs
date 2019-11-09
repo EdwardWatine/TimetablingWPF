@@ -19,6 +19,7 @@ using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
 using static TimetablingWPF.GenericHelpers;
+using static TimetablingWPF.DataHelpers;
 
 namespace TimetablingWPF
 {
@@ -39,8 +40,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Teacher";
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxSubjects.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
-            cmbxAssignmentLesson.ItemsSource = (IEnumerable<Lesson>)Application.Current.Properties[Lesson.ListName];
+            cmbxSubjects.ItemsSource = GetData<Subject>();
+            cmbxAssignmentLesson.ItemsSource = GetData<Lesson>();
 
             HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
 
@@ -273,7 +274,7 @@ namespace TimetablingWPF
 
         private readonly Teacher Teacher;
         private readonly Teacher OriginalTeacher;
-        private readonly TimetableStructure Structure = (TimetableStructure)Application.Current.Properties[TimetableStructure.ListName];
+        private readonly TimetableStructure Structure = GetTimetableStructure();
         private readonly ErrorContainer HAS_NO_PERIODS;
         private readonly ErrorContainer NOT_ENOUGH_PERIODS;
         private readonly ErrorContainer SUBJECT_NO_ASSIGNMENT;
@@ -313,19 +314,6 @@ namespace TimetablingWPF
             }
         }
 
-        /*private void CmbxAssignmentsSubjectsSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            object subject = cmbxAssignmentSubject.SelectedItem;
-            IEnumerable<Lesson> all_lessons = (IEnumerable<Lesson>)Application.Current.Properties[Lesson.ListName];
-            if (subject == null)
-            {
-                cmbxAssignmentLesson.ItemsSource = all_lessons;
-                return;
-            }
-            IEnumerable<Lesson> filtered = from lesson in all_lessons where lesson.Subject == subject select lesson;
-            cmbxAssignmentLesson.ItemsSource = filtered;
-        }*/
-
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             Cancel();
@@ -359,7 +347,7 @@ namespace TimetablingWPF
             Teacher.Name = txName.Text;
             Teacher.Unfreeze();
             if (CommandType == CommandType.edit) {
-                OriginalTeacher.Recommit(Teacher);
+                OriginalTeacher.UpdateWithClone(Teacher);
             } else
             {
                 Teacher.Commit();

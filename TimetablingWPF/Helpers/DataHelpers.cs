@@ -20,7 +20,15 @@ namespace TimetablingWPF
         }
         public static TimetableStructurePeriod PeriodNumToPeriod(int period)
         {
-            return ((TimetableStructure)Application.Current.Properties[TimetableStructure.ListName]).Structure[period];
+            return GetTimetableStructure().Structure[period];
+        }
+        public static IList<T> GetData<T>()
+        {
+            return (IList<T>)Application.Current.Properties[typeof(T)];
+        }
+        public static TimetableStructure GetTimetableStructure()
+        {
+            return (TimetableStructure)Application.Current.Properties[typeof(TimetableStructure)];
         }
     }
 }

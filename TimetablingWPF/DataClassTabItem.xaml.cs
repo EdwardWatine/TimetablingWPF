@@ -38,7 +38,7 @@ namespace TimetablingWPF
             attachCommand($"miDeleteItem", Commands.DeleteItem, dgMainDataGrid);
             attachCommand($"miDuplicateItem", Commands.DuplicateItem, dgMainDataGrid);
 
-            dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type.GetField("ListName").GetValue(type)];
+            dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type];
             
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
@@ -101,7 +101,7 @@ namespace TimetablingWPF
             object item = (((DataGrid)e.Parameter).SelectedItem);
             Type type = item.GetType();
             MainPage.NewTab(
-                Activator.CreateInstance(type, new object[] { item, MainPage, CommandType.edit }),
+                Activator.CreateInstance(TypeTab[type], new object[] { item, MainPage, CommandType.edit }),
                 $"Edit {type.Name}");
 
         }
@@ -116,9 +116,8 @@ namespace TimetablingWPF
             object item = (((DataGrid)e.Parameter).SelectedItem);
             Type type = item.GetType();
             MainPage.NewTab(
-                Activator.CreateInstance(type, new object[] { item, MainPage, CommandType.edit }),
+                Activator.CreateInstance(TypeTab[type], new object[] { item, MainPage, CommandType.edit }),
                 $"Edit {type.Name}");
-
         }
 
         private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)

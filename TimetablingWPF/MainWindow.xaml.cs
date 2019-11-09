@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static TimetablingWPF.FileFunctions;
+using static TimetablingWPF.FileHandlers;
 
 namespace TimetablingWPF
 {
@@ -42,7 +42,7 @@ namespace TimetablingWPF
             var file = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
             if (file != null && file.Length > 0)
             {
-                LoadFile(file[0]);
+                //LoadFile(file[0]);
                 return;
             }
             Content = new FirstTime();

@@ -42,8 +42,5 @@ namespace TimetablingWPF
             }
         }
         public RelationalCollection<Group> Groups { get; private set; } = new RelationalCollection<Group>("Rooms");
-
-        public const string ListName = "Rooms";
-        protected override string ListNameAbstract => ListName;
     }
 }

@@ -25,6 +25,22 @@ namespace TimetablingWPF
             Day = day;
             Period = period;
         }
+        public int ToInt()
+        {
+            TimetableStructure structure = DataHelpers.GetTimetableStructure();
+            return 5 * (structure.PeriodsPerDay * Week + Day) + Period;
+        }
+        public ushort ToUshort()
+        {
+            return (ushort)ToInt();
+        }
+        public static TimetableSlot FromInt(int from)
+        {
+            TimetableStructure structure = DataHelpers.GetTimetableStructure();
+            return new TimetableSlot(from / (structure.PeriodsPerDay * 5),
+                from % (structure.PeriodsPerDay * 5) / 5,
+                from % (structure.PeriodsPerDay * 5) % 5);
+        }
         public override string ToString()
         {
             return $"{DataHelpers.WeekToString(Week)} {DataHelpers.DayToString(Day)} P{DataHelpers.PeriodNumToPeriod(Period).Name}";

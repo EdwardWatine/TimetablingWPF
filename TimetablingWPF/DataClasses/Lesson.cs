@@ -15,21 +15,49 @@ namespace TimetablingWPF
 {
     public class Lesson : BaseDataClass
     {
-        public Lesson(Form form, Subject subject, int numLessons, int length)
+        private Form _form;
+        public Form Form
         {
-            Form = form;
-            LessonsPerCycle = numLessons;
-            LessonLength = length;
-            Subject = subject;
+            get { return _form; }
+            set
+            {
+                if (value != _form)
+                {
+                    _form = value;
+                    _form?.Lessons.Remove(this);
+                    value.Lessons.Add(this);
+                    NotifyPropertyChanged("Form");
+                }
+            }
         }
-        public Form Form { get; }
-        public int LessonsPerCycle { get; }
-        public int LessonLength { get; }
+        private int _lpc;
+        public int LessonsPerCycle
+        {
+            get { return _lpc; }
+            set
+            {
+                if (value != _lpc)
+                {
+                    _lpc = value;
+                    NotifyPropertyChanged("LessonsPerCycle");
+                }
+            }
+        }
+        private int _length;
+        public int LessonLength
+        {
+            get { return _length; }
+            set
+            {
+                if (value != _length)
+                {
+                    _length = value;
+                    NotifyPropertyChanged("LessonsPerCycle");
+                }
+            }
+        }
         public Subject Subject { get; }
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
-        public const string ListName = "Lessons";
-        protected override string ListNameAbstract => ListName;
-
         public override void Commit()
         {
             foreach (Assignment assignment in Assignments)

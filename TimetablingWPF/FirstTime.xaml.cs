@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
-using static TimetablingWPF.FileFunctions;
+using static TimetablingWPF.FileHandlers;
 
 namespace TimetablingWPF
 {
@@ -44,7 +44,7 @@ namespace TimetablingWPF
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = e.Source as Hyperlink;
-            LoadFile(link.Tag.ToString());
+            //LoadFile(link.Tag.ToString());
         }
         
         public void OpenFile(object sender, RoutedEventArgs e)
@@ -52,7 +52,7 @@ namespace TimetablingWPF
             string fpath = FileDialog();
             if (fpath!=null)
             {
-                LoadFile(fpath);
+               // LoadFile(fpath);
             }
         }
 

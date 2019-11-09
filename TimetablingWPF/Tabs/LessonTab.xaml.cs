@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
+using static TimetablingWPF.DataHelpers;
 
 namespace TimetablingWPF
 {
@@ -37,7 +38,7 @@ namespace TimetablingWPF
             txName.Text = lesson.Name;
             txName.SelectionStart = txName.Text.Length;
 
-            cmbxSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
+            cmbxSubject.ItemsSource = GetData<Subject>();
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Lesson");
             HAS_NO_SUBJECT = new ErrorContainer(ErrManager, (e) => cmbxSubject.SelectedItem == null, (e) => "No subject has been selected.", ErrorType.Error, false);
@@ -130,7 +131,7 @@ namespace TimetablingWPF
             Lesson.Name = txName.Text;
             Lesson.Unfreeze();
             if (CommandType == CommandType.edit) {
-                OriginalLesson.Recommit(Lesson);
+                OriginalLesson.UpdateWithClone(Lesson);
             } else
             {
                 Lesson.Commit();

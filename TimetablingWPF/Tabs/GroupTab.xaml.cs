@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
+using static TimetablingWPF.DataHelpers;
 
 namespace TimetablingWPF
 {
@@ -36,8 +37,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Group";
             txName.Text = group.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxSubject.ItemsSource = (IEnumerable<Subject>)Application.Current.Properties[Subject.ListName];
-            cmbxRoom.ItemsSource = (IEnumerable<Form>)Application.Current.Properties[Form.ListName];
+            cmbxSubject.ItemsSource = GetData<Subject>();
+            cmbxRoom.ItemsSource = GetData<Room>();
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Group");
         }
@@ -133,7 +134,7 @@ namespace TimetablingWPF
             Group.Name = txName.Text;
             Group.Unfreeze();
             if (CommandType == CommandType.edit) {
-                OriginalGroup.Recommit(Group);
+                OriginalGroup.UpdateWithClone(Group);
             } else
             {
                 Group.Commit();

@@ -19,12 +19,13 @@ namespace TimetablingWPF
         {
             WeeksPerCycle = weeksPerCycle;
             Structure = structure;
-            TotalFreePeriods = weeksPerCycle*5*(from period in structure where period.IsSchedulable select period).Count();
+            PeriodsPerDay = (from period in structure where period.IsSchedulable select period).Count();
+            TotalFreePeriods = weeksPerCycle*5*PeriodsPerDay;
         }
         public int WeeksPerCycle { get; }
         public IList<TimetableStructurePeriod> Structure { get; private set; }
         public int TotalFreePeriods { get; }
-        public const string ListName = "Structure";
+        public int PeriodsPerDay { get; }
     }
     public struct TimetableStructurePeriod : IEquatable<TimetableStructurePeriod>
     {
@@ -62,14 +63,14 @@ namespace TimetablingWPF
         }
     }
 
-    public struct YearGroup : IEquatable<YearGroup>
+    public class YearGroup
     {
         public YearGroup(string year)
         {
             Year = year;
         }
         public string Year { get; set; }
-        public const string ListName = "Years";
+        public int StorageIndex { get; set; }
         public override string ToString()
         {
             return $"Year {Year}";
@@ -77,7 +78,7 @@ namespace TimetablingWPF
 
         public override bool Equals(object obj)
         {
-            return obj is YearGroup yg && Equals(yg);
+            return obj is YearGroup yg && yg.Year == Year;
         }
         
         public override int GetHashCode()
@@ -93,11 +94,6 @@ namespace TimetablingWPF
         public static bool operator !=(YearGroup left, YearGroup right)
         {
             return !left.Equals(right);
-        }
-
-        public bool Equals(YearGroup other)
-        {
-            return Year == other.Year;
         }
     }
 }

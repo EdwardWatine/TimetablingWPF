@@ -16,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
+using static TimetablingWPF.DataHelpers;
+
 
 namespace TimetablingWPF
 {
@@ -36,8 +38,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Subject";
             txName.Text = subject.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
-            cmbxTeachers.ItemsSource = (IEnumerable<Teacher>)Application.Current.Properties[Teacher.ListName];
+            cmbxGroups.ItemsSource = GetData<Group>();
+            cmbxTeachers.ItemsSource = GetData<Teacher>();
             //Errors
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Subject");
@@ -142,7 +144,7 @@ namespace TimetablingWPF
             Subject.Name = txName.Text;
             Subject.Unfreeze();
             if (CommandType == CommandType.edit) {
-                OriginalSubject.Recommit(Subject);
+                OriginalSubject.UpdateWithClone(Subject);
             } else
             {
                 Subject.Commit();

@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -45,6 +46,11 @@ namespace TimetablingWPF
                 (e) => $"{type} has no name.", ErrorType.Error, false);
             box.TextChanged += delegate (object sender, TextChangedEventArgs e) { ec.UpdateError(); };
             return ec;
+        }
+
+        public static CultureInfo GetGlobalCultureInfo()
+        {
+            return (CultureInfo)Application.Current.Properties["GLOBAL_CULTURE"];
         }
     }
 }

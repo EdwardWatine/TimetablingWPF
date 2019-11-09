@@ -16,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
+using static TimetablingWPF.DataHelpers;
 
 namespace TimetablingWPF
 {
@@ -36,8 +37,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Form";
             txName.Text = form.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxLesson.ItemsSource = (IEnumerable<Lesson>)Application.Current.Properties[Lesson.ListName];
-            cmbxYear.ItemsSource = (IEnumerable<YearGroup>)Application.Current.Properties[YearGroup.ListName];
+            cmbxLesson.ItemsSource = GetData<Lesson>();
+            cmbxYear.ItemsSource = GetData<YearGroup>();
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Fomr");
             HAS_NO_YEAR = new ErrorContainer(ErrManager, (e) => cmbxYear.SelectedItem == null, (e) => "No year group has been selected.", ErrorType.Error, false);
             cmbxYear.comboBox.SelectionChanged += delegate (object o, SelectionChangedEventArgs e) { HAS_NO_YEAR.UpdateError(); };
@@ -107,9 +108,10 @@ namespace TimetablingWPF
                 }
             }
             Form.Name = txName.Text;
+            Form.YearGroup = (YearGroup)cmbxYear.SelectedItem;
             Form.Unfreeze();
             if (CommandType == CommandType.edit) {
-                OriginalForm.Recommit(Form);
+                OriginalForm.UpdateWithClone(Form);
             } else
             {
                 Form.Commit();

@@ -16,6 +16,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
+using static TimetablingWPF.DataHelpers;
+
 
 namespace TimetablingWPF
 {
@@ -36,7 +38,7 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Room";
             txName.Text = room.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxGroups.ItemsSource = (IEnumerable<Group>)Application.Current.Properties[Group.ListName];
+            cmbxGroups.ItemsSource = GetData<Group>();
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Room");
         }
@@ -110,7 +112,7 @@ namespace TimetablingWPF
             Room.Quantity = iupdown.Value ?? 0;
             Room.Unfreeze();
             if (CommandType == CommandType.edit) {
-                OriginalRoom.Recommit(Room);
+                OriginalRoom.UpdateWithClone(Room);
             } else
             {
                 Room.Commit();

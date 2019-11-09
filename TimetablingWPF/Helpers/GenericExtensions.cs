@@ -13,5 +13,9 @@ namespace TimetablingWPF
         {
             return new HashSet<T>(source);
         }
+        public static string Join<T>(this string str, IEnumerable<T> enumerable)
+        {
+            return string.Join(str, enumerable.Select(t => Convert.ToString(t, GenericHelpers.GetGlobalCultureInfo())));
+        }
     }
 }
