@@ -56,14 +56,68 @@ namespace TimetablingWPF
                 }
             }
         }
-        public Subject Subject { get; }
-        public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
-        public override void Commit()
+        private Subject _subject;
+        public Subject Subject
         {
-            foreach (Assignment assignment in Assignments)
+            get { return _subject; }
+            set
+            {
+                if (value != _subject)
+                {
+                    _subject?.Lessons.Remove(this);
+                    _subject = value;
+                    value.Lessons.Add(this);
+                }
+            }
+        }
+        public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
+        private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
+        private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();
+        private void AssignmentsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.NewItems != null)
+            {
+                if (!Frozen)
+                {
+                    foreach (Assignment assignment in e.NewItems)
+                    {
+                        assignment.Teacher.Assignments.Add(assignment);
+                    }
+                }
+                else
+                {
+                    frozenAssignmentsAdd.AddRange(e.NewItems.Cast<Assignment>());
+                }
+            }
+            if (e.OldItems != null)
+            {
+                if (!Frozen)
+                {
+                    foreach (Assignment assignment in e.OldItems)
+                    {
+                        assignment.Teacher.Assignments.Remove(assignment);
+                    }
+                }
+                else
+                {
+                    frozenAssignmentsRemove.AddRange(e.OldItems.Cast<Assignment>());
+                }
+            }
+        }
+        public new void Unfreeze()
+        {
+            base.Unfreeze();
+            foreach (Assignment assignment in frozenAssignmentsAdd)
             {
                 assignment.Teacher.Assignments.Add(assignment);
             }
+            foreach (Assignment assignment in frozenAssignmentsRemove)
+            {
+                assignment.Teacher.Assignments.Remove(assignment);
+            }
+        }
+        public override void Commit()
+        {
             base.Commit();
         }
     }

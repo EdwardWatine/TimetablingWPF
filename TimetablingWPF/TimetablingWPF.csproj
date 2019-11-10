@@ -145,6 +145,7 @@
     </ApplicationDefinition>
     <Content Include="DefunctCode.txt" />
     <Compile Include="DataClasses\Lesson.cs" />
+    <Compile Include="DataClasses\Teacher.cs" />
     <Compile Include="Helpers\DataHelpers.cs" />
     <Compile Include="Helpers\FileHandlers.cs" />
     <Compile Include="Helpers\GenericHelpers.cs" />
@@ -152,7 +153,7 @@
     <Compile Include="Helpers\VisualExtensions.cs" />
     <Compile Include="DataClasses\Collections.cs" />
     <Compile Include="DataClasses\Form.cs" />
-    <Compile Include="DataClasses\Teacher Subject Group.cs" />
+    <Compile Include="DataClasses\Subject Group.cs" />
     <Compile Include="DataClasses\Room.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />
@@ -175,6 +176,9 @@
     </Compile>
     <Compile Include="Tabs\GroupTab.xaml.cs">
       <DependentUpon>GroupTab.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\ApplicationMenu.xaml.cs">
+      <DependentUpon>ApplicationMenu.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
@@ -217,6 +221,10 @@
     <Page Include="Tabs\GroupTab.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="UserControls\ApplicationMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="UserControls\PlaceholderComboBox.xaml">
       <SubType>Designer</SubType>

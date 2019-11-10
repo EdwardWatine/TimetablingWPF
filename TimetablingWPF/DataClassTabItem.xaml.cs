@@ -37,10 +37,10 @@ namespace TimetablingWPF
                 ((MenuItem)Resources[key]).CommandBindings.Add(new CommandBinding(command, executed, canExecute));
                 ((MenuItem)Resources[key]).Command = command;
             }
-            attachCommand($"miEditItem", Commands.EditItem, ExecuteEditItem, CanExecuteEditItem, dgMainDataGrid);
-            attachCommand($"miNewItem", Commands.NewItem, ExecuteNewItem, CanExecuteNewItem, type);
-            attachCommand($"miDeleteItem", Commands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem, dgMainDataGrid);
-            attachCommand($"miDuplicateItem", Commands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem, dgMainDataGrid);
+            attachCommand($"miEditItem", DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem, dgMainDataGrid);
+            attachCommand($"miNewItem", DataGridCommands.NewItem, ExecuteNewItem, CanExecuteNewItem, type);
+            attachCommand($"miDeleteItem", DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem, dgMainDataGrid);
+            attachCommand($"miDuplicateItem", DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem, dgMainDataGrid);
 
             dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type];
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
@@ -150,16 +150,16 @@ namespace TimetablingWPF
             return;
         }
     }
-    public static class Commands
+    public static class DataGridCommands
     {
         public static readonly RoutedUICommand NewItem = new RoutedUICommand(
-            "NewTeacher", "NewTeacher", typeof(Commands));
+            "NewTeacher", "NewTeacher", typeof(DataGridCommands));
         public static readonly RoutedUICommand EditItem = new RoutedUICommand(
-            "EditItem", "EditItem", typeof(Commands));
+            "EditItem", "EditItem", typeof(DataGridCommands));
         public static readonly RoutedUICommand DuplicateItem = new RoutedUICommand(
-            "DuplicateItem", "DuplicateItem", typeof(Commands));
+            "DuplicateItem", "DuplicateItem", typeof(DataGridCommands));
         public static readonly RoutedUICommand DeleteItem = new RoutedUICommand(
-            "DeleteItem", "DeleteItem", typeof(Commands));
+            "DeleteItem", "DeleteItem", typeof(DataGridCommands));
     }
 
     public enum CommandType

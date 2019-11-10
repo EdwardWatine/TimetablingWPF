@@ -58,7 +58,7 @@ namespace TimetablingWPF
         private bool Commited = false;
         public const string Wildcard = "Any";
         public bool Frozen { get; private set; } = false;
-        public ushort StorageIndex { get; set; }
+        public int StorageIndex { get; set; }
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.
         /// </summary>
@@ -102,7 +102,7 @@ namespace TimetablingWPF
         }
         public override bool Equals(object obj)
         {
-            return ReferenceEquals(this, obj) || ReferenceEquals(obj, Wildcard);
+            return ReferenceEquals(this, obj);
         }
         /// <summary>
         /// Will remove all instances of self from <see cref="RelationalCollection{T}"/>. Will then remove self from the properties list

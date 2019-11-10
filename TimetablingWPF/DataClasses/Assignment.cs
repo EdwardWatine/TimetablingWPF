@@ -32,10 +32,6 @@ namespace TimetablingWPF
             TimetableStructure structure = DataHelpers.GetTimetableStructure();
             return 5 * (structure.PeriodsPerDay * Week + Day) + Period;
         }
-        public ushort ToUshort()
-        {
-            return (ushort)ToInt();
-        }
         public static TimetableSlot FromInt(int from)
         {
             TimetableStructure structure = DataHelpers.GetTimetableStructure();

@@ -3,7 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:TimetablingWPF" xmlns:dgblz="clr-namespace:Dragablz;assembly=Dragablz"
+      xmlns:local="clr-namespace:TimetablingWPF"
       mc:Ignorable="d" 
       Title="MainPage" Background="#FFFFFF">
     <Grid>
@@ -12,11 +12,8 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        
-        <Menu>
-            <MenuItem Header="Hello"/>
-            <MenuItem Header="Hello2"/>
-        </Menu>
+        <local:ApplicationMenu/>
+
         <TabControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch"/>
         <StatusBar Grid.Row="2" Background="#FF0000" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
             <StatusBarItem>Hello</StatusBarItem>
