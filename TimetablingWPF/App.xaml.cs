@@ -43,7 +43,7 @@ namespace TimetablingWPF
                 new TimetableStructurePeriod("Lch", false),
                 new TimetableStructurePeriod("5", true)
             });
-            ObservableCollection<Teacher> TestData = new ObservableCollection<Teacher>
+            InternalObservableCollection<Teacher> TestData = new InternalObservableCollection<Teacher>
             {
                 new Teacher(){ Name="Mr Worth" },
                 new Teacher(){ Name="Mr Henley" }
@@ -52,7 +52,7 @@ namespace TimetablingWPF
             {
                 teacher.Commit();
             }
-            ObservableCollection<Subject> TestSubjects = new ObservableCollection<Subject>() {
+            InternalObservableCollection<Subject> TestSubjects = new InternalObservableCollection<Subject>() {
                 new Subject(){ Name = "Science" },
                 new Subject() { Name = "Timetabling" }
             };

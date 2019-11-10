@@ -64,12 +64,11 @@ namespace TimetablingWPF
         /// </summary>
         public virtual void Commit()
         {
-            if (Commited)
+            if (!Commited)
             {
-                return;
+                ((IList)Application.Current.Properties[GetType()]).Add(this);
+                Commited = true;
             }
-            ((IList)Application.Current.Properties[GetType()]).Add(this);
-            Commited = true;
         }
         public void UpdateWithClone(BaseDataClass clone)
         {

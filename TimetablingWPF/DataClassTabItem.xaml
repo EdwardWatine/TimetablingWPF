@@ -1,11 +1,11 @@
-﻿<TabItem x:Class="TimetablingWPF.DataSetTabItem"
+﻿<TabItem x:Class="TimetablingWPF.DataClassTabItem"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:TimetablingWPF"
       mc:Ignorable="d">
-    
+
     <TabItem.Resources>
         <MenuItem x:Key="miEditItem" Header="Edit item"/>
         <MenuItem x:Key="miNewItem" Header="New item"/>
@@ -53,24 +53,17 @@
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Critical}"/>
         </DataTemplate>
     </TabItem.Resources>
-    <TabItem.CommandBindings>
-        <CommandBinding Command="local:Commands.NewItem" CanExecute="CanExecuteNewItemCommand" Executed="ExecuteNewItemCommand"/>
-        <CommandBinding Command="local:Commands.EditItem" CanExecute="CanExecuteEditItem" Executed="ExecuteEditItemCommand"/>
-        <CommandBinding Command="local:Commands.DuplicateItem" CanExecute="CanExecuteDuplicateItem" Executed="ExecuteDuplicateItem"/>
-        <CommandBinding Command="local:Commands.DeleteItem" CanExecute="CanExecuteDeleteItem" Executed="ExecuteDeleteItem"/>
-    </TabItem.CommandBindings>
     <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
                           SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
         <DataGrid.ContextMenu>
-                <ContextMenu>
-                    <StaticResource ResourceKey="miNewItem"/>
-                    <Separator/>
-                    <StaticResource ResourceKey="miEditItem"/>
-                    <StaticResource ResourceKey="miDuplicateItem"/>
-                    <Separator/>
-                    <StaticResource ResourceKey="miDeleteItem"/>
-                    <Separator/>
-                </ContextMenu>
+            <ContextMenu Name="cmContextMenu">
+                <StaticResource ResourceKey="miNewItem"/>
+                <Separator/>
+                <StaticResource ResourceKey="miEditItem"/>
+                <StaticResource ResourceKey="miDuplicateItem"/>
+                <Separator/>
+                <StaticResource ResourceKey="miDeleteItem"/>
+            </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
 </TabItem>

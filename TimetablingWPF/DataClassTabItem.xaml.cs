@@ -21,25 +21,28 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for MainPage.xaml
     /// </summary>
-    public partial class DataSetTabItem : TabItem, ITab
+    public partial class DataClassTabItem : TabItem, ITab
     {
-        public DataSetTabItem(MainPage mainPage, Type type)
+        public DataClassTabItem(MainPage mainPage, Type type)
         {
             InitializeComponent();
             MainPage = mainPage;
             DataType = type;
-            void attachCommand(string key, ICommand command, object parameter = null)
+            void attachCommand(string key, ICommand command,
+                ExecutedRoutedEventHandler executed,
+                CanExecuteRoutedEventHandler canExecute,
+                object parameter = null)
             {
                 ((MenuItem)Resources[key]).CommandParameter = parameter;
+                ((MenuItem)Resources[key]).CommandBindings.Add(new CommandBinding(command, executed, canExecute));
                 ((MenuItem)Resources[key]).Command = command;
             }
-            attachCommand($"miEditItem", Commands.EditItem, dgMainDataGrid);
-            attachCommand($"miNewItem", Commands.NewItem, type);
-            attachCommand($"miDeleteItem", Commands.DeleteItem, dgMainDataGrid);
-            attachCommand($"miDuplicateItem", Commands.DuplicateItem, dgMainDataGrid);
+            attachCommand($"miEditItem", Commands.EditItem, ExecuteEditItem, CanExecuteEditItem, dgMainDataGrid);
+            attachCommand($"miNewItem", Commands.NewItem, ExecuteNewItem, CanExecuteNewItem, type);
+            attachCommand($"miDeleteItem", Commands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem, dgMainDataGrid);
+            attachCommand($"miDuplicateItem", Commands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem, dgMainDataGrid);
 
             dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type];
-            
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
                 CanUserSort = true,
@@ -83,7 +86,7 @@ namespace TimetablingWPF
                 { "Room", new string[]{"Quantity", "Critical", "Groups"} }
             };
         private readonly HashSet<string> Shortcols = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length", "Quantity", "Critical", "Subject", "Year Group" };
-        private void ExecuteNewItemCommand(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
             Type type = (Type)e.Parameter;
             MainPage.NewTab(
@@ -91,12 +94,12 @@ namespace TimetablingWPF
                 $"New {type.Name}");
         }
 
-        private void CanExecuteNewItemCommand(object sender, CanExecuteRoutedEventArgs e)
+        private void CanExecuteNewItem(object sender, CanExecuteRoutedEventArgs e)
         {
             e.CanExecute = true;
         }
 
-        private void ExecuteEditItemCommand(object sender, ExecutedRoutedEventArgs e)
+        private void ExecuteEditItem(object sender, ExecutedRoutedEventArgs e)
         {
             object item = (((DataGrid)e.Parameter).SelectedItem);
             Type type = item.GetType();
@@ -113,7 +116,7 @@ namespace TimetablingWPF
 
         private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
         {
-            object item = (((DataGrid)e.Parameter).SelectedItem);
+            object item = ((DataGrid)e.Parameter).SelectedItem;
             Type type = item.GetType();
             MainPage.NewTab(
                 Activator.CreateInstance(TypeTab[type], new object[] { item, MainPage, CommandType.edit }),

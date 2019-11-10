@@ -18,7 +18,9 @@ namespace TimetablingWPF
     /// </summary>
     public struct TimetableSlot : IEquatable<TimetableSlot>
     {
-        public int Week, Day, Period;
+        public int Week { get; }
+        public int Day { get; }
+        public int Period { get; }
         public TimetableSlot(int week, int day, int period)
         {
             Week = week;

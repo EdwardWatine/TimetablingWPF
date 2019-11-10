@@ -69,8 +69,18 @@ namespace TimetablingWPF
         {
             Year = year;
         }
+        private bool Committed;
+        public InternalObservableCollection<Form> Forms { get; private set; } = new InternalObservableCollection<Form>();
         public string Year { get; set; }
         public int StorageIndex { get; set; }
+        public void Commit()
+        {
+            if (!Committed)
+            {
+                ((IList)Application.Current.Properties[typeof(YearGroup)]).Add(this);
+                Committed = true;
+            }
+        }
         public override string ToString()
         {
             return $"Year {Year}";

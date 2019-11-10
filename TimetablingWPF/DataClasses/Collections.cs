@@ -26,7 +26,13 @@ namespace TimetablingWPF
     {
         public ObservableCollection() { }
         public ObservableCollection(IEnumerable<T> collection) : base(collection) { }
-
+        public void AddRange(IEnumerable<T> enumerable)
+        {
+            foreach (T item in enumerable)
+            {
+                Add(item);
+            }
+        }
         public virtual object Clone()
         {
             return new ObservableCollection<T>(this);
@@ -77,13 +83,21 @@ namespace TimetablingWPF
     /// <summary>
     /// A list which reflects updates in itself with the list in the added form
     /// </summary>
-    /// <typeparam name="T">The type of the objects in this list</typeparam>
-    public class RelationalCollection<T> : InternalObservableCollection<T>, IRelationalCollection, IFreezable where T : INotifyPropertyChanged
+    /// <typeparam name="TContent">The type of the objects in this list</typeparam>
+    /// <typeparam name="TThis">The type of the object declaring this list</typeparam>
+    public class RelationalCollection<TContent, TThis> : InternalObservableCollection<TContent>, IRelationalCollection, IFreezable
+        where TContent : INotifyPropertyChanged
+        where TThis : INotifyPropertyChanged
     {
         /// <summary>
         /// The object to which this list belongs
         /// </summary>
-        public object Parent { get; set; }
+        public object Parent
+        {
+            get { return _parent; }
+            set { _parent = (TThis)value; }
+        }
+        private TThis _parent;
         /// <summary>
         /// Holds the field name of the object of type T which holds the RelationalList which will hold the parent
         /// </summary>
@@ -92,27 +106,23 @@ namespace TimetablingWPF
         /// The form constructor
         /// </summary>
         /// <param name="otherSetProperty"><see cref="OtherSetProperty"/></param>
-        /// <param name="parent"><see cref="Parent"/></param>
-        public RelationalCollection(string otherSetProperty,
-            BaseDataClass parent = null)
+        public RelationalCollection(string otherSetProperty)
         {
             OtherSetProperty = otherSetProperty;
-            Parent = parent;
         }
 
         public RelationalCollection(string otherSetProperty,
-            IEnumerable<T> collection, BaseDataClass parent = null) : base(collection)
+            IEnumerable<TContent> collection) : base(collection)
         {
             OtherSetProperty = otherSetProperty;
-            Parent = parent;
         }
         /// <summary>
         /// Adds a new item to the list, and adds the parent in the list of the added item
         /// </summary>
         /// <param name="item">Item to add to the list</param>
-        public new void Add(T item)
+        public new void Add(TContent item)
         {
-            if (Parent == null)
+            if (_parent == null)
             {
                 throw new InvalidOperationException("Parent is not set");
             }
@@ -122,9 +132,13 @@ namespace TimetablingWPF
                 frozenAddElements.Add(item);
                 return;
             }
-            ((IList)item.GetType().GetProperty(OtherSetProperty).GetValue(item)).Add(Parent);
+            AddToOther(item);
         }
-        public new void Remove(T item)
+        private void AddToOther(TContent item)
+        {
+            ((ObservableCollection<TThis>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item)).Add(_parent);
+        }
+        public new void Remove(TContent item)
         {
             if (Parent == null)
             {
@@ -136,30 +150,43 @@ namespace TimetablingWPF
                 frozenRemoveElements.Add(item);
                 return;
             }
-            ((IList)item.GetType().GetProperty(OtherSetProperty).GetValue(item)).Remove(Parent);
+            RemoveFromOther(item);
+        }
+        private void RemoveFromOther(TContent item)
+        {
+            ((ObservableCollection<TThis>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item)).Remove(_parent);
         }
         public void Freeze()
         {
             Frozen = true;
         }
+        public new void AddRange(IEnumerable<TContent> enumerable)
+        {
+            foreach (TContent item in enumerable)
+            {
+                Add(item);
+            }
+        }
         public void Unfreeze()
         {
             Frozen = false;
-            foreach (T element in frozenAddElements)
+            foreach (TContent element in frozenRemoveElements)
             {
-                ((IList)element.GetType().GetProperty(OtherSetProperty).GetValue(element)).Add(Parent);
+                RemoveFromOther(element);
             }
-            foreach (T element in frozenRemoveElements)
+            foreach (TContent element in frozenAddElements)
             {
-                ((IList)element.GetType().GetProperty(OtherSetProperty).GetValue(element)).Remove(Parent);
+                AddToOther(element);
             }
+            frozenRemoveElements.Clear();
+            frozenAddElements.Clear();
         }
         public override object Clone()
         {
-            return new RelationalCollection<T>(OtherSetProperty, this) { Parent = Parent };
+            return new RelationalCollection<TContent, TThis>(OtherSetProperty, this) { Parent = Parent };
         }
         public bool Frozen { get; private set; } = false;
-        private readonly IList<T> frozenAddElements = new List<T>();
-        private readonly IList<T> frozenRemoveElements = new List<T>();
+        private readonly IList<TContent> frozenAddElements = new List<TContent>();
+        private readonly IList<TContent> frozenRemoveElements = new List<TContent>();
     }
 }

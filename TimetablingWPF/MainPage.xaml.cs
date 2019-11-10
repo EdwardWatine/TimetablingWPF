@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Threading;
 using Humanizer;
 
 namespace TimetablingWPF
@@ -153,16 +154,17 @@ namespace TimetablingWPF
             {
                 if (tab.Content == page)
                 {
-                    tcMainTabControl.Items.Remove(tab);
+                    if (tcMainTabControl.Items.Count == 0 && Application.Current.Windows.Count > 1)
+                    {
+                        Window.GetWindow(this).Close();
+                        return;
+                    }
                     if (tab == currentTab)
                     {
                         TabHistory.Pop();
                         tcMainTabControl.SelectedItem = TabHistory.FirstOrDefault();
                     }
-                    if (tcMainTabControl.Items.Count == 0 && Application.Current.Windows.Count > 1)
-                    {
-                        Window.GetWindow(this).Close();
-                    }
+                    tcMainTabControl.Items.Remove(tab);
                     return;
                 }
             }
@@ -177,7 +179,8 @@ namespace TimetablingWPF
         {
             TextBlock header = new TextBlock() { Text = type.Name.Pluralize() };
             header.MouseLeftButtonUp += ManualChange;
-            tcMainTabControl.Items.Add(new DataSetTabItem(this, type) { Header = header });
+            DataClassTabItem dataTab = new DataClassTabItem(this, type) { Header = header };
+            tcMainTabControl.Items.Add(dataTab);
             if (tcMainTabControl.Items.Count == 1)
             {
                 TabHistory.Push((TabItem)tcMainTabControl.Items[0]);
@@ -188,7 +191,7 @@ namespace TimetablingWPF
         {
             for (int i=0; i<tcMainTabControl.Items.Count; i++)
             {
-                if (tcMainTabControl.Items[i] is DataSetTabItem tabItem && tabItem.DataType == type)
+                if (tcMainTabControl.Items[i] is DataClassTabItem tabItem && tabItem.DataType == type)
                 {
                     tcMainTabControl.Items.RemoveAt(i);
                     if (TabHistory.FirstOrDefault() == tabItem)

@@ -3,7 +3,7 @@
     public class Teacher : BaseDataClass
     {
         public ObservableCollection<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollection<TimetableSlot>();
-        public RelationalCollection<Subject> Subjects { get; private set; } = new RelationalCollection<Subject>("Teachers");
+        public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>("Teachers");
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
         public override void Commit()
         {
@@ -17,14 +17,14 @@
 
     public class Subject : BaseDataClass
     {
-        public RelationalCollection<Group> Groups { get; private set; } = new RelationalCollection<Group>("Subjects");
-        public RelationalCollection<Teacher> Teachers { get; private set; } = new RelationalCollection<Teacher>("Subjects");
+        public RelationalCollection<Group, Subject> Groups { get; private set; } = new RelationalCollection<Group, Subject>("Subjects");
+        public RelationalCollection<Teacher, Subject> Teachers { get; private set; } = new RelationalCollection<Teacher, Subject>("Subjects");
         public InternalObservableCollection<Lesson> Lessons { get; private set; } = new InternalObservableCollection<Lesson>();
     }
 
     public class Group : BaseDataClass
     {
-        public RelationalCollection<Subject> Subjects { get; private set; } = new RelationalCollection<Subject>("Groups");
-        public RelationalCollection<Room> Rooms { get; private set; } = new RelationalCollection<Room>("Groups");
+        public RelationalCollection<Subject, Group> Subjects { get; private set; } = new RelationalCollection<Subject, Group>("Groups");
+        public RelationalCollection<Room, Group> Rooms { get; private set; } = new RelationalCollection<Room, Group>("Groups");
     }
 }

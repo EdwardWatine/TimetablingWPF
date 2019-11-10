@@ -15,7 +15,7 @@ namespace TimetablingWPF
 {
     public class Form : BaseDataClass
     {
-        public ObservableCollection<Lesson> Lessons { get; private set; } = new ObservableCollection<Lesson>();
+        public InternalObservableCollection<Lesson> Lessons { get; private set; } = new InternalObservableCollection<Lesson>();
         private YearGroup _year;
         public YearGroup YearGroup
         {
@@ -24,6 +24,8 @@ namespace TimetablingWPF
             {
                 if (value != _year)
                 {
+                    _year?.Forms.Remove(this);
+                    value.Forms.Add(this);
                     _year = value;
                     NotifyPropertyChanged("YearGroup");
                 }

@@ -41,6 +41,6 @@ namespace TimetablingWPF
                 }
             }
         }
-        public RelationalCollection<Group> Groups { get; private set; } = new RelationalCollection<Group>("Rooms");
+        public RelationalCollection<Group, Room> Groups { get; private set; } = new RelationalCollection<Group, Room>("Rooms");
     }
 }

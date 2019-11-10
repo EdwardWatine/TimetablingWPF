@@ -23,8 +23,8 @@ namespace TimetablingWPF
             {
                 if (value != _form)
                 {
-                    _form = value;
                     _form?.Lessons.Remove(this);
+                    _form = value;
                     value.Lessons.Add(this);
                     NotifyPropertyChanged("Form");
                 }
