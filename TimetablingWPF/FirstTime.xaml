@@ -14,7 +14,6 @@
         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
             <GradientStop Color="#FFFFFF" Offset="0.0"/>
             <GradientStop Color="#000064" Offset="0.75"/>
-            <GradientStop Color="#000064" Offset="1.0"/>
 
         </LinearGradientBrush>
     </Page.Background>
@@ -136,7 +135,7 @@
                                 <Image MaxHeight="{Binding ElementName=fpath, Path=ActualHeight}"
                                        Source="{StaticResource FileIcon}"/>
                             </InlineUIContainer>         
-                            <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding}">
+                            <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding Converter={StaticResource URISetatter}}">
                                 <TextBlock x:Name="fpath" 
                                            Text="{Binding Converter={StaticResource URISetatter}, ConverterParameter=filename}"
                                            ToolTip="{Binding Converter={StaticResource URISetatter}}"/>

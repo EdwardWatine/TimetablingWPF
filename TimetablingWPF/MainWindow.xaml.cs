@@ -14,7 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using static TimetablingWPF.FileHandlers;
+using static TimetablingWPF.FileHelpers;
 
 namespace TimetablingWPF
 {
@@ -25,27 +25,21 @@ namespace TimetablingWPF
 
     public partial class MainWindow : Window
     {
-        public MainWindow()
+        public MainWindow(bool loadDataTabs = false)
         {
             InitializeComponent();
             //Subject Science = new Subject("Science");
 
             //Room sgroup = new Room("Science Rooms", 5);
             MainPage mp = new MainPage();
+            if (loadDataTabs)
+            {
+                foreach (Type type in (Type[])Application.Current.Properties["USER_TYPES"])
+                {
+                    mp.NewDataSetTab(type);
+                }
+            }
             Content = mp;
-            return;
-            if (AppDomain.CurrentDomain.ActivationContext == null)
-            {
-                Content = new FirstTime();
-                return;
-            }
-            var file = AppDomain.CurrentDomain.SetupInformation.ActivationArguments.ActivationData;
-            if (file != null && file.Length > 0)
-            {
-                //LoadFile(file[0]);
-                return;
-            }
-            Content = new FirstTime();
             return;
 
         }

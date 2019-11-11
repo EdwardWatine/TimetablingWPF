@@ -1,0 +1,12 @@
+﻿<Window x:Class="TimetablingWPF.LoadingBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             mc:Ignorable="d" Width="240" Height="160" ResizeMode="NoResize" WindowStartupLocation="CenterOwner"
+             d:DesignHeight="450" d:DesignWidth="800" Background="#000064">
+    <Grid VerticalAlignment="Center" HorizontalAlignment="Center">
+        <ProgressBar Foreground="#44a6c6" Name="pbProgressBar" VerticalAlignment="Center" Width="200" Height="20" Value="0" Maximum="100"/>
+        <TextBlock Name="tbTextBlock" VerticalAlignment="Center" TextAlignment="Center"/>
+    </Grid>
+</Window>

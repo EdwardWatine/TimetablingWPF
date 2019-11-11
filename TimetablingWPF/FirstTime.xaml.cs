@@ -14,7 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.IO;
 using Microsoft.Win32;
-using static TimetablingWPF.FileHandlers;
+using static TimetablingWPF.FileHelpers;
 
 namespace TimetablingWPF
 {
@@ -31,7 +31,7 @@ namespace TimetablingWPF
 
             InitializeComponent();
 
-            IList<string> lines = (IList<string>)Properties.Settings.Default.RECENT_FILES;
+            IList<string> lines = Properties.Settings.Default.RECENT_FILES.Cast<string>().ToList();
             if (lines.Count == 0)
             {
                 tbNoRecentFiles.Visibility = Visibility.Visible;
@@ -44,7 +44,8 @@ namespace TimetablingWPF
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = e.Source as Hyperlink;
-            //LoadFile(link.Tag.ToString());
+            FileHelpers.OpenFile(link.Tag.ToString());
+            LoadData(link.Tag.ToString(), () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this));
         }
         
         public void OpenFile(object sender, RoutedEventArgs e)
@@ -52,24 +53,9 @@ namespace TimetablingWPF
             string fpath = FileDialog();
             if (fpath!=null)
             {
-               // LoadFile(fpath);
+                FileHelpers.OpenFile(fpath);
+                LoadData(fpath, () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this));
             }
-        }
-
-        public string FileDialog()
-        {
-            OpenFileDialog dialog = new OpenFileDialog
-            {
-                Filter = "Timetable files (*.TTBL)|*.TTBL|All files (*.*)|*.*",
-                InitialDirectory = TimetablingWPF.Properties.Settings.Default.LAST_ACCESSED_PATH,
-                ValidateNames = true
-            };
-            if (dialog.ShowDialog() == true)
-            {
-                TimetablingWPF.Properties.Settings.Default.LAST_ACCESSED_PATH = dialog.FileName;
-                return dialog.FileName;
-            }
-            return null;
         }
 
         private void NewByImport(object sender, RoutedEventArgs e)
@@ -116,7 +102,7 @@ namespace TimetablingWPF
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             Uri URI = (Uri)value;
-            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.AbsolutePath) : URI.AbsolutePath;
+            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.AbsolutePath) : URI.LocalPath;
         }
         public object ConvertBack(object value, Type targetType, object paramter, System.Globalization.CultureInfo culture)
         {

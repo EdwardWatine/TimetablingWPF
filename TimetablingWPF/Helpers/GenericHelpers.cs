@@ -48,10 +48,5 @@ namespace TimetablingWPF
             box.TextChanged += delegate (object sender, TextChangedEventArgs e) { ec.UpdateError(); };
             return ec;
         }
-
-        public static CultureInfo GetGlobalCultureInfo()
-        {
-            return (CultureInfo)Application.Current.Properties["GLOBAL_CULTURE"];
-        }
     }
 }

@@ -147,7 +147,7 @@
     <Compile Include="DataClasses\Lesson.cs" />
     <Compile Include="DataClasses\Teacher.cs" />
     <Compile Include="Helpers\DataHelpers.cs" />
-    <Compile Include="Helpers\FileHandlers.cs" />
+    <Compile Include="Helpers\FileHelpers.cs" />
     <Compile Include="Helpers\GenericHelpers.cs" />
     <Compile Include="Helpers\GenericExtensions.cs" />
     <Compile Include="Helpers\VisualExtensions.cs" />
@@ -162,6 +162,10 @@
       <DependentUpon>DataClassTabItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\VisualHelpers.cs" />
+    <Compile Include="Settings.cs" />
+    <Compile Include="StartWindow.xaml.cs">
+      <DependentUpon>StartWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Tabs\LessonTab.xaml.cs">
       <DependentUpon>LessonTab.xaml</DependentUpon>
     </Compile>
@@ -179,6 +183,9 @@
     </Compile>
     <Compile Include="UserControls\ApplicationMenu.xaml.cs">
       <DependentUpon>ApplicationMenu.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="UserControls\LoadingBox.xaml.cs">
+      <DependentUpon>LoadingBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
@@ -199,6 +206,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="DataClassTabItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="StartWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -223,6 +234,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="UserControls\ApplicationMenu.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="UserControls\LoadingBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

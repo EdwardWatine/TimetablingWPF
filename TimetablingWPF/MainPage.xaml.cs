@@ -26,9 +26,6 @@ namespace TimetablingWPF
     {
         public MainPage()
         {
-            Application.Current.MainWindow.WindowState = WindowState.Maximized;
-            Application.Current.MainWindow.ResizeMode = ResizeMode.CanResize;
-            Application.Current.MainWindow.SizeToContent = SizeToContent.Manual;
             InitializeComponent();
             void MoveWindow()
             {

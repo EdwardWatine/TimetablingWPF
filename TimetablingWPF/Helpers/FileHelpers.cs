@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,7 +11,7 @@ using static TimetablingWPF.DataHelpers;
 
 namespace TimetablingWPF
 {
-    public static class FileHandlers
+    public static class FileHelpers
     {
         private static void WriteUshortEnum(IEnumerable<int> enumerable, BinaryWriter writer)
         {
@@ -49,8 +51,57 @@ namespace TimetablingWPF
                 obj.Commit();
             }, reader);
         }
-        public static void LoadData(string fpath)
+        public static void OpenFile(string fpath)
         {
+            Application.Current.Properties["CURRENT_FILE_PATH"] = fpath;
+            Properties.Settings.Default.RECENT_FILES.Remove(fpath);
+            Properties.Settings.Default.RECENT_FILES.Insert(0, fpath);
+            Properties.Settings.Default.Save();
+        }
+        public static void RecentFilesRemove(string fpath)
+        {
+            Properties.Settings.Default.RECENT_FILES.Remove(fpath);
+            Properties.Settings.Default.Save();
+        }
+        public static void LoadData(string fpath, Action done = null, Window owner = null)
+        {
+            BackgroundWorker worker = new BackgroundWorker()
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
+            LoadingBox box = new LoadingBox("Loading...")
+            {
+                Owner = owner
+            };
+            box.Show();
+            worker.DoWork += delegate (object sender, DoWorkEventArgs e) { 
+                LoadDataFromFile(fpath, worker); };
+            worker.ProgressChanged += delegate (object sender, ProgressChangedEventArgs e)
+            {
+                box.pbProgressBar.Value = e.ProgressPercentage;
+                box.tbTextBlock.Text = (string)e.UserState;
+            };
+            worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e) { box.Close(); done?.Invoke(); };
+            worker.RunWorkerAsync();
+            worker.Dispose();
+
+        }
+        public static void LoadDataFromFile(string fpath, BackgroundWorker worker = null)
+        {
+            int total = 7;
+            int count = 0;
+            void UpdateWorker(string things)
+            {
+                worker?.ReportProgress(count * 100 / 7, $"Loading {things} ({count + 1}/{total})");
+                count++;
+            };
+            UpdateWorker("Lessons");
+            if (!File.Exists(fpath))
+            {
+                VisualHelpers.ShowErrorBox($"File path {fpath} does not exist.", "File not found!");
+                RecentFilesRemove(fpath);
+            }
             FileStream fileStream = File.OpenRead(fpath);
             BinaryReader reader = new BinaryReader(fileStream);
             LoadEnum(() =>
@@ -59,25 +110,30 @@ namespace TimetablingWPF
                 YearGroup year = new YearGroup(name);
                 year.Commit();
             }, reader);
+            UpdateWorker("Teachers");
             LoadBDCEnum<Teacher>(t =>
             {
                 LoadEnum(() => t.UnavailablePeriods.Add(TimetableSlot.FromInt(reader.ReadInt32())), reader);
             }, reader);
+            UpdateWorker("Subjects");
             IList<Teacher> teacher_list = GetData<Teacher>();
             LoadBDCEnum<Subject>(s =>
             {
                 LoadEnum(() => s.Teachers.Add(teacher_list[reader.ReadInt32()]), reader);
             }, reader);
+            UpdateWorker("Forms");
             IList<YearGroup> year_list = GetData<YearGroup>();
             LoadBDCEnum<Form>(f =>
             {
                 f.YearGroup = year_list[reader.ReadInt32()];
             }, reader);
+            UpdateWorker("Rooms");
             LoadBDCEnum<Room>(r =>
             {
                 r.Quantity = reader.ReadInt32();
                 r.Critical = reader.ReadBoolean();
             }, reader);
+            UpdateWorker("Groups");
             IList<Subject> subject_list = GetData<Subject>();
             IList<Room> room_list = GetData<Room>();
             LoadBDCEnum<Group>(g =>
@@ -85,6 +141,7 @@ namespace TimetablingWPF
                 LoadEnum(() => g.Subjects.Add(subject_list[reader.ReadInt32()]), reader);
                 LoadEnum(() => g.Rooms.Add(room_list[reader.ReadInt32()]), reader);
             }, reader);
+            UpdateWorker("Lessons");
             IList<Form> form_list = GetData<Form>();
             LoadBDCEnum<Lesson>(l =>
             {
@@ -97,7 +154,7 @@ namespace TimetablingWPF
             reader.Close();
             fileStream.Close();
         }
-        public static void SaveData(string fpath)
+        public static void SaveDataToFile(string fpath)
         {
             MemoryStream all_data = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(all_data);
@@ -151,5 +208,21 @@ namespace TimetablingWPF
             writer.Close();
             all_data.Close();
         }
+        public static string FileDialog()
+        {
+            OpenFileDialog dialog = new OpenFileDialog
+            {
+                Filter = "Timetable files (*.TTBL)|*.TTBL|All files (*.*)|*.*",
+                InitialDirectory = Properties.Settings.Default.LAST_ACCESSED_PATH,
+                ValidateNames = true
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                Properties.Settings.Default.LAST_ACCESSED_PATH = dialog.FileName;
+                return dialog.FileName;
+            }
+            return null;
+        }
     }
+
 }

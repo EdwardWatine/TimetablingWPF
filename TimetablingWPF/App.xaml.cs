@@ -24,9 +24,10 @@ namespace TimetablingWPF
     {
         public App()
         {
+            InitializeComponent();
             Properties["APPLICATION_NAME"] = "Timetabler";
+            Properties["CURRENT_FILE_PATH"] = null;
             Properties["USER_TYPES"] = new Type[] { typeof(Teacher), typeof(Subject), typeof(Lesson), typeof(Form), typeof(Group), typeof(Room) };
-            Properties["GLOBAL_CULTURE"] = new CultureInfo("en-GB");
             Type ioc_type = typeof(InternalObservableCollection<>);
             foreach (Type type in (Type[])Properties["USER_TYPES"])
             {
@@ -43,26 +44,7 @@ namespace TimetablingWPF
                 new TimetableStructurePeriod("Lch", false),
                 new TimetableStructurePeriod("5", true)
             });
-            InternalObservableCollection<Teacher> TestData = new InternalObservableCollection<Teacher>
-            {
-                new Teacher(){ Name="Mr Worth" },
-                new Teacher(){ Name="Mr Henley" }
-            };
-            foreach (Teacher teacher in TestData)
-            {
-                teacher.Commit();
-            }
-            InternalObservableCollection<Subject> TestSubjects = new InternalObservableCollection<Subject>() {
-                new Subject(){ Name = "Science" },
-                new Subject() { Name = "Timetabling" }
-            };
-            foreach (Subject subject in TestSubjects) { subject.Commit(); }
-            MainWindow window = new MainWindow();
-            foreach (Type type in (Type[])Properties["USER_TYPES"])
-            {
-                window.GetMainPage().NewDataSetTab(type);
-            }
-            FileHandlers.SaveData(@"C:\Users\02ewa\Desktop\testdata.ttbl");
+            StartWindow window = new StartWindow();
             window.Show();
         }
 
