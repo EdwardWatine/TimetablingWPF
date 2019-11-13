@@ -44,23 +44,27 @@ namespace TimetablingWPF
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = e.Source as Hyperlink;
-            FileHelpers.OpenFile(link.Tag.ToString());
-            LoadData(link.Tag.ToString(), () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this));
+            if (LoadData(link.Tag.ToString(), () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this)))
+            {
+                RegisterOpenFile(link.Tag.ToString());
+            }
         }
-        
+
         public void OpenFile(object sender, RoutedEventArgs e)
         {
-            string fpath = FileDialog();
-            if (fpath!=null)
+            string fpath = OpenFileDialogHelper();
+            if (fpath != null)
             {
-                FileHelpers.OpenFile(fpath);
-                LoadData(fpath, () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this));
+                if (LoadData(fpath, () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this)))
+                {
+                    RegisterOpenFile(fpath);
+                }
             }
         }
 
         private void NewByImport(object sender, RoutedEventArgs e)
         {
-            string fpath = FileDialog();
+            string fpath = OpenFileDialogHelper();
             if (fpath == null) { return; }
             CheckboxDialog cbDialog = new CheckboxDialog(Application.Current.MainWindow, new string[] {
                 "Subjects", "Teachers", "Rooms", "Forms", "\n", "Sets", "Timetables"});

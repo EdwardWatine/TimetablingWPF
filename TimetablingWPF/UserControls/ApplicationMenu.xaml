@@ -8,13 +8,13 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Menu>
         <MenuItem Header="_File">
-            <MenuItem Header="_New"/>
+            <MenuItem Header="_New" Command="ApplicationCommands.New"/>
             <Separator/>
-            <MenuItem Header="_Open"/>
+            <MenuItem Header="_Open" Command="ApplicationCommands.Open"/>
             <MenuItem Header="_Import"/>
             <Separator/>
-            <MenuItem Header="_Save"/>
-            <MenuItem Header="Save As"/>
+            <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
+            <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs" InputGestureText="CTRL+SHIFT+S"/>
         </MenuItem>
         <MenuItem Header="Hello2"/>
     </Menu>

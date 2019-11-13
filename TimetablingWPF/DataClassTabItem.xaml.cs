@@ -38,7 +38,7 @@ namespace TimetablingWPF
                 ((MenuItem)Resources[key]).Command = command;
             }
             attachCommand($"miEditItem", DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem, dgMainDataGrid);
-            attachCommand($"miNewItem", DataGridCommands.NewItem, ExecuteNewItem, CanExecuteNewItem, type);
+            attachCommand($"miNewItem", DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute, type);
             attachCommand($"miDeleteItem", DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem, dgMainDataGrid);
             attachCommand($"miDuplicateItem", DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem, dgMainDataGrid);
 
@@ -92,11 +92,6 @@ namespace TimetablingWPF
             MainPage.NewTab(
                 Activator.CreateInstance(TypeTab[type], new object[] { Activator.CreateInstance(type), MainPage, CommandType.@new }),
                 $"New {type.Name}");
-        }
-
-        private void CanExecuteNewItem(object sender, CanExecuteRoutedEventArgs e)
-        {
-            e.CanExecute = true;
         }
 
         private void ExecuteEditItem(object sender, ExecutedRoutedEventArgs e)

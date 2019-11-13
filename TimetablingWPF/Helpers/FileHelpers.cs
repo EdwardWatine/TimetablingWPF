@@ -51,9 +51,9 @@ namespace TimetablingWPF
                 obj.Commit();
             }, reader);
         }
-        public static void OpenFile(string fpath)
+        public static void RegisterOpenFile(string fpath)
         {
-            Application.Current.Properties["CURRENT_FILE_PATH"] = fpath;
+            SetCurrentFilePath(fpath);
             Properties.Settings.Default.RECENT_FILES.Remove(fpath);
             Properties.Settings.Default.RECENT_FILES.Insert(0, fpath);
             Properties.Settings.Default.Save();
@@ -63,7 +63,7 @@ namespace TimetablingWPF
             Properties.Settings.Default.RECENT_FILES.Remove(fpath);
             Properties.Settings.Default.Save();
         }
-        public static void LoadData(string fpath, Action done = null, Window owner = null)
+        public static bool LoadData(string fpath, Action done = null, Window owner = null)
         {
             BackgroundWorker worker = new BackgroundWorker()
             {
@@ -74,7 +74,6 @@ namespace TimetablingWPF
             {
                 Owner = owner
             };
-            box.Show();
             worker.DoWork += delegate (object sender, DoWorkEventArgs e) { 
                 LoadDataFromFile(fpath, worker); };
             worker.ProgressChanged += delegate (object sender, ProgressChangedEventArgs e)
@@ -85,7 +84,8 @@ namespace TimetablingWPF
             worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e) { box.Close(); done?.Invoke(); };
             worker.RunWorkerAsync();
             worker.Dispose();
-
+            box.ShowDialog();
+            return !worker.CancellationPending;
         }
         public static void LoadDataFromFile(string fpath, BackgroundWorker worker = null)
         {
@@ -101,6 +101,7 @@ namespace TimetablingWPF
             {
                 VisualHelpers.ShowErrorBox($"File path {fpath} does not exist.", "File not found!");
                 RecentFilesRemove(fpath);
+                worker.CancelAsync();
             }
             FileStream fileStream = File.OpenRead(fpath);
             BinaryReader reader = new BinaryReader(fileStream);
@@ -208,13 +209,14 @@ namespace TimetablingWPF
             writer.Close();
             all_data.Close();
         }
-        public static string FileDialog()
+        public static string OpenFileDialogHelper()
         {
             OpenFileDialog dialog = new OpenFileDialog
             {
                 Filter = "Timetable files (*.TTBL)|*.TTBL|All files (*.*)|*.*",
                 InitialDirectory = Properties.Settings.Default.LAST_ACCESSED_PATH,
-                ValidateNames = true
+                ValidateNames = true,
+                DefaultExt = ".ttbl"
             };
             if (dialog.ShowDialog() == true)
             {
@@ -222,6 +224,32 @@ namespace TimetablingWPF
                 return dialog.FileName;
             }
             return null;
+        }
+        public static string SaveFileDialogHelper()
+        {
+            SaveFileDialog dialog = new SaveFileDialog
+            {
+                Filter = "Timetable files (*.TTBL)|*.TTBL|All files (*.*)|*.*",
+                InitialDirectory = Properties.Settings.Default.LAST_ACCESSED_PATH,
+                ValidateNames = true,
+                OverwritePrompt = true,
+                DefaultExt = ".ttbl",
+                AddExtension = true
+            };
+            if (dialog.ShowDialog() == true)
+            {
+                Properties.Settings.Default.LAST_ACCESSED_PATH = dialog.FileName;
+                return dialog.FileName;
+            }
+            return null;
+        }
+        public static void SetCurrentFilePath(string fpath)
+        {
+            Application.Current.Properties["CURRENT_FILE_PATH"] = fpath;
+            foreach (Window window in Application.Current.Windows)
+            {
+                window.Title = $"Timetabler - {fpath}";
+            }
         }
     }
 
