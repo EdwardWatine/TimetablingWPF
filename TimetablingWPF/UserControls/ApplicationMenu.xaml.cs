@@ -58,6 +58,7 @@ namespace TimetablingWPF
             string fpath = FileHelpers.OpenFileDialogHelper();
             if (fpath != null && fpath != (string)Application.Current.Properties["CURRENT_FILE_PATH"])
             {
+                DataHelpers.ClearData();
                 if (FileHelpers.LoadData(fpath, owner: Window.GetWindow(this)))
                 {
                     FileHelpers.RegisterOpenFile(fpath);

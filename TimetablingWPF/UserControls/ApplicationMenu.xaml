@@ -14,7 +14,7 @@
             <MenuItem Header="_Import"/>
             <Separator/>
             <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
-            <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs" InputGestureText="CTRL+SHIFT+S"/>
+            <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs" InputGestureText="Ctrl+Shift+S"/>
         </MenuItem>
         <MenuItem Header="Hello2"/>
     </Menu>

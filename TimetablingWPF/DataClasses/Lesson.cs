@@ -15,21 +15,7 @@ namespace TimetablingWPF
 {
     public class Lesson : BaseDataClass
     {
-        private Form _form;
-        public Form Form
-        {
-            get { return _form; }
-            set
-            {
-                if (value != _form)
-                {
-                    _form?.Lessons.Remove(this);
-                    _form = value;
-                    value.Lessons.Add(this);
-                    NotifyPropertyChanged("Form");
-                }
-            }
-        }
+        public RelationalCollection<Form, Lesson> Forms { get; private set; } = new RelationalCollection<Form, Lesson>("Lessons");
         private int _lpc;
         public int LessonsPerCycle
         {

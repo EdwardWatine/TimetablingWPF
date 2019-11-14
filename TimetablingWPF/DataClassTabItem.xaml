@@ -43,6 +43,15 @@
         <DataTemplate x:Key="RoomsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Rooms, Converter={StaticResource ListFormatter}}"/>
         </DataTemplate>
+        <DataTemplate x:Key="GroupsTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Groups, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="FormsTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Forms, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
+        <DataTemplate x:Key="LessonsTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Lessons, Converter={StaticResource ListFormatter}}"/>
+        </DataTemplate>
         <DataTemplate x:Key="Year GroupTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding YearGroup}"/>
         </DataTemplate>

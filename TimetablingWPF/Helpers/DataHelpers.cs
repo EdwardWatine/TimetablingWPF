@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -30,6 +31,14 @@ namespace TimetablingWPF
         public static TimetableStructure GetTimetableStructure()
         {
             return (TimetableStructure)Application.Current.Properties[typeof(TimetableStructure)];
+        }
+        public static void ClearData()
+        {
+            ((IList)Application.Current.Properties[typeof(YearGroup)]).Clear();
+            foreach (Type type in (IList<Type>)Application.Current.Properties["USER_TYPES"])
+            {
+                ((IList)Application.Current.Properties[type]).Clear();
+            }
         }
     }
 }

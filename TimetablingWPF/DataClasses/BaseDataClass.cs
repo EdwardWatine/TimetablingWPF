@@ -66,7 +66,7 @@ namespace TimetablingWPF
         {
             if (!Commited)
             {
-                ((IList)Application.Current.Properties[GetType()]).Add(this);
+                Application.Current.Dispatcher.Invoke(()=>((IList)Application.Current.Properties[GetType()]).Add(this));
                 Commited = true;
             }
         }

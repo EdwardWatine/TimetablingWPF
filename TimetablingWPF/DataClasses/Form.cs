@@ -15,7 +15,7 @@ namespace TimetablingWPF
 {
     public class Form : BaseDataClass
     {
-        public InternalObservableCollection<Lesson> Lessons { get; private set; } = new InternalObservableCollection<Lesson>();
+        public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");
         private YearGroup _year;
         public YearGroup YearGroup
         {

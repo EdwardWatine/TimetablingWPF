@@ -13,7 +13,7 @@ namespace TimetablingWPF
 {
     public static class FileHelpers
     {
-        private static void WriteUshortEnum(IEnumerable<int> enumerable, BinaryWriter writer)
+        private static void WriteIntEnum(IEnumerable<int> enumerable, BinaryWriter writer)
         {
             IList<int> list = enumerable.ToList();
             writer.Write(list.Count);
@@ -146,7 +146,7 @@ namespace TimetablingWPF
             IList<Form> form_list = GetData<Form>();
             LoadBDCEnum<Lesson>(l =>
             {
-                l.Form = form_list[reader.ReadInt32()];
+                LoadEnum(() => l.Forms.Add(form_list[reader.ReadInt32()]), reader);
                 l.LessonsPerCycle = reader.ReadInt32();
                 l.LessonLength = reader.ReadInt32();
                 l.Subject = subject_list[reader.ReadInt32()];
@@ -169,11 +169,11 @@ namespace TimetablingWPF
             }
             WriteBDCEnum(GetData<Teacher>(), writer, t =>
             {
-                WriteUshortEnum(t.UnavailablePeriods.Select(p => p.ToInt()), writer);
+                WriteIntEnum(t.UnavailablePeriods.Select(p => p.ToInt()), writer);
             });
             WriteBDCEnum(GetData<Subject>(), writer, s =>
             {
-                WriteUshortEnum(s.Teachers.Select(t => t.StorageIndex), writer);
+                WriteIntEnum(s.Teachers.Select(t => t.StorageIndex), writer);
             });
             WriteBDCEnum(GetData<Form>(), writer, f =>
             {
@@ -186,12 +186,12 @@ namespace TimetablingWPF
             });
             WriteBDCEnum(GetData<Group>(), writer, g =>
             {
-                WriteUshortEnum(g.Subjects.Select(s => s.StorageIndex), writer);
-                WriteUshortEnum(g.Rooms.Select(r => r.StorageIndex), writer);
+                WriteIntEnum(g.Subjects.Select(s => s.StorageIndex), writer);
+                WriteIntEnum(g.Rooms.Select(r => r.StorageIndex), writer);
             });
             WriteBDCEnum(GetData<Lesson>(), writer, l =>
             {
-                writer.Write(l.Form.StorageIndex);
+                WriteIntEnum(l.Forms.Select(f => f.StorageIndex), writer);
                 writer.Write(l.LessonsPerCycle);
                 writer.Write(l.LessonLength);
                 writer.Write(l.Subject.StorageIndex);

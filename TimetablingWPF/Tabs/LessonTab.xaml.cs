@@ -39,6 +39,8 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
 
             cmbxSubject.ItemsSource = GetData<Subject>();
+            cmbxAssignmentTeacher.ItemsSource = GetData<Teacher>();
+            cmbxForm.ItemsSource = GetData<Form>();
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Lesson");
             HAS_NO_SUBJECT = new ErrorContainer(ErrManager, (e) => cmbxSubject.SelectedItem == null, (e) => "No subject has been selected.", ErrorType.Error, false);
@@ -97,6 +99,31 @@ namespace TimetablingWPF
             }
         }
 
+        private void FormButtonClick(object sender, RoutedEventArgs e)
+        {
+            Form form = (Form)cmbxForm.SelectedItem;
+            if (form != null && !Lesson.Forms.Contains(form))
+            {
+                AddForm(form);
+                cmbxForm.SelectedItem = form;
+                Lesson.Forms.Add(form);
+            }
+        }
+
+        private void AddForm(Form form)
+        {
+            spForms.Children.Add(VerticalMenuItem(form, RemoveForm));
+        }
+
+        private void RemoveForm(object sender, MouseButtonEventArgs e)
+        {
+            FrameworkElement element = (FrameworkElement)sender;
+            StackPanel sp = (StackPanel)element.Parent;
+            Form form = (Form)element.Tag;
+            Lesson.Forms.Remove(form);
+            spForms.Children.Remove(sp);
+        }
+
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             Cancel();
@@ -129,6 +156,9 @@ namespace TimetablingWPF
                 }
             }
             Lesson.Name = txName.Text;
+            Lesson.Subject = (Subject)cmbxSubject.SelectedItem;
+            Lesson.LessonLength = (int)iupdownLength.Value;
+            Lesson.LessonsPerCycle = (int)iupdownPerCycle.Value;
             Lesson.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalLesson.UpdateWithClone(Lesson);

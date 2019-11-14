@@ -80,7 +80,7 @@ namespace TimetablingWPF
             {
                 { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
                 { "Subject", new string[]{"Teachers", "Groups" } },
-                { "Lesson", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments" } },
+                { "Lesson", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Forms" } },
                 { "Group", new string[]{"Subjects", "Rooms" } },
                 { "Form", new string[]{"Year Group", "Lessons" } },
                 { "Room", new string[]{"Quantity", "Critical", "Groups"} }

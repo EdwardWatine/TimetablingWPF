@@ -48,23 +48,45 @@
     <Grid Grid.Column="1" Grid.Row="1">
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Assignments:" Margin="0,1,0,0"/>
-        <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Grid.Column="1">
-            <StackPanel Orientation="Vertical" Name="spAssignments" Margin="10,0,0,0"/>
-        </ScrollViewer>
-        <StackPanel Orientation="Horizontal" Grid.Column="1" Grid.Row="1">
-            <local:PlaceholderComboBox x:Name="cmbxAssignmentTeacher" Style="{StaticResource HorizontalMenu}" Placeholder="-- Teacher --"/>
-            <tlkt:IntegerUpDown Name="iupdown" Minimum="1" Value="1" Width="50" Style="{StaticResource HorizontalMenu}"/>
-            <Button Height="{Binding ElementName=cmbxAssignmentTeacher, Path=ActualHeight}" Click="AssignmentButtonClick">
-                <Image Source="{StaticResource PlusIcon}"/>
-            </Button>
-        </StackPanel>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Grid.Column="1">
+                <StackPanel Orientation="Vertical" Name="spAssignments" Margin="10,0,0,0"/>
+            </ScrollViewer>
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <local:PlaceholderComboBox x:Name="cmbxAssignmentTeacher" Style="{StaticResource HorizontalMenu}" Placeholder="-- Teacher --"/>
+                <tlkt:IntegerUpDown Name="iupdown" Minimum="1" Value="1" Width="50" Style="{StaticResource HorizontalMenu}"/>
+                <Button Height="{Binding ElementName=cmbxAssignmentTeacher, Path=ActualHeight}" Click="AssignmentButtonClick">
+                    <Image Source="{StaticResource PlusIcon}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Forms:" Margin="0,1,0,0" Grid.Row="1"/>
+        <Grid Grid.Column="1" Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto" Grid.Column="1">
+                <StackPanel Orientation="Vertical" Name="spForms" Margin="10,0,0,0"/>
+            </ScrollViewer>
+            <StackPanel Orientation="Horizontal" Grid.Row="1">
+                <local:PlaceholderComboBox x:Name="cmbxForm" IsEditable="True" Style="{StaticResource HorizontalMenu}" Placeholder="-- Form --" Grid.Column="1" Grid.Row="1"/>
+                <Button Height="{Binding ElementName=cmbxAssignmentTeacher, Path=ActualHeight}" Click="FormButtonClick">
+                    <Image Source="{StaticResource PlusIcon}"/>
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
     <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,5,0,0">
         <Grid.ColumnDefinitions>
