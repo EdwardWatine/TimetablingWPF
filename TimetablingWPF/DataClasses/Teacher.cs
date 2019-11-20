@@ -9,6 +9,7 @@ namespace TimetablingWPF
         public ObservableCollection<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollection<TimetableSlot>();
         public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>("Teachers");
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
+        public int MaxPeriodsPerCycle { get; set; } = TimetableSettings.TeacherMaxPeriods;
 
         private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
         private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();

@@ -40,7 +40,9 @@
         <CheckBox Name="checkCritical" Grid.Row="1" Grid.Column="1" VerticalAlignment="Center"/>
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Number of rooms:" Grid.Row="2" Margin="0,-2,0,0"/>
         <tlkt:IntegerUpDown Minimum="1" Value="1" Width="50" Name="iupdown" Grid.Row="2" Grid.Column="1" HorizontalAlignment="Left"/>
-        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="3" Grid.Column="1"/>
+        <ScrollViewer Grid.Row="3" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="spErrors" Orientation="Vertical"/>
+        </ScrollViewer>
     </Grid>
     <Grid Grid.Column="1" Grid.Row="1">
         <Grid.ColumnDefinitions>

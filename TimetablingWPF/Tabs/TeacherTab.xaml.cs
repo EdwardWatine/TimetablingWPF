@@ -42,6 +42,7 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
             cmbxSubjects.ItemsSource = GetData<Subject>();
             cmbxAssignmentLesson.ItemsSource = GetData<Lesson>();
+            iupdownMax.Value = Teacher.MaxPeriodsPerCycle;
 
             HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
 
@@ -345,6 +346,7 @@ namespace TimetablingWPF
                 }
             }
             Teacher.Name = txName.Text;
+            Teacher.MaxPeriodsPerCycle = iupdownMax.Value ?? Teacher.MaxPeriodsPerCycle;
             Teacher.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalTeacher.UpdateWithClone(Teacher);

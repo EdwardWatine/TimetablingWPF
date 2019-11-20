@@ -146,6 +146,7 @@
     <Content Include="DefunctCode.txt" />
     <Compile Include="DataClasses\Lesson.cs" />
     <Compile Include="DataClasses\Teacher.cs" />
+    <Compile Include="DataClasses\TimetableSettings.cs" />
     <Compile Include="Helpers\DataHelpers.cs" />
     <Compile Include="Helpers\FileHelpers.cs" />
     <Compile Include="Helpers\GenericHelpers.cs" />

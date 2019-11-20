@@ -43,7 +43,9 @@
         <tlkt:IntegerUpDown Name="iupdownLength" Minimum="1" Value="1" Width="50" HorizontalAlignment="Left" Height="{Binding ElementName=cmbxSubject, Path=ActualHeight}" Grid.Row="2" Grid.Column="1"/>
         <TextBlock HorizontalAlignment="Left" Style="{StaticResource DialogText}" Text="Lessons per cycle:" FontSize="14" Padding="6" Grid.Row="3" Margin="0"/>
         <tlkt:IntegerUpDown Name="iupdownPerCycle" Minimum="1" Value="1" Width="50" HorizontalAlignment="Left" Height="{Binding ElementName=cmbxSubject, Path=ActualHeight}"  Grid.Column="1" Grid.Row="3"/>
-        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="4" Grid.Column="1" Margin="0,5,0,0"/>
+        <ScrollViewer Grid.Row="4" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="spErrors" Orientation="Vertical" Margin="0,5,0,0"/>
+        </ScrollViewer>
     </Grid>
     <Grid Grid.Column="1" Grid.Row="1">
         <Grid.RowDefinitions>

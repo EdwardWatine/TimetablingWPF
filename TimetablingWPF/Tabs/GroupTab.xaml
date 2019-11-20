@@ -37,7 +37,9 @@
         <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
         <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
                      Name="txName" MinWidth="200" MinHeight="32"/>
-        <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="1" Grid.Column="1"/>
+        <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+            <StackPanel Name="spErrors" Orientation="Vertical"/>
+        </ScrollViewer>
     </Grid>
     <Grid Grid.Column="1" Grid.Row="1">
         <Grid.ColumnDefinitions>
