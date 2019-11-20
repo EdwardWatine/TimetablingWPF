@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimetablingWPF"
-        xmlns:tlkt="clr-namespace:Xceed.Wpf.Toolkit;assembly=Xceed.Wpf.Toolkit"
+        xmlns:tlkt="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
         FocusManager.FocusedElement="{Binding ElementName=txName}" HorizontalAlignment="Stretch" Name="gdMain"
         >

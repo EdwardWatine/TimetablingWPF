@@ -49,7 +49,7 @@ namespace TimetablingWPF
             string fpath = FileHelpers.SaveFileDialogHelper();
             if (fpath != null)
             {
-                Application.Current.Properties["CURRENT_FILE_PATH"] = fpath;
+                FileHelpers.SetCurrentFilePath(fpath);
                 FileHelpers.SaveDataToFile(fpath);
             }
         }

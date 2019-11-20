@@ -1,20 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Windows.Threading;
+using Dragablz;
 using Humanizer;
 
 namespace TimetablingWPF
@@ -27,116 +19,18 @@ namespace TimetablingWPF
         public MainPage()
         {
             InitializeComponent();
-            void MoveWindow()
-            {
-                Vector vector = Mouse.GetPosition(tcMainTabControl) - DraggingTab.Item2;
-                Window.GetWindow(tcMainTabControl).Left += vector.X;
-                Window.GetWindow(tcMainTabControl).Top += vector.Y;
-            }
-            void ReleaseMouse()
-            {
-                DraggingTab = null;
-                tcMainTabControl.ReleaseMouseCapture();
-            }
-            void MouseMoveDragTab(object sender, MouseEventArgs e)
-            {
-                if (DraggingTab == null || !(e.LeftButton == MouseButtonState.Pressed))
-                {
-                    return;
-                }
-                if (tcMainTabControl.Items.Count == 1)
-                {
-                    MoveWindow();
-                    return;
-                }
-                if (e.GetPosition(tcMainTabControl).Y >
-                    DraggingTab.Item1.TransformToAncestor(TabToContent(DraggingTab.Item1.Parent).MainPage.tcMainTabControl).Transform(new Point(0, 0)).Y + DraggingTab.Item1.ActualHeight)
-                {
-                    MouseLeaveDragTab(sender, e);
-                }
-            }
-            void MouseLeaveDragTab(object sender, MouseEventArgs e)
-            {
-                if (DraggingTab == null || !(e.LeftButton == MouseButtonState.Pressed))
-                {
-                    return;
-                }
-                if (tcMainTabControl.Items.Count == 1)
-                {
-                    MoveWindow();
-                    return;
-                }
-                TabItem tab = (TabItem)DraggingTab.Item1.Parent;
-                Vector localToMouse = DraggingTab.Item2.ToVector();
-                Vector screenToMouse = DraggingTab.Item1.PointToScreen(DraggingTab.Item2).ToVector();
-                tcMainTabControl.Items.Remove(tab);
-                TabHistory.Clear();
-                TabItem newTab = new TabItem();
-                GenericHelpers.MoveElementProperties(tab, newTab, new DependencyProperty[] { HeaderedContentControl.HeaderProperty, ContentControl.ContentProperty });
-
-                //void newWindow(object sender2, EventArgs e2)
-                //{
-                MainWindow window = new MainWindow();
-                MainPage mainPage = window.GetMainPage();
-                TabToContent(newTab).MainPage = mainPage;
-                mainPage.tcMainTabControl.Items.Add(newTab);
-                mainPage.TabHistory.Push(newTab);
-                window.Show();
-                Vector windowToLocal = ((FrameworkElement)newTab.Header).PointToScreen(new Point()).ToVector() - window.VectorPos().VectorFromScreen();
-                Vector screenToWindow = screenToMouse - localToMouse - windowToLocal;
-                window.SetPos((screenToMouse-localToMouse).VectorToScreen());
-
-                window.SetPos(screenToWindow.VectorToScreen());
-                mainPage.DraggingTab = new Tuple<FrameworkElement, Point>((FrameworkElement)newTab.Header, Mouse.GetPosition((FrameworkElement)newTab.Header));
-                ReleaseMouse();
-                mainPage.tcMainTabControl.CaptureMouse();
-                //}
-            }
-            void MouseUp(object sender, MouseButtonEventArgs e)
-            {
-                ReleaseMouse();
-            }
-            tcMainTabControl.MouseLeftButtonUp += MouseUp;
-            tcMainTabControl.MouseMove += MouseMoveDragTab;
-            tcMainTabControl.MouseLeave += MouseLeaveDragTab;
         }
 
-        public Tuple<FrameworkElement, Point> DraggingTab { get; set; }
         public Stack<TabItem> TabHistory { get; } = new Stack<TabItem>();
 
-        public void NewTab(object page, string title, bool focus = true, bool draggable = true)
+        public void NewTab(object page, string title, bool focus = true)
         {
-            Grid grid = new Grid();
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = GridLength.Auto });
-            TextBlock tb = new TextBlock() { Text = title };
-            Grid.SetColumn(tb, 0);
-            grid.Children.Add(tb);
-            Button button = new Button() { Content = new TextBlock() { Text = "x" } };
-            button.Click += delegate (object sender, RoutedEventArgs e) { ((ITab)page).Cancel(); };
-            Grid.SetColumn(button, 1);
-            grid.Children.Add(button);
             TabItem newTab = new TabItem()
             {
                 Content = page,
-                Header = grid
+                Header = new TextBlock() { Text = title }
             };
             tcMainTabControl.Items.Add(newTab);
-            if (draggable)
-            {
-                void TabHeaderMouseDown(object sender, MouseButtonEventArgs e)
-                {
-                    FrameworkElement element = (FrameworkElement)sender;
-                    ITab content = TabToContent(element.Parent);
-                    content.MainPage.DraggingTab = new Tuple<FrameworkElement, Point>(element, e.GetPosition(element));
-                    content.MainPage.tcMainTabControl.CaptureMouse();
-                   // TabToContent(((FrameworkElement)sender).Parent).MainPage.tcMainTabControl.CaptureMouse();
-                }
-
-                grid.MouseLeftButtonDown += TabHeaderMouseDown;
-                grid.MouseLeftButtonDown += ManualChange;
-            }
-
             if (focus)
             {
                 tcMainTabControl.SelectedItem = newTab;
@@ -218,6 +112,20 @@ namespace TimetablingWPF
         void Cancel();
     }
 
+    public class InterTabClient : IInterTabClient
+    {
+        public INewTabHost<Window> GetNewHost(IInterTabClient interTabClient, object partition, TabablzControl source)
+        {
+            MainWindow window = new MainWindow(fullscreen: false);
+            MainPage mainPage = window.GetMainPage();
+            return new NewTabHost<Window>(window, mainPage.tcMainTabControl);
+        }
+
+        public TabEmptiedResponse TabEmptiedHandler(TabablzControl tabControl, Window window)
+        {
+            return Application.Current.Windows.Count == 1 ? TabEmptiedResponse.DoNothing : TabEmptiedResponse.CloseWindowOrLayoutBranch;
+        }
+    }
     public class ListFormatter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

@@ -25,8 +25,9 @@ namespace TimetablingWPF
 
     public partial class MainWindow : Window
     {
-        public MainWindow(bool loadDataTabs = false)
+        public MainWindow(bool loadDataTabs = false, bool fullscreen = true)
         {
+            WindowState = fullscreen ? WindowState.Maximized : WindowState.Normal;
             InitializeComponent();
             //Subject Science = new Subject("Science");
 
