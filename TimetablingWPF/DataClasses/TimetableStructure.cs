@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using System.IO;
 
 namespace TimetablingWPF
 {
@@ -95,7 +96,6 @@ namespace TimetablingWPF
         {
             return Year.GetHashCode();
         }
-
         public static bool operator ==(YearGroup left, YearGroup right)
         {
             return left.Equals(right);

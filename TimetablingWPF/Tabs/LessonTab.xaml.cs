@@ -129,13 +129,10 @@ namespace TimetablingWPF
             Cancel();
         }
 
-        public void Cancel()
+        public bool Cancel()
         {
-            if (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
-                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
-            {
-                MainPage.CloseTab(this);
-            }
+            return (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
+                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes);
         }
 
         private void Confirm(object sender, RoutedEventArgs e)
@@ -167,7 +164,7 @@ namespace TimetablingWPF
                 Lesson.Commit();
             }
             
-            MainPage.CloseTab(this);
+            
         }
     }
 }

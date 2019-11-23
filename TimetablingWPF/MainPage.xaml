@@ -232,7 +232,8 @@
         </Grid.RowDefinitions>
         <local:ApplicationMenu/>
 
-        <dgbz:TabablzControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch" ShowDefaultCloseButton="True" ItemContainerStyle="{StaticResource TabItemStyle}" >
+        <dgbz:TabablzControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch" ShowDefaultCloseButton="True" ItemContainerStyle="{StaticResource TabItemStyle}"
+                        >
             <dgbz:TabablzControl.InterTabController>
                 <dgbz:InterTabController InterTabClient="{StaticResource tabClient}"/>
             </dgbz:TabablzControl.InterTabController>

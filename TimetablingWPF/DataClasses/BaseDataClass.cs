@@ -11,12 +11,15 @@ using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Reflection;
+using System.IO;
 
 namespace TimetablingWPF
 {
     /// <summary>
     /// Base form for all data objects
     /// </summary>
+    /// 
+
     public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable, IFreezable
     {
 

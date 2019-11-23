@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using System.IO;
 
 namespace TimetablingWPF
 {

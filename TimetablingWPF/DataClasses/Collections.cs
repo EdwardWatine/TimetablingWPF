@@ -9,18 +9,6 @@ using System.Threading.Tasks;
 
 namespace TimetablingWPF
 {
-    public interface IRelationalCollection
-    {
-        object Parent { get; set; }
-        string OtherSetProperty { get; set; }
-    };
-
-    public interface IFreezable
-    {
-        bool Frozen { get; }
-        void Freeze();
-        void Unfreeze();
-    }
     public class ObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>, ICloneable
     {
         public ObservableCollection() { }

@@ -19,6 +19,7 @@ namespace TimetablingWPF
         public MainPage()
         {
             InitializeComponent();
+            tcMainTabControl.ClosingItemCallback = CloseTab;
         }
 
         public Stack<TabItem> TabHistory { get; } = new Stack<TabItem>();
@@ -32,37 +33,25 @@ namespace TimetablingWPF
             };
             tcMainTabControl.Items.Add(newTab);
             if (focus)
-            {
+            { 
                 tcMainTabControl.SelectedItem = newTab;
                 TabHistory.Push(newTab);
             }
         }
 
-        public void CloseTab(object page)
+        public static void CloseTab(ItemActionCallbackArgs<TabablzControl> args)
         {
-            TabItem currentTab = TabHistory.FirstOrDefault();
-            foreach (TabItem tab in tcMainTabControl.Items)
+            if (!TabToContent(args.DragablzItem.Content).Cancel())
             {
-                if (tab.Content == page)
-                {
-                    if (tcMainTabControl.Items.Count == 0 && Application.Current.Windows.Count > 1)
-                    {
-                        Window.GetWindow(this).Close();
-                        return;
-                    }
-                    if (tab == currentTab)
-                    {
-                        TabHistory.Pop();
-                        tcMainTabControl.SelectedItem = TabHistory.FirstOrDefault();
-                    }
-                    tcMainTabControl.Items.Remove(tab);
-                    return;
-                }
+                args.Cancel();
             }
-            throw new ArgumentException($"Page {page} of type {page.GetType().Name} does not exist in the tab list");
         }
         public static ITab TabToContent(object tab)
         {
+            if (tab is DataClassTabItem)
+            {
+                return (ITab)tab;
+            }
             return (ITab)((TabItem)tab).Content;
         }
 
@@ -104,12 +93,6 @@ namespace TimetablingWPF
                 TabHistory.Push((TabItem)tcMainTabControl.SelectedItem);
             }
         }
-    }
-
-    public interface ITab
-    {
-        MainPage MainPage { get; set; }
-        void Cancel();
     }
 
     public class InterTabClient : IInterTabClient

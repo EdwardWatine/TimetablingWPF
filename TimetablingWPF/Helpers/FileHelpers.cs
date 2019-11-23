@@ -160,7 +160,7 @@ namespace TimetablingWPF
             MemoryStream all_data = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(all_data);
             IList<YearGroup> year_list = GetData<YearGroup>();
-            writer.Write((int)year_list.Count);
+            writer.Write(year_list.Count);
             for (int i = 0; i < year_list.Count; i++)
             {
                 YearGroup year = year_list[i];

@@ -44,7 +44,11 @@ namespace TimetablingWPF
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = e.Source as Hyperlink;
-            if (LoadData(link.Tag.ToString(), () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this)))
+            if (LoadData(link.Tag.ToString(), () => {
+                Window window = new MainWindow(true);
+                window.Show();
+                window.Activate();
+                Window.GetWindow(this).Close(); }, Window.GetWindow(this)))
             {
                 RegisterOpenFile(link.Tag.ToString());
             }

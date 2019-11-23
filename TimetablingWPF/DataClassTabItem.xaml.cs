@@ -140,9 +140,9 @@ namespace TimetablingWPF
             e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count >= 1;
         }
 
-        public void Cancel()
+        public bool Cancel()
         {
-            return;
+            return true;
         }
     }
     public static class DataGridCommands
