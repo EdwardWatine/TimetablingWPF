@@ -66,16 +66,10 @@ namespace TimetablingWPF
             }
         }
 
-        private void NewByImport(object sender, RoutedEventArgs e)
+        private void LaunchManual(object sender, RoutedEventArgs e)
         {
-            string fpath = OpenFileDialogHelper();
-            if (fpath == null) { return; }
-            CheckboxDialog cbDialog = new CheckboxDialog(Application.Current.MainWindow, new string[] {
-                "Subjects", "Teachers", "Rooms", "Forms", "\n", "Sets", "Timetables"});
-            if (cbDialog.ShowDialog() != true)
-            {
-                return;
-            }
+            ImportDialog dialog = new ImportDialog(Window.GetWindow(this));
+            dialog.ShowDialog();
         }
     }
 
@@ -89,11 +83,11 @@ namespace TimetablingWPF
 
         public static string GetText(DependencyObject d)
         {
-            throw new NotImplementedException("GetterText");
+            return (string)d.GetValue(TextProperty);
         }
         public static ImageSource GetImage(DependencyObject d)
         {
-            throw new NotImplementedException("GetterImage");
+            return (ImageSource)d.GetValue(ImageProperty);
         }
         public static void SetText(DependencyObject d, string value)
         {

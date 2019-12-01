@@ -10,7 +10,8 @@ using System.Windows.Media;
 
 namespace TimetablingWPF
 {
-    public enum ErrorType : byte {
+    public enum ErrorType
+    {
         Error = 0,
         Warning = 1
     }

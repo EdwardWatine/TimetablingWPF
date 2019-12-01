@@ -15,6 +15,10 @@ namespace TimetablingWPF
 {
     public class Lesson : BaseDataClass
     {
+        public Lesson()
+        {
+            Assignments.CollectionChanged += AssignmentsChanged;
+        }
         public RelationalCollection<Form, Lesson> Forms { get; private set; } = new RelationalCollection<Form, Lesson>("Lessons");
         private int _lpc;
         public int LessonsPerCycle

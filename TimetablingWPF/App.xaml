@@ -12,6 +12,7 @@
         <BitmapImage x:Key="PlusIcon" UriSource="Media/PlusIcon.png"/>
         <BitmapImage x:Key="WarningIcon" UriSource="Media/WarningIcon.png"/>
         <BitmapImage x:Key="ErrorIcon" UriSource="Media/ErrorIcon.png"/>
+        <BitmapImage x:Key="UserManualIcon" UriSource="Media/UserManualIcon.png"/>
         <Style x:Key="HeaderText" TargetType="TextBlock">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Center"/>

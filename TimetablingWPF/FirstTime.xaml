@@ -104,9 +104,9 @@
             <Button Style="{StaticResource ButtonStyle}" Margin="0,0,40,0" HorizontalAlignment="Center"
                     local:ButtonProperties.Image="{StaticResource NewFileIcon}"
                     local:ButtonProperties.Text="Create a new Timetable"/>
-            <Button Style="{StaticResource ButtonStyle}" Margin="0,0,0,0" Click="NewByImport" HorizontalAlignment="Center"
-                    local:ButtonProperties.Image="{StaticResource NewFileImportIcon}"
-                    local:ButtonProperties.Text="Import from a current timetable"/>
+            <Button Style="{StaticResource ButtonStyle}" Margin="0,0,0,0" Click="LaunchManual" HorizontalAlignment="Center"
+                    local:ButtonProperties.Image="{StaticResource UserManualIcon}"
+                    local:ButtonProperties.Text="Access the help manual"/>
             
         </StackPanel>
         <Grid Grid.Row="1" Grid.Column="1">

@@ -160,7 +160,7 @@
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />
     <Compile Include="ErrorManager.cs" />
-    <Compile Include="DataClassTabItem.xaml.cs">
+    <Compile Include="Tabs\DataClassTabItem.xaml.cs">
       <DependentUpon>DataClassTabItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\VisualHelpers.cs" />
@@ -189,9 +189,13 @@
     <Compile Include="UserControls\LoadingBox.xaml.cs">
       <DependentUpon>LoadingBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\ImportDialog.xaml.cs">
+      <DependentUpon>ImportDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
+    <Resource Include="Media\UserManualIcon.png" />
     <Content Include="UserControls\DoubleMenu.xaml.cs">
       <DependentUpon>DoubleMenu.xaml</DependentUpon>
     </Content>
@@ -203,11 +207,11 @@
     <Resource Include="Media\PlusIcon.png" />
     <Resource Include="Media\CrossIcon.png" />
     <Resource Include="Media\LeftArrowIcon.png" />
-    <Page Include="CheckboxDialog.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="UserControls\ImportDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="DataClassTabItem.xaml">
+    <Page Include="Tabs\DataClassTabItem.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -266,9 +270,6 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CheckboxDialog.xaml.cs">
-      <DependentUpon>CheckboxDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataClasses\Assignment.cs" />
     <Compile Include="FirstTime.xaml.cs">

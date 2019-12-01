@@ -6,6 +6,10 @@ namespace TimetablingWPF
 {
     public class Teacher : BaseDataClass
     {
+        public Teacher()
+        {
+            Assignments.CollectionChanged += AssignmentsChanged;
+        }
         public ObservableCollection<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollection<TimetableSlot>();
         public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>("Teachers");
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
