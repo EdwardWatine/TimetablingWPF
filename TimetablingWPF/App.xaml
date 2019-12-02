@@ -13,17 +13,22 @@
         <BitmapImage x:Key="WarningIcon" UriSource="Media/WarningIcon.png"/>
         <BitmapImage x:Key="ErrorIcon" UriSource="Media/ErrorIcon.png"/>
         <BitmapImage x:Key="UserManualIcon" UriSource="Media/UserManualIcon.png"/>
+        <Color x:Key="PrimaryColor">#1A1A74</Color>
+        <Color x:Key="SecondaryColor">#FFF</Color>
+        <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}"/>
+        <SolidColorBrush x:Key="SecondaryBrush" Color="{DynamicResource SecondaryColor}"/>
+        <SolidColorBrush x:Key="PressedBrush" Color="#707070"/>
         <Style x:Key="HeaderText" TargetType="TextBlock">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
                 <Setter Property="Margin" Value="10"/>
-                <Setter Property="Foreground" Value="#FFFFFF"/>
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"/>
                 <Setter Property="FontSize" Value="20"/>
             </Style.Setters>
         </Style>
         <Style x:Key="DialogText" TargetType="TextBlock">
             <Style.Setters>
-                <Setter Property="Foreground" Value="#FFFFFF"/>
+                <Setter Property="Foreground" Value="{DynamicResource SecondaryBrush}"/>
                 <Setter Property="FontSize" Value="15"/>
                 <Setter Property="Margin" Value="5,0,5,5"/>
                 <Setter Property="Padding" Value="5"/>
@@ -57,19 +62,113 @@
         </Style>
         <Style TargetType="CheckBox">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
-                        <BulletDecorator Background="Transparent">
-                            <BulletDecorator.Bullet>
-                                <Grid>
-                                    <Border Background="#FFF" Name="CheckboxBorder" Width="13" Height="13">
-                                        <Path Width="7" Height="7" x:Name="Checkmark" Stroke="#000" StrokeThickness="2" Data="M 0 0 L 7 7 M 0 7 L 7 0"/>
-                                    </Border>
-                                </Grid>
-                            </BulletDecorator.Bullet>
-                            <ContentPresenter Margin="4,0,0,0" VerticalAlignment="Center" HorizontalAlignment="Left" RecognizesAccessKey="True"/>
-                        </BulletDecorator>
+                        <StackPanel Orientation="Horizontal">
+                            <Border Tag="{DynamicResource SecondaryColor}" Name="CheckboxBorder" Width="14" Height="14" BorderBrush="#000" BorderThickness="1" VerticalAlignment="Center">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=Tag, Mode=OneWay}"/>
+                                </Border.Background>
+                                <Path Tag="{DynamicResource PrimaryColor}" StrokeThickness="2" Width="8" Height="9" Name="Checkmark">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M 0 4 L 0 4 M 3 9 L 3 9"/>
+                                    </Path.Data>
+                                    <Path.Stroke>
+                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Path}, Path=Tag, Mode=OneWay}"/>
+                                    </Path.Stroke>
+                                </Path>
+                            </Border>
+                            <ContentPresenter Margin="4,0,0,0" HorizontalAlignment="Left" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal"/>
+                                    <VisualState Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="CheckboxBorder" Storyboard.TargetProperty="BorderBrush.Color" To="#94e5ff" Duration="0"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="Pressed">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="CheckboxBorder" Storyboard.TargetProperty="Background.Color" To="#707070" Duration="0"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="Disabled">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="CheckboxBorder" Storyboard.TargetProperty="Background.Color" To="#A0A0A0" Duration="0"/>
+                                            <ColorAnimation Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Stroke.Color" To="#505050" Duration="0"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup Name="CheckStates">
+                                    <VisualState Name="Checked">
+                                        <Storyboard>
+                                            <PointAnimation From="0,4" To="3,8" Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Data.Figures[0].Segments[0].Point" Duration="0:0:0.1"/>
+                                            <PointAnimation From="3,9" To="8,0" Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Data.Figures[1].Segments[0].Point" Duration="0:0:0.1" BeginTime="0:0:0.1"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="Unchecked"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </StackPanel>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style TargetType="RadioButton">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="RadioButton">
+                        <StackPanel Orientation="Horizontal">
+                            <Grid>
+                                <Ellipse Width="14" Height="14" StrokeThickness="1" Stroke="#000" Name="RadioBorder" Tag="{DynamicResource SecondaryColor}">
+                                    <Ellipse.Fill>
+                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Ellipse}, Path=Tag, Mode=OneWay}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Ellipse Tag="{DynamicResource PrimaryColor}" Width="0" Height="0" Name="Radiomark" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <Ellipse.Fill>
+                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Ellipse}, Path=Tag, Mode=OneWay}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </Grid>
+                            <ContentPresenter Margin="4,0,0,0" HorizontalAlignment="Left" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal"/>
+                                    <VisualState Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="RadioBorder" Storyboard.TargetProperty="Stroke.Color" To="#94e5ff" Duration="0"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="Pressed">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="RadioBorder" Storyboard.TargetProperty="Fill.Color" To="#707070" Duration="0"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="Disabled">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="RadioBorder" Storyboard.TargetProperty="Background.Color" To="#A0A0A0" Duration="0"/>
+                                            <ColorAnimation Storyboard.TargetName="Radiomark" Storyboard.TargetProperty="Background.Color" To="#505050" Duration="0"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                </VisualStateGroup>
+                                <VisualStateGroup Name="CheckStates">
+                                    <VisualState Name="Checked">
+                                        <Storyboard>
+                                            <DoubleAnimation Storyboard.TargetName="Radiomark" Storyboard.TargetProperty="Width" From="10" To="2" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Radiomark" Storyboard.TargetProperty="Height" From="1" To="8" Duration="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Radiomark" Storyboard.TargetProperty="Width" From="2" To="6" Duration="0:0:0.05" BeginTime="0:0:0.15"/>
+                                            <DoubleAnimation Storyboard.TargetName="Radiomark" Storyboard.TargetProperty="Height" From="8" To="6" Duration="0:0:0.05" BeginTime="0:0:0.15"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="Unchecked"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </StackPanel>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
