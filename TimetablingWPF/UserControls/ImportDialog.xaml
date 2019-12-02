@@ -25,8 +25,8 @@
                 </Style>
                 <Style TargetType="TextBlock" BasedOn="{StaticResource DialogText}">
                     <Style.Setters>
-                        <Setter Property="Margin" Value="0,7,0,7"/>
                         <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="0,6,0,7"/>
                     </Style.Setters>
                 </Style>
                 <Style TargetType="RadioButton">
@@ -35,7 +35,57 @@
                     </Style.Setters>
                 </Style>
                 <Style TargetType="CheckBox">
-                    <Setter Property="VerticalContentAlignment" Value="Center"/>
+                    <Setter Property="OverridesDefaultStyle" Value="True"/>
+                    <Setter Property="SnapsToDevicePixels" Value="True"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="CheckBox">
+                                <StackPanel Orientation="Horizontal">
+                                    <Border Background="#FFF" Name="CheckboxBorder" Width="14" Height="14" BorderBrush="#000" BorderThickness="1" VerticalAlignment="Center">
+                                        <Path Stroke="#000" StrokeThickness="2" Width="8" Height="9" Name="Checkmark" Visibility="Collapsed">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M 0 4 L 0 4 M 3 9 L 3 9"/>
+                                            </Path.Data>
+                                        </Path>
+                                    </Border>
+                                    <ContentPresenter Margin="4,0,0,0" HorizontalAlignment="Left" RecognizesAccessKey="True" VerticalAlignment="Center"/>
+                                    <VisualStateManager.VisualStateGroups>
+                                        <VisualStateGroup Name="CommonStates">
+                                            <VisualState Name="Normal"/>
+                                            <VisualState Name="MouseOver">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="CheckboxBorder" Storyboard.TargetProperty="BorderBrush.Color" To="#94e5ff" Duration="0"/>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState Name="Pressed">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="CheckboxBorder" Storyboard.TargetProperty="Background.Color" To="#707070" Duration="0"/>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState Name="Disabled">
+                                                <Storyboard>
+                                                    <ColorAnimation Storyboard.TargetName="CheckboxBorder" Storyboard.TargetProperty="Background.Color" To="#A0A0A0" Duration="0"/>
+                                                    <ColorAnimation Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Stroke.Color" To="#505050" Duration="0"/>
+                                                </Storyboard>
+                                            </VisualState>
+                                        </VisualStateGroup>
+                                        <VisualStateGroup Name="CheckStates">
+                                            <VisualState Name="Checked">
+                                                <Storyboard>
+                                                    <ObjectAnimationUsingKeyFrames Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Visibility">
+                                                        <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}"/>
+                                                    </ObjectAnimationUsingKeyFrames>
+                                                    <PointAnimation From="0,4" To="3,8" Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Data.Figures[0].Segments[0].Point" Duration="0:0:0.1"/>
+                                                    <PointAnimation From="3,9" To="8,0" Storyboard.TargetName="Checkmark" Storyboard.TargetProperty="Data.Figures[1].Segments[0].Point" Duration="0:0:0.1" BeginTime="0:0:0.1"/>
+                                                </Storyboard>
+                                            </VisualState>
+                                            <VisualState Name="Unchecked"/>
+                                        </VisualStateGroup>
+                                    </VisualStateManager.VisualStateGroups>
+                                </StackPanel>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </StackPanel.Resources>
             <CheckBox VerticalContentAlignment="Center">
