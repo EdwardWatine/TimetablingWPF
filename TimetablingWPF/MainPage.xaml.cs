@@ -109,24 +109,4 @@ namespace TimetablingWPF
             return Application.Current.Windows.Count == 1 ? TabEmptiedResponse.DoNothing : TabEmptiedResponse.CloseWindowOrLayoutBranch;
         }
     }
-    public class ListFormatter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            if (value == null)
-            {
-                return "N/A";
-            }
-            if (((IList)value).Count == 0)
-            {
-                return "None";
-            }
-            IEnumerable<object> enumerable = ((IEnumerable)value).Cast<object>();
-            return GenericHelpers.FormatEnumerable(enumerable);
-        }
-        public object ConvertBack(object value, Type targetType, object paramter, System.Globalization.CultureInfo culture)
-        {
-            return null;
-        }
-    }
 }

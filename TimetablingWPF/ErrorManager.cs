@@ -84,11 +84,11 @@ namespace TimetablingWPF
             {
                 case ErrorType.Warning:
                     source = (ImageSource)Application.Current.Resources["WarningIcon"];
-                    colour = (SolidColorBrush)new BrushConverter().ConvertFromString("#FC9803");
+                    colour = (SolidColorBrush)Application.Current.Resources["WarningBrush"];
                     break;
                 default:
                     source = (ImageSource)Application.Current.Resources["ErrorIcon"];
-                    colour = (SolidColorBrush)new BrushConverter().ConvertFromString("#FF0000");
+                    colour = (SolidColorBrush)Application.Current.Resources["ErrorBrush"];
                     break;
             }
             sp.Children.Add(new Image()

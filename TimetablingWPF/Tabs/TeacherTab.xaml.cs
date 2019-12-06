@@ -46,13 +46,13 @@ namespace TimetablingWPF
 
             HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
 
-            HAS_NO_PERIODS = new ErrorContainer(ErrManager, (e) => Teacher.UnavailablePeriods.Count == Structure.TotalFreePeriods,
+            HAS_NO_PERIODS = new ErrorContainer(ErrManager, (e) => Teacher.UnavailablePeriods.Count == GetTimetableStructure().TotalFreePeriods,
                 (e) => "Teacher has no free periods.", ErrorType.Warning);
             HAS_NO_PERIODS.BindCollection(Teacher.UnavailablePeriods);
 
             NOT_ENOUGH_PERIODS = new ErrorContainer(ErrManager,
-                (e) => Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.LessonCount),
-                (e) => $"Teacher has fewer free periods ({Structure.TotalFreePeriods - Teacher.UnavailablePeriods.Count}) than assigned periods " +
+                (e) => GetTimetableStructure().TotalFreePeriods - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.LessonCount),
+                (e) => $"Teacher has fewer free periods ({GetTimetableStructure().TotalFreePeriods - Teacher.UnavailablePeriods.Count}) than assigned periods " +
                 $"({Teacher.Assignments.Sum(x => x.LessonCount)}).", ErrorType.Error);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.UnavailablePeriods);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.Assignments);
@@ -110,94 +110,7 @@ namespace TimetablingWPF
                 AddAssignment(assignment);
             }
 
-            string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
-            for (int week = 0; week < Structure.WeeksPerCycle; week++)
-            {
-                Grid gridWeek = new Grid()
-                {
-                    Width = 200
-                };
-                gridWeek.ColumnDefinitions.Add(new ColumnDefinition());
-                gridWeek.RowDefinitions.Add(new RowDefinition());
-                gridWeek.Children.Add(SetInternalBorder(new TextBlock()
-                {
-                    Text = DataHelpers.WeekToString(week),
-                    Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
-                    Padding = new Thickness(2),
-                    TextAlignment = TextAlignment.Center
-                })
-                );
-
-
-                for (int day = 0; day < 5; day++)
-                {
-                    ColumnDefinition columnDay = new ColumnDefinition()
-                    {
-                        Width = new GridLength(1, GridUnitType.Star),
-                    };
-                    gridWeek.ColumnDefinitions.Add(columnDay);
-
-                    TextBlock dayHeading = new TextBlock()
-                    {
-                        Text = days[day],
-                        Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
-                        Padding = new Thickness(2),
-                        TextAlignment = TextAlignment.Center
-                    };
-                    Border dayBorder = SetInternalBorder(dayHeading);
-                    Grid.SetColumn(dayBorder, day + 1);
-                    gridWeek.Children.Add(dayBorder);
-                }
-
-                for (int periodCount=0; periodCount<Structure.Structure.Count; periodCount++)
-                {
-                    TimetableStructurePeriod period = Structure.Structure[periodCount];
-                    RowDefinition rowPeriod = new RowDefinition()
-                    {
-                        //Height = new GridLength(1, GridUnitType.Star)
-                    };
-                    gridWeek.RowDefinitions.Add(rowPeriod);
-
-                    TextBlock periodHeading = new TextBlock()
-                    {
-                        Text = period.Name,
-                        Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
-                        Padding = new Thickness(2)
-                    };
-                    Border periodBorder = SetInternalBorder(periodHeading);
-                    Grid.SetRow(periodBorder, periodCount + 1);
-                    gridWeek.Children.Add(periodBorder);
-
-                    for (int day = 0; day < 5; day++)
-                    {
-                        bool schedulable = period.IsSchedulable;
-                        TimetableSlot slot = new TimetableSlot(week, day, periodCount);
-                        bool isUnavailable = Teacher.UnavailablePeriods.Contains(slot);
-                        Rectangle rect = new Rectangle()
-                        {
-                            Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(schedulable ?
-                            (isUnavailable ? "#FF0000" : "#00FF00") :
-                            "#A8A8A8"),
-                            Tag = schedulable ? Tuple.Create(slot, !isUnavailable) : null
-                        };
-                        if (schedulable)
-                        {
-                            rect.MouseLeftButtonDown += ToggleSlot;
-                        }
-                        Border rectBorder = SetInternalBorder(rect);
-                        Grid.SetColumn(rectBorder, day + 1);
-                        Grid.SetRow(rectBorder, periodCount + 1);
-                        gridWeek.Children.Add(rectBorder);
-                    }
-                }
-                gridWeek.MouseRightButtonDown += ToggleAll;
-                spPeriods.Children.Add(new Border()
-                {
-                    Child = gridWeek,
-                    Style = (Style)Application.Current.Resources["GridLineExternal"],
-                    Margin = new Thickness(0, 5, 10, 5)
-                });
-            }
+            spPeriods = GenerateTimetable(Teacher.UnavailablePeriods, ToggleSlot, ToggleAll);
         }
 
         private void SubjectButtonClick(object sender, RoutedEventArgs e)
@@ -275,7 +188,6 @@ namespace TimetablingWPF
 
         private readonly Teacher Teacher;
         private readonly Teacher OriginalTeacher;
-        private readonly TimetableStructure Structure = GetTimetableStructure();
         private readonly ErrorContainer HAS_NO_PERIODS;
         private readonly ErrorContainer NOT_ENOUGH_PERIODS;
         private readonly ErrorContainer SUBJECT_NO_ASSIGNMENT;

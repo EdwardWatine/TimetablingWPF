@@ -6,13 +6,8 @@
         xmlns:local="clr-namespace:TimetablingWPF"
         xmlns:tlkt="http://schemas.xceed.com/wpf/xaml/toolkit"
         mc:Ignorable="d"
-        FocusManager.FocusedElement="{Binding ElementName=txName}" HorizontalAlignment="Stretch" Name="gdMain"
+        FocusManager.FocusedElement="{Binding ElementName=txName}" HorizontalAlignment="Stretch" Name="gdMain" Style="{StaticResource PrimaryBackground}"
         >
-    <Grid.Background>
-        <SolidColorBrush Color="#1A1A74"/>
-    </Grid.Background>
-
-
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="*"/>

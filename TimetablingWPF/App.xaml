@@ -15,9 +15,16 @@
         <BitmapImage x:Key="UserManualIcon" UriSource="Media/UserManualIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
+        <Color x:Key="WarningColor">#fc9803</Color>
+        <Color x:Key="ErrorColor">#ff0000</Color>
         <SolidColorBrush x:Key="PrimaryBrush" Color="{DynamicResource PrimaryColor}"/>
         <SolidColorBrush x:Key="SecondaryBrush" Color="{DynamicResource SecondaryColor}"/>
+        <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}"/>
+        <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}"/>
         <SolidColorBrush x:Key="PressedBrush" Color="#707070"/>
+        <Style x:Key="PrimaryBackground" TargetType="Panel">
+            <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
+        </Style>
         <Style x:Key="HeaderText" TargetType="TextBlock">
             <Style.Setters>
                 <Setter Property="HorizontalAlignment" Value="Center"/>
@@ -34,17 +41,23 @@
                 <Setter Property="Padding" Value="5"/>
             </Style.Setters>
         </Style>
-        <Style x:Key="GridLineInternal" TargetType="Border">
+        <Style x:Key="GridLineInternalBlack" TargetType="Border">
             <Style.Setters>
                 <Setter Property="BorderThickness" Value="0, 0, 1, 1"/>
                 <Setter Property="BorderBrush" Value="#000000"/>
             </Style.Setters>
         </Style>
-        <Style x:Key="GridLineExternal" TargetType="Border">
+        <Style x:Key="GridLineExternalBlack" TargetType="Border">
             <Style.Setters>
                 <Setter Property="BorderThickness" Value="1, 1, 0, 0"/>
                 <Setter Property="BorderBrush" Value="#000000"/>
             </Style.Setters>
+        </Style>
+        <Style x:Key="GridLineExternal" BasedOn="{StaticResource GridLineExternalBlack}" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBrush}"/>
+        </Style>
+        <Style x:Key="GridLineInternal" BasedOn="{StaticResource GridLineInternalBlack}" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{DynamicResource SecondaryBrush}"/>
         </Style>
         <Style x:Key="Collapsed" TargetType="FrameworkElement">
             <Style.Setters>
@@ -67,9 +80,9 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
                         <StackPanel Orientation="Horizontal">
-                            <Border Tag="{DynamicResource SecondaryColor}" Name="CheckboxBorder" Width="14" Height="14" BorderBrush="#000" BorderThickness="1" VerticalAlignment="Center">
+                            <Border Tag="{DynamicResource SecondaryColor}" Name="CheckboxBorder" Width="14" Height="14" BorderBrush="#000" BorderThickness="1" VerticalAlignment="Center" Margin="4,0,0,0">
                                 <Border.Background>
-                                    <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Border}, Path=Tag, Mode=OneWay}"/>
+                                    <SolidColorBrush Color="{Binding Path=Tag, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Border}}"/>
                                 </Border.Background>
                                 <Path Tag="{DynamicResource PrimaryColor}" StrokeThickness="2" Width="8" Height="9" Name="Checkmark">
                                     <Path.Data>
@@ -119,11 +132,12 @@
         <Style TargetType="RadioButton">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="SnapsToDevicePixels" Value="True"/>
+            <Setter Property="Margin" Value="4,0,0,0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="RadioButton">
                         <StackPanel Orientation="Horizontal">
-                            <Grid>
+                            <Grid Margin="4,0,0,0">
                                 <Ellipse Width="14" Height="14" StrokeThickness="1" Stroke="#000" Name="RadioBorder" Tag="{DynamicResource SecondaryColor}">
                                     <Ellipse.Fill>
                                         <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Ellipse}, Path=Tag, Mode=OneWay}"/>

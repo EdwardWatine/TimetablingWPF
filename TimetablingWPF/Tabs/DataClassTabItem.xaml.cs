@@ -28,7 +28,7 @@ namespace TimetablingWPF
             InitializeComponent();
             MainPage = mainPage;
             DataType = type;
-            void attachCommand(string key, ICommand command,
+            void attachMenuCommand(string key, ICommand command,
                 ExecutedRoutedEventHandler executed,
                 CanExecuteRoutedEventHandler canExecute,
                 object parameter = null)
@@ -37,10 +37,21 @@ namespace TimetablingWPF
                 ((MenuItem)Resources[key]).CommandBindings.Add(new CommandBinding(command, executed, canExecute));
                 ((MenuItem)Resources[key]).Command = command;
             }
-            attachCommand($"miEditItem", DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem, dgMainDataGrid);
-            attachCommand($"miNewItem", DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute, type);
-            attachCommand($"miDeleteItem", DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem, dgMainDataGrid);
-            attachCommand($"miDuplicateItem", DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem, dgMainDataGrid);
+            void attachButtonCommand(Button button, ICommand command,
+                ExecutedRoutedEventHandler executed,
+                CanExecuteRoutedEventHandler canExecute,
+                object parameter = null)
+            {
+                button.CommandParameter = parameter;
+                button.CommandBindings.Add(new CommandBinding(command, executed, canExecute));
+                button.Command = command;
+            }
+            attachMenuCommand($"miEditItem", DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem, dgMainDataGrid);
+            attachMenuCommand($"miNewItem", DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute, type);
+            attachMenuCommand($"miDeleteItem", DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem, dgMainDataGrid);
+            attachMenuCommand($"miDuplicateItem", DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem, dgMainDataGrid);
+
+            attachButtonCommand(btNewToolbar, DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute, type);
 
             dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type];
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()

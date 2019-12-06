@@ -12,9 +12,12 @@
         <MenuItem x:Key="miDeleteItem" Header="Delete selection"/>
         <MenuItem x:Key="miDuplicateItem" Header="Duplicate item"/>
         <local:ListFormatter x:Key="ListFormatter"/>
+        <local:ListReportLength x:Key="ListReportLength"/>
+        <local:PeriodsToTable x:Key="PeriodsToTable"/>
         <Style x:Key="tbStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="10"/>
-            <Setter Property="HorizontalAlignment" Value="Center"/>
+            <Setter Property="HorizontalAlignment" Value="Stretch"/>
+            <Setter Property="TextAlignment" Value="Center"/>
         </Style>
         <DataTemplate x:Key="NameTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Name}"/>
@@ -32,7 +35,11 @@
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subject}"/>
         </DataTemplate>
         <DataTemplate x:Key="Unavailable PeriodsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding UnavailablePeriods, Converter={StaticResource ListFormatter}}"/>
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding UnavailablePeriods, Converter={StaticResource ListReportLength}, ConverterParameter=periods}">
+                <TextBlock.ToolTip>
+                    <ToolTip Content="{Binding UnavailablePeriods, Converter={StaticResource PeriodsToTable}}"/>
+                </TextBlock.ToolTip>
+            </TextBlock>
         </DataTemplate>
         <DataTemplate x:Key="AssignmentsTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
@@ -62,17 +69,26 @@
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Critical}"/>
         </DataTemplate>
     </TabItem.Resources>
-    <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
+    <StackPanel Orientation="Vertical">
+        <ToolBarTray>
+            <ToolBar Height="25">
+                <Button Name="btNewToolbar" Command="local:DataGridCommands.NewItem">
+                    <Image Source="{StaticResource PlusIcon}"/>
+                </Button>
+            </ToolBar>
+        </ToolBarTray>
+        <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
                           SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
-        <DataGrid.ContextMenu>
-            <ContextMenu Name="cmContextMenu">
-                <StaticResource ResourceKey="miNewItem"/>
-                <Separator/>
-                <StaticResource ResourceKey="miEditItem"/>
-                <StaticResource ResourceKey="miDuplicateItem"/>
-                <Separator/>
-                <StaticResource ResourceKey="miDeleteItem"/>
-            </ContextMenu>
+            <DataGrid.ContextMenu>
+                <ContextMenu Name="cmContextMenu">
+                    <StaticResource ResourceKey="miNewItem"/>
+                    <Separator/>
+                    <StaticResource ResourceKey="miEditItem"/>
+                    <StaticResource ResourceKey="miDuplicateItem"/>
+                    <Separator/>
+                    <StaticResource ResourceKey="miDeleteItem"/>
+                </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
+    </StackPanel>
 </TabItem>

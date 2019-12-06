@@ -10,150 +10,169 @@
     <Window.Background>
         <SolidColorBrush Color="{DynamicResource PrimaryColor}"/>
     </Window.Background>
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <Window.Resources>
+        <local:InverseBool x:Key="InverseBoolConverter"/>
+        <Style TargetType="StackPanel">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style TargetType="TextBlock" BasedOn="{StaticResource DialogText}">
+            <Style.Setters>
+                <Setter Property="VerticalAlignment" Value="Center"/>
+                <Setter Property="HorizontalAlignment" Value="Center"/>
+                <Setter Property="Margin" Value="0,6,0,7"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="GridLineInternalVertical" TargetType="Border" BasedOn="{StaticResource GridLineInternal}">
+            <Setter Property="BorderThickness" Value="0,0,1,0"/>
+        </Style>
+    </Window.Resources>
+    <StackPanel Orientation="Vertical">
         <TextBlock Text="Select data to import" Style="{StaticResource HeaderText}"/>
-        <StackPanel Margin="10" Grid.Row="1" HorizontalAlignment="Center" Orientation="Vertical" Name="spCheckboxes">
-            <StackPanel.Resources>
-                <local:InverseBool x:Key="InverseBoolConverter"/>
-                <Style TargetType="StackPanel">
-                    <Setter Property="VerticalAlignment" Value="Center"/>
-                </Style>
-                <Style TargetType="TextBlock" BasedOn="{StaticResource DialogText}">
-                    <Style.Setters>
-                        <Setter Property="VerticalAlignment" Value="Center"/>
-                        <Setter Property="Margin" Value="0,6,0,7"/>
-                    </Style.Setters>
-                </Style>
-            </StackPanel.Resources>
-            <CheckBox VerticalContentAlignment="Center">
-                <TextBlock Text="Timetable Structure"/>
-            </CheckBox>
-            <Separator/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Teacher" />
-                <StackPanel Orientation="Vertical">
-                    <RadioButton IsChecked="True" Name="TeacherImportFalse">
-                        <TextBlock Text="Do not Import"/>
-                    </RadioButton>
-                    <RadioButton Name="TeacherImport">
-                        <TextBlock Text="Import without replacement"/>
-                    </RadioButton>
-                    <RadioButton>
-                        <TextBlock Text="Import and replace if the name matches"/>
-                    </RadioButton>
-                </StackPanel>
-                <StackPanel>
-                    <CheckBox Name="TeacherAssignments" IsChecked="{Binding ElementName=LessonAssignments, Path=IsChecked, Mode=TwoWay}">
+        <Border Style="{StaticResource GridLineExternal}">
+            <Grid IsSharedSizeScope="True">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
+                    <ColumnDefinition SharedSizeGroup="A"/>
+                    <ColumnDefinition SharedSizeGroup="A"/>
+                    <ColumnDefinition SharedSizeGroup="A"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource GridLineInternal}">
+                    <CheckBox VerticalContentAlignment="Center" Margin="5,0,0,0">
+                        <TextBlock Text="Timetable Structure"/>
+                    </CheckBox>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource GridLineInternal}">
+                    <TextBlock Text="Teacher"/>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource GridLineInternal}">
+                    <TextBlock Text="Lesson"/>
+                </Border>
+                <Border Grid.Column="3" Style="{StaticResource GridLineInternal}">
+                    <TextBlock Text="Subject"/>
+                </Border>
+                <Border Grid.Column="4" Style="{StaticResource GridLineInternal}">
+                    <TextBlock Text="Form"/>
+                </Border>
+                <Border Grid.Column="5" Style="{StaticResource GridLineInternal}">
+                    <TextBlock Text="Group"/>
+                </Border>
+                <Border Grid.Column="6" Style="{StaticResource GridLineInternal}">
+                    <TextBlock Text="Room"/>
+                </Border>
+                <Border Grid.Row="1" Style="{StaticResource GridLineInternalVertical}">
+                    <TextBlock Text="Do not Import"/>
+                </Border>
+                <Border Grid.Row="2" Style="{StaticResource GridLineInternalVertical}">
+                    <TextBlock Text="Import without replacement"/>
+                </Border>
+                <Border Grid.Row="3" Style="{StaticResource GridLineInternal}">
+                    <TextBlock Text="Import and replace"/>
+                </Border>
+                <Border Style="{StaticResource GridLineInternal}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton Name="TeacherImportFalse" IsChecked="True" HorizontalAlignment="Center"/>
+                        <RadioButton Name="TeacherImport" Grid.Row="1" HorizontalAlignment="Center"/>
+                        <RadioButton Name="TeacherReplace" Grid.Row="2" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource GridLineInternal}" Grid.Column="2" Grid.Row="1" Grid.RowSpan="3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton Name="LessonImportFalse" IsChecked="True" HorizontalAlignment="Center"/>
+                        <RadioButton Name="LessonImport" Grid.Row="1" HorizontalAlignment="Center"/>
+                        <RadioButton Name="LessonReplace" Grid.Row="2" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource GridLineInternal}" Grid.Column="3" Grid.Row="1" Grid.RowSpan="3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton Name="SubjectImportFalse" IsChecked="True" HorizontalAlignment="Center"/>
+                        <RadioButton Name="SubjectImport" Grid.Row="1" HorizontalAlignment="Center"/>
+                        <RadioButton Name="SubjectReplace" Grid.Row="2" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource GridLineInternal}" Grid.Column="4" Grid.Row="1" Grid.RowSpan="3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton Name="FormImportFalse" IsChecked="True" HorizontalAlignment="Center"/>
+                        <RadioButton Name="FormImport" Grid.Row="1" HorizontalAlignment="Center"/>
+                        <RadioButton Name="FormReplace" Grid.Row="2" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource GridLineInternal}" Grid.Column="5" Grid.Row="1" Grid.RowSpan="3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton Name="GroupImportFalse" IsChecked="True" HorizontalAlignment="Center"/>
+                        <RadioButton Name="GroupImport" Grid.Row="1" HorizontalAlignment="Center"/>
+                        <RadioButton Name="GroupReplace" Grid.Row="2" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+                <Border Style="{StaticResource GridLineInternal}" Grid.Column="6" Grid.Row="1" Grid.RowSpan="3">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <RadioButton Name="RoomImportFalse" IsChecked="True" HorizontalAlignment="Center"/>
+                        <RadioButton Name="RoomImport" Grid.Row="1" HorizontalAlignment="Center"/>
+                        <RadioButton Name="RoomReplace" Grid.Row="2" HorizontalAlignment="Center"/>
+                    </Grid>
+                </Border>
+                <Border Grid.Row="4" Style="{StaticResource GridLineInternal}" BorderThickness="0,0,1,0"/>
+                <Border Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource GridLineInternal}">
+                    <CheckBox IsChecked="True">
                         <CheckBox.IsEnabled>
                             <MultiBinding Converter="{StaticResource InverseBoolConverter}">
                                 <Binding ElementName="TeacherImportFalse" Path="IsChecked"/>
                                 <Binding ElementName="LessonImportFalse" Path="IsChecked"/>
                             </MultiBinding>
                         </CheckBox.IsEnabled>
-                        <TextBlock Text="Keep Assignments"/>
+                        <TextBlock Text="Import Assignments"/>
                     </CheckBox>
-                </StackPanel>
-            </StackPanel>
-            <Separator/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Subject"/>
-                <StackPanel Orientation="Vertical">
-                    <RadioButton IsChecked="True" Name="SubjectImportFalse">
-                        <TextBlock Text="Do not Import"/>
-                    </RadioButton>
-                    <RadioButton Name="SubjectImport">
-                        <TextBlock Text="Import without replacement"/>
-                    </RadioButton>
-                    <RadioButton>
-                        <TextBlock Text="Import and replace if the name matches"/>
-                    </RadioButton>
-                </StackPanel>
-            </StackPanel>
-            <Separator/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Lesson" />
-                <StackPanel Orientation="Vertical">
-                    <RadioButton IsChecked="True" Name="LessonImportFalse">
-                        <TextBlock Text="Do not Import"/>
-                    </RadioButton>
-                    <RadioButton Name="LessonImport">
-                        <TextBlock Text="Import without replacement"/>
-                    </RadioButton>
-                    <RadioButton>
-                        <TextBlock Text="Import and replace if the name matches"/>
-                    </RadioButton>
-                </StackPanel>
-                <StackPanel Orientation="Vertical">
-                    <CheckBox Name="LessonAssignments" IsChecked="True">
-                        <CheckBox.IsEnabled>
-                            <MultiBinding Converter="{StaticResource InverseBoolConverter}">
-                                <Binding ElementName="TeacherImportFalse" Path="IsChecked"/>
-                                <Binding ElementName="LessonImportFalse" Path="IsChecked"/>
-                            </MultiBinding>
-                        </CheckBox.IsEnabled>
-                        <TextBlock Text="Keep Assignments"/>
-                    </CheckBox>
-                </StackPanel>
-            </StackPanel>
-            <Separator/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Form"/>
-                <StackPanel Orientation="Vertical">
-                    <RadioButton IsChecked="True" Name="FormImportFalse">
-                        <TextBlock Text="Do not Import"/>
-                    </RadioButton>
-                    <RadioButton Name="FormImport">
-                        <TextBlock Text="Import without replacement"/>
-                    </RadioButton>
-                    <RadioButton>
-                        <TextBlock Text="Import and replace if the name matches"/>
-                    </RadioButton>
-                </StackPanel>
-            </StackPanel>
-            <Separator/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Grpup" />
-                <StackPanel Orientation="Vertical">
-                    <RadioButton IsChecked="True" Name="GroupImportFalse">
-                        <TextBlock Text="Do not Import"/>
-                    </RadioButton>
-                    <RadioButton Name="GroupImport">
-                        <TextBlock Text="Import without replacement"/>
-                    </RadioButton>
-                    <RadioButton>
-                        <TextBlock Text="Import and replace if the name matches"/>
-                    </RadioButton>
-                </StackPanel>
-            </StackPanel>
-            <Separator/>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Room" />
-                <StackPanel Orientation="Vertical">
-                    <RadioButton IsChecked="True" Name="RoomImportFalse">
-                        <TextBlock Text="Do not Import"/>
-                    </RadioButton>
-                    <RadioButton Name="RoomImport">
-                        <TextBlock Text="Import without replacement"/>
-                    </RadioButton>
-                    <RadioButton>
-                        <TextBlock Text="Import and replace if the name matches"/>
-                    </RadioButton>
-                </StackPanel>
-            </StackPanel>
-        </StackPanel>
-        <Grid Grid.Row="2" Margin="10" HorizontalAlignment="Stretch">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                </Border>
+            </Grid>
+        </Border>
+        <Grid Margin="10" HorizontalAlignment="Stretch">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
 
-            </Grid.ColumnDefinitions>
-            <Button Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" IsDefault="True" Click="Confirm" FontSize="13">Confirm</Button>
-            <Button Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" IsCancel="True" FontSize="13">Cancel</Button>
-        </Grid>
-    </Grid>
+                </Grid.ColumnDefinitions>
+                <Button Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" IsDefault="True" Click="Confirm" FontSize="13">Confirm</Button>
+                <Button Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" IsCancel="True" FontSize="13">Cancel</Button>
+            </Grid>
+    </StackPanel>
 </Window>

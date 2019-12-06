@@ -26,7 +26,7 @@ namespace TimetablingWPF
 
         public static string Pluralize(this string word, int number)
         {
-            return number == 1 ? word : word.Pluralize();
+            return number == 1 ? word.Singularize(false) : word.Pluralize(false);
         }
 
         public static IList<object> InsertAndReturn(IEnumerable enumerable, object toInsert, int index = 0)

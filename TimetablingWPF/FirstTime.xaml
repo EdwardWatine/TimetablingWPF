@@ -12,8 +12,8 @@
       >
     <Page.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="#FFFFFF" Offset="0.0"/>
-            <GradientStop Color="#000064" Offset="0.75"/>
+            <GradientStop Color="{DynamicResource SecondaryColor}" Offset="0.0"/>
+            <GradientStop Color="{DynamicResource PrimaryColor}" Offset="0.75"/>
 
         </LinearGradientBrush>
     </Page.Background>
@@ -32,13 +32,12 @@
 
             </Style.Triggers>
 
-            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}" />
 
             <Setter Property="TextBlock.TextDecorations" Value="{x:Null}" />
         </Style>
 
         <Style x:Key="ButtonBorderStyle" TargetType="Border">
-            <Setter Property="Background" Value="#FFFFFF"/>
             <Setter Property="Padding" Value="5"/>
             <Setter Property="CornerRadius" Value="15"/>
         </Style>
@@ -48,9 +47,9 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Name="Border" Style="{StaticResource ButtonBorderStyle}">
+                        <Border Name="Border" Style="{StaticResource ButtonBorderStyle}" Tag="{StaticResource SecondaryColor}">
                             <Border.Background>
-                                <SolidColorBrush x:Name="BorderBg" Color="#FFFFFF"/>
+                                <SolidColorBrush x:Name="BorderBg" Color="{Binding Path=Tag, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Border}}"/>
                             </Border.Background>
                             <StackPanel Orientation="Vertical">
                                 <Image Height="100" Width="100" Source="{TemplateBinding local:ButtonProperties.Image}"/>
@@ -61,7 +60,7 @@
                                     <VisualState Name="Normal">
                                         <Storyboard>
                                             <ColorAnimation Storyboard.TargetName="BorderBg"
-                                                            Storyboard.TargetProperty="Color" To="#FFFFFF" Duration="0:0:0.2"/>
+                                                            Storyboard.TargetProperty="Color" To="{StaticResource SecondaryColor}" Duration="0:0:0.2"/>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState Name="MouseOver">

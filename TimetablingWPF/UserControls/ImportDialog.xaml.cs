@@ -31,25 +31,6 @@ namespace TimetablingWPF
             DialogResult = true;
         }
 
-        public List<bool> Result
-        {
-            get
-            {
-                List<bool> result = new List<bool>();
-                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(spCheckboxes); i++)
-                {
-                    Visual visual = (Visual)VisualTreeHelper.GetChild(spCheckboxes, i);
-
-                    if (visual is Separator)
-                    {
-                        continue;
-                    }
-
-                    result.Add((bool)visual.GetValue(CheckBox.IsCheckedProperty));
-                }
-                return result;
-            }
-        }
     }
 
     public class InverseBool : IMultiValueConverter
