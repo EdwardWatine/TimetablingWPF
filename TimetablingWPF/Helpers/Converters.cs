@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,6 +58,19 @@ namespace TimetablingWPF
         public object ConvertBack(object value, Type targetType, object paramter, System.Globalization.CultureInfo culture)
         {
             return null;
+        }
+    }
+    public class ItemRepr : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return string.IsNullOrEmpty((string)value[1]) ? value[0].ToString() : value[0].GetType().GetProperty((string)value[1]).GetValue(value[0]).ToString();
+
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

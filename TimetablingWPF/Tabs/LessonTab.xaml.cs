@@ -23,7 +23,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for AssignmentTab.xaml
     /// </summary>
-    public partial class LessonTab : Grid, ITab
+    public partial class LessonTab : TabItem, ITab
     {
         public LessonTab(Lesson lesson, MainPage mainPage, CommandType commandType)
         {
@@ -41,6 +41,11 @@ namespace TimetablingWPF
             cmbxSubject.ItemsSource = GetData<Subject>();
             cmbxAssignmentTeacher.ItemsSource = GetData<Teacher>();
             cmbxForm.ItemsSource = GetData<Form>();
+
+            ilAssignments.ItemsSource = Lesson.Assignments;
+            ilAssignments.ListenToCollection(OriginalLesson.Assignments);
+            ilForms.ItemsSource = Lesson.Forms;
+            ilForms.ListenToCollection(OriginalLesson.Forms);
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Lesson");
             HAS_NO_SUBJECT = new ErrorContainer(ErrManager, (e) => cmbxSubject.SelectedItem == null, (e) => "No subject has been selected.", ErrorType.Error, false);
@@ -65,38 +70,10 @@ namespace TimetablingWPF
             if (old != null)
             {
                 if (old.LessonCount == lessons) { return; }
-                RemoveAssignment(old);
+                Lesson.Assignments.Remove(old);
             }
             Assignment assignment = new Assignment(teacher, Lesson, (int)lessons);
-            AddAssignment(assignment);
             Lesson.Assignments.Add(assignment);
-        }
-
-        private void AddAssignment(Assignment assignment)
-        {
-            spAssignments.Children.Add(VerticalMenuItem(assignment, RemoveAssignmentClick, assignment.LessonString));
-        }
-
-        private void RemoveAssignmentClick(object sender, RoutedEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)sender;
-            StackPanel sp = (StackPanel)element.Parent;
-            Assignment assignment = (Assignment)element.Tag;
-            Lesson.Assignments.Remove(assignment);
-            spAssignments.Children.Remove(sp);
-        }
-
-        private void RemoveAssignment(Assignment assignment)
-        {
-            foreach (FrameworkElement sp in spAssignments.Children)
-            {
-                if ((Assignment)sp.Tag == assignment)
-                {
-                    spAssignments.Children.Remove(sp);
-                    Lesson.Assignments.Remove(assignment);
-                    return;
-                }
-            }
         }
 
         private void FormButtonClick(object sender, RoutedEventArgs e)
@@ -104,29 +81,17 @@ namespace TimetablingWPF
             Form form = (Form)cmbxForm.SelectedItem;
             if (form != null && !Lesson.Forms.Contains(form))
             {
-                AddForm(form);
                 cmbxForm.SelectedItem = form;
                 Lesson.Forms.Add(form);
             }
         }
 
-        private void AddForm(Form form)
-        {
-            spForms.Children.Add(VerticalMenuItem(form, RemoveForm));
-        }
-
-        private void RemoveForm(object sender, MouseButtonEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)sender;
-            StackPanel sp = (StackPanel)element.Parent;
-            Form form = (Form)element.Tag;
-            Lesson.Forms.Remove(form);
-            spForms.Children.Remove(sp);
-        }
-
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Cancel();
+            if (Cancel())
+            {
+                MainPage.CloseTab(this);
+            }
         }
 
         public bool Cancel()
@@ -163,7 +128,7 @@ namespace TimetablingWPF
             {
                 Lesson.Commit();
             }
-            
+            MainPage.CloseTab(this);
             
         }
     }

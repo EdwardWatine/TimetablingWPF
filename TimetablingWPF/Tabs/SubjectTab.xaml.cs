@@ -24,7 +24,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class SubjectTab : Grid, ITab
+    public partial class SubjectTab : TabItem, ITab
     {
         public SubjectTab(Subject subject, MainPage mainPage, CommandType commandType)
         {
@@ -43,15 +43,10 @@ namespace TimetablingWPF
             //Errors
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Subject");
-
-            foreach (Group group in Subject.Groups)
-            {
-                AddGroup(group);
-            }
-            foreach (Teacher teacher in Subject.Teachers)
-            {
-                AddTeacher(teacher);
-            }
+            ilGroups.ItemsSource = Subject.Groups;
+            ilGroups.ListenToCollection(OriginalSubject.Groups);
+            ilTeachers.ItemsSource = Subject.Teachers;
+            ilTeachers.ListenToCollection(OriginalSubject.Teachers);
         }
 
         private void GroupButtonClick(object sender, RoutedEventArgs e)
@@ -61,7 +56,6 @@ namespace TimetablingWPF
             if (group != null && !Subject.Groups.Contains(group))
             {
                 group.Commit();
-                AddGroup(group);
                 cmbxGroups.SelectedItem = group;
                 Subject.Groups.Add(group);
             }
@@ -73,37 +67,11 @@ namespace TimetablingWPF
             if (teacher != null && !Subject.Teachers.Contains(teacher))
             {
                 teacher.Commit();
-                AddTeacher(teacher);
                 cmbxTeachers.SelectedItem = teacher;
                 Subject.Teachers.Add(teacher);
             }
         }
 
-        private void AddGroup(Group group)
-        {            
-            spGroups.Children.Add(VerticalMenuItem(group, RemoveGroup));
-        }
-
-        private void RemoveGroup(object sender, RoutedEventArgs e)
-        {
-            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Group group = (Group)sp.Tag;
-            Subject.Groups.Remove(group);
-            spGroups.Children.Remove(sp);
-        }
-
-        private void AddTeacher(Teacher teacher)
-        {
-            spTeachers.Children.Add(VerticalMenuItem(teacher, RemoveTeacher));
-        }
-
-        private void RemoveTeacher(object sender, RoutedEventArgs e)
-        {
-            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Teacher teacher = (Teacher)sp.Tag;
-            Subject.Teachers.Remove(teacher);
-            spTeachers.Children.Remove(sp);
-        }
         private readonly Subject Subject;
         private readonly Subject OriginalSubject;
         private readonly ErrorContainer HAS_NO_NAME;
@@ -113,7 +81,7 @@ namespace TimetablingWPF
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Cancel();
+            if (Cancel()){				MainPage.CloseTab(this);			}
         }
 
         public bool Cancel()
@@ -146,7 +114,7 @@ namespace TimetablingWPF
             {
                 Subject.Commit();
             }
-            
+            MainPage.CloseTab(this);
             
         }
     }

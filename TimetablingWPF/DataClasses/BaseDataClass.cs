@@ -30,7 +30,7 @@ namespace TimetablingWPF
             {
                 void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
                 {
-                    if (e.NewItems != null && e.OldItems != null && e.NewItems[0] != e.OldItems[0] && !((IFreezable)sender).Frozen)
+                    if ((e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || e.NewItems[0] != e.OldItems[0]) && !Frozen)
                     {
                         NotifyPropertyChanged(prop.Name);
                     }

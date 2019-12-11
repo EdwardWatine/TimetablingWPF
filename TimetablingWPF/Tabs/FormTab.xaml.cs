@@ -23,7 +23,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for AssignmentTab.xaml
     /// </summary>
-    public partial class FormTab : Grid, ITab
+    public partial class FormTab : TabItem, ITab
     {
         public FormTab(Form form, MainPage mainPage, CommandType commandType)
         {
@@ -39,6 +39,8 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
             cmbxLesson.ItemsSource = GetData<Lesson>();
             cmbxYear.ItemsSource = GetData<YearGroup>();
+            ilLessons.ItemsSource = Form.Lessons;
+            ilLessons.ListenToCollection(OriginalForm.Lessons);
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Form");
             HAS_NO_YEAR = new ErrorContainer(ErrManager, (e) => cmbxYear.SelectedItem == null, (e) => "No year group has been selected.", ErrorType.Error, false);
             cmbxYear.comboBox.SelectionChanged += delegate (object o, SelectionChangedEventArgs e) { HAS_NO_YEAR.UpdateError(); };
@@ -52,21 +54,7 @@ namespace TimetablingWPF
             if (lesson != null && !Form.Lessons.Contains(lesson))
             {
                 Form.Lessons.Add(lesson);
-                AddLesson(lesson);
             }
-        }
-
-        private void AddLesson(Lesson lesson)
-        {            
-            spLessons.Children.Add(VerticalMenuItem(lesson, RemoveLesson));
-        }
-
-        private void RemoveLesson(object sender, RoutedEventArgs e)
-        {
-            StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
-            Lesson lesson = (Lesson)sp.Tag;
-            spLessons.Children.Remove(sp);
-            Form.Lessons.Remove(lesson);
         }
 
         private readonly Form Form;
@@ -78,7 +66,10 @@ namespace TimetablingWPF
         private readonly CommandType CommandType;
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Cancel();
+            if (Cancel())
+            {
+                MainPage.CloseTab(this);
+            }
         }
 
         public bool Cancel()
@@ -113,7 +104,7 @@ namespace TimetablingWPF
             {
                 Form.Commit();
             }
-            
+            MainPage.CloseTab(this);
             
         }
     }

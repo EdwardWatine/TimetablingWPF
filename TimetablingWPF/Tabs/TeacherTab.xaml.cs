@@ -26,7 +26,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class TeacherTab : Grid, ITab
+    public partial class TeacherTab : TabItem, ITab
     {
         public TeacherTab(Teacher teacher, MainPage mainPage, CommandType commandType)
         {
@@ -101,16 +101,14 @@ namespace TimetablingWPF
                 }, ErrorType.Error);
             NOT_ENOUGH_FORM_SLOTS.BindCollection(Teacher.Assignments);
 
-            foreach (Subject subject in Teacher.Subjects)
-            {
-                AddSubject(subject);
-            }
             foreach (Assignment assignment in Teacher.Assignments)
             {
                 AddAssignment(assignment);
             }
 
-            spPeriods = GenerateTimetable(Teacher.UnavailablePeriods, ToggleSlot, ToggleAll);
+            svPeriods.Content = GenerateTimetable(Teacher.UnavailablePeriods, ToggleSlot, ToggleAll);
+            ilSubjects.ItemsSource = Teacher.Subjects;
+            ilSubjects.ListenToCollection(OriginalTeacher.Subjects);
         }
 
         private void SubjectButtonClick(object sender, RoutedEventArgs e)
@@ -120,7 +118,6 @@ namespace TimetablingWPF
             if (subject != null)
             {
                 subject.Commit();
-                AddSubject(subject);
                 cmbxSubjects.SelectedItem = subject;
                 Teacher.Subjects.Add(subject);
             }
@@ -143,20 +140,6 @@ namespace TimetablingWPF
             Assignment assignment = new Assignment(Teacher, lesson, (int)lessons);
             AddAssignment(assignment);
             Teacher.Assignments.Add(assignment);
-        }
-
-        private void AddSubject(Subject subject)
-        {            
-            spSubjects.Children.Add(VerticalMenuItem(subject, RemoveSubjectClick));
-        }
-
-        private void RemoveSubjectClick(object sender, RoutedEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)sender;
-            StackPanel sp = (StackPanel)element.Parent;
-            Subject subject = (Subject)element.Tag;
-            Teacher.Subjects.Remove(subject);
-            spSubjects.Children.Remove(sp);
         }
 
         private void AddAssignment(Assignment assignment)
@@ -229,7 +212,10 @@ namespace TimetablingWPF
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Cancel();
+            if (Cancel())
+            {
+                MainPage.CloseTab(this);
+            }
         }
 
         public bool Cancel()
@@ -263,8 +249,7 @@ namespace TimetablingWPF
             {
                 Teacher.Commit();
             }
-            
-            
+            MainPage.CloseTab(this);
         }
     }
 }

@@ -24,35 +24,27 @@ namespace TimetablingWPF
 
         public Stack<TabItem> TabHistory { get; } = new Stack<TabItem>();
 
-        public void NewTab(object page, string title, bool focus = true)
+        public void NewTab(object tabItem, string title, bool focus = true)
         {
-            TabItem newTab = new TabItem()
-            {
-                Content = page,
-                Header = new TextBlock() { Text = title }
-            };
-            tcMainTabControl.Items.Add(newTab);
+            TabItem tab = (TabItem)tabItem;
+            tab.Header = title;
+            tcMainTabControl.Items.Add(tab);
             if (focus)
             { 
-                tcMainTabControl.SelectedItem = newTab;
-                TabHistory.Push(newTab);
+                tcMainTabControl.SelectedItem = tab;
+                TabHistory.Push(tab);
             }
         }
-
-        public static void CloseTab(ItemActionCallbackArgs<TabablzControl> args)
+        public void CloseTab(TabItem tabItem)
         {
-            if (!TabToContent(args.DragablzItem.Content).Cancel())
+            tcMainTabControl.Items.Remove(tabItem);
+        }
+        private static void CloseTab(ItemActionCallbackArgs<TabablzControl> args)
+        {
+            if (!((ITab)(args.DragablzItem.Content)).Cancel())
             {
                 args.Cancel();
             }
-        }
-        public static ITab TabToContent(object tab)
-        {
-            if (tab is DataClassTabItem)
-            {
-                return (ITab)tab;
-            }
-            return (ITab)((TabItem)tab).Content;
         }
 
         public void NewDataSetTab(Type type)

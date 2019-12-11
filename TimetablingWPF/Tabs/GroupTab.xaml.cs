@@ -23,7 +23,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class GroupTab : Grid, ITab
+    public partial class GroupTab : TabItem, ITab
     {
         public GroupTab(Group group, MainPage mainPage, CommandType commandType)
         {
@@ -39,6 +39,10 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
             cmbxSubject.ItemsSource = GetData<Subject>();
             cmbxRoom.ItemsSource = GetData<Room>();
+            ilRooms.ItemsSource = Group.Rooms;
+            ilRooms.ListenToCollection(OriginalGroup.Rooms);
+            ilSubjects.ItemsSource = Group.Subjects;
+            ilSubjects.ListenToCollection(OriginalGroup.Subjects);
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Group");
         }
@@ -50,7 +54,6 @@ namespace TimetablingWPF
             if (subject != null && !Group.Subjects.Contains(subject))
             {
                 subject.Commit();
-                AddSubject(subject);
                 cmbxSubject.SelectedItem = subject;
                 Group.Subjects.Add(subject);
             }
@@ -61,37 +64,9 @@ namespace TimetablingWPF
             Room room = (Room)cmbxRoom.SelectedItem;
             if (room != null && !Group.Rooms.Contains(room))
             {
-                AddRoom(room);
                 cmbxRoom.SelectedItem = room;
                 Group.Rooms.Add(room);
             }
-        }
-
-        private void AddSubject(Subject subject)
-        {            
-            spSubjects.Children.Add(VerticalMenuItem(subject, RemoveSubject));
-        }
-
-        private void RemoveSubject(object sender, RoutedEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)sender;
-            StackPanel sp = (StackPanel)element.Parent;
-            Subject subject = (Subject)element.Tag;
-            Group.Subjects.Remove(subject);
-            spSubjects.Children.Remove(sp);
-        }
-        private void AddRoom(Room subject)
-        {            
-            spRooms.Children.Add(VerticalMenuItem(subject, RemoveRoom));
-        }
-
-        private void RemoveRoom(object sender, RoutedEventArgs e)
-        {
-            FrameworkElement element = (FrameworkElement)sender;
-            StackPanel sp = (StackPanel)element.Parent;
-            Room room = (Room)element.Tag;
-            Group.Rooms.Remove(room);
-            spRooms.Children.Remove(sp);
         }
 
         private readonly Group Group;
@@ -103,7 +78,9 @@ namespace TimetablingWPF
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Cancel();
+            if (Cancel())
+            {                MainPage.CloseTab(this);
+            }
         }
 
         public bool Cancel()
@@ -136,7 +113,7 @@ namespace TimetablingWPF
             {
                 Group.Commit();
             }
-            
+            MainPage.CloseTab(this);
             
         }
     }

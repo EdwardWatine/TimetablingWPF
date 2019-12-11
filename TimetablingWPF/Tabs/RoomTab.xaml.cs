@@ -24,7 +24,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class RoomTab : Grid, ITab
+    public partial class RoomTab : TabItem, ITab
     {
         public RoomTab(Room room, MainPage mainPage, CommandType commandType)
         {
@@ -39,6 +39,8 @@ namespace TimetablingWPF
             txName.Text = room.Name;
             txName.SelectionStart = txName.Text.Length;
             cmbxGroups.ItemsSource = GetData<Group>();
+            ilGroups.ItemsSource = Room.Groups;
+            ilGroups.ListenToCollection(OriginalRoom.Groups);
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Room");
         }
@@ -50,16 +52,9 @@ namespace TimetablingWPF
             if (group != null && !Room.Groups.Contains(group))
             {
                 group.Commit();
-                AddGroup(group);
                 cmbxGroups.SelectedItem = group;
                 Room.Groups.Add(group);
             }
-        }
-
-
-        private void AddGroup(Group group)
-        {            
-            spGroups.Children.Add(VerticalMenuItem(group, RemoveGroup));
         }
 
         private void RemoveGroup(object sender, RoutedEventArgs e)
@@ -67,7 +62,6 @@ namespace TimetablingWPF
             StackPanel sp = (StackPanel)((FrameworkElement)sender).Tag;
             Group group = (Group)sp.Tag;
             Room.Groups.Remove(group);
-            spGroups.Children.Remove(sp);
         }
 
         private readonly Room Room;
@@ -79,7 +73,10 @@ namespace TimetablingWPF
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            Cancel();
+            if (Cancel())
+            {
+                MainPage.CloseTab(this);
+            }
         }
 
         public bool Cancel()
@@ -114,7 +111,7 @@ namespace TimetablingWPF
             {
                 Room.Commit();
             }
-            
+            MainPage.CloseTab(this);
             
         }
     }
