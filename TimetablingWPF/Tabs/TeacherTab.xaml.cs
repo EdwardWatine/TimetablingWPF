@@ -46,13 +46,13 @@ namespace TimetablingWPF
 
             HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
 
-            HAS_NO_PERIODS = new ErrorContainer(ErrManager, (e) => Teacher.UnavailablePeriods.Count == GetTimetableStructure().TotalFreePeriods,
+            HAS_NO_PERIODS = new ErrorContainer(ErrManager, (e) => Teacher.UnavailablePeriods.Count == TimetableStructure.TotalFreePeriods,
                 (e) => "Teacher has no free periods.", ErrorType.Warning);
             HAS_NO_PERIODS.BindCollection(Teacher.UnavailablePeriods);
 
             NOT_ENOUGH_PERIODS = new ErrorContainer(ErrManager,
-                (e) => GetTimetableStructure().TotalFreePeriods - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.LessonCount),
-                (e) => $"Teacher has fewer free periods ({GetTimetableStructure().TotalFreePeriods - Teacher.UnavailablePeriods.Count}) than assigned periods " +
+                (e) => TimetableStructure.TotalFreePeriods - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.LessonCount),
+                (e) => $"Teacher has fewer free periods ({TimetableStructure.TotalFreePeriods - Teacher.UnavailablePeriods.Count}) than assigned periods " +
                 $"({Teacher.Assignments.Sum(x => x.LessonCount)}).", ErrorType.Error);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.UnavailablePeriods);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.Assignments);

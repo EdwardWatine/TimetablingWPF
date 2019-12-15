@@ -18,9 +18,9 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for LoadingBox.xaml
     /// </summary>
-    public partial class LoadingBox : Window
+    public partial class LoadingDialog : Window
     {
-        public LoadingBox(string title)
+        public LoadingDialog(string title)
         {
             Title = title;
             InitializeComponent();

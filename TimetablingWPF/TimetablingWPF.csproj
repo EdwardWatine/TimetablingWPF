@@ -148,6 +148,9 @@
     <Compile Include="DataClasses\Lesson.cs" />
     <Compile Include="DataClasses\Teacher.cs" />
     <Compile Include="DataClasses\TimetableSettings.cs" />
+    <Compile Include="Dialogs\TimetableStructureDialog.xaml.cs">
+      <DependentUpon>TimetableStructureDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\Converters.cs" />
     <Compile Include="Helpers\DataHelpers.cs" />
     <Compile Include="Helpers\FileHelpers.cs" />
@@ -190,16 +193,19 @@
     <Compile Include="UserControls\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\LoadingBox.xaml.cs">
-      <DependentUpon>LoadingBox.xaml</DependentUpon>
+    <Compile Include="UserControls\LoadingDialog.xaml.cs">
+      <DependentUpon>LoadingDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\ImportDialog.xaml.cs">
+    <Compile Include="Dialogs\ImportDialog.xaml.cs">
       <DependentUpon>ImportDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
     <Resource Include="Media\UserManualIcon.png" />
+    <Resource Include="Media\EditAccountIcon.png" />
+    <Resource Include="Media\DuplicateIcon.png" />
+    <Resource Include="Media\DeleteBinIcon.png" />
     <Content Include="UserControls\DoubleMenu.xaml.cs">
       <DependentUpon>DoubleMenu.xaml</DependentUpon>
     </Content>
@@ -211,9 +217,13 @@
     <Resource Include="Media\PlusIcon.png" />
     <Resource Include="Media\CrossIcon.png" />
     <Resource Include="Media\LeftArrowIcon.png" />
-    <Page Include="UserControls\ImportDialog.xaml">
+    <Page Include="Dialogs\ImportDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Dialogs\TimetableStructureDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\DataClassTabItem.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -251,7 +261,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\LoadingBox.xaml">
+    <Page Include="UserControls\LoadingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -361,6 +371,7 @@
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetFramework.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.NetFramework.Analyzers.2.9.7\analyzers\dotnet\cs\Microsoft.NetFramework.CSharp.Analyzers.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

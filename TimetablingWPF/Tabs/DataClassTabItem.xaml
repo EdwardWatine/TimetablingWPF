@@ -71,9 +71,27 @@
     </TabItem.Resources>
     <StackPanel Orientation="Vertical">
         <ToolBarTray>
-            <ToolBar Height="25">
+            <ToolBar Height="30">
+                <ToolBar.Resources>
+                    <Style TargetType="Image">
+                        <Style.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </ToolBar.Resources>
                 <Button Name="btNewToolbar" Command="local:DataGridCommands.NewItem">
                     <Image Source="{StaticResource PlusIcon}"/>
+                </Button>
+                <Button Name="btEditToolbar" Command="local:DataGridCommands.EditItem">
+                    <Image Source="{StaticResource EditAccountIcon}"/>
+                </Button>
+                <Button Name="btDuplicateToolbar" Command="local:DataGridCommands.DuplicateItem">
+                    <Image Source="{StaticResource DuplicateIcon}"/>
+                </Button>
+                <Button x:Name="btDeleteToolbar" Command="local:DataGridCommands.DeleteItem">
+                    <Image Source="{StaticResource DeleteBinIcon}"/>
                 </Button>
             </ToolBar>
         </ToolBarTray>

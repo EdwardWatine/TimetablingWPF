@@ -21,7 +21,7 @@ namespace TimetablingWPF
         {
             string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
             StackPanel returnPanel = new StackPanel() { Orientation = Orientation.Horizontal };
-            for (int week = 0; week < GetTimetableStructure().WeeksPerCycle; week++)
+            for (int week = 0; week < TimetableStructure.WeeksPerCycle; week++)
             {
                 Grid gridWeek = new Grid()
                 {
@@ -59,9 +59,9 @@ namespace TimetablingWPF
                     gridWeek.Children.Add(dayBorder);
                 }
 
-                for (int periodCount = 0; periodCount < GetTimetableStructure().Structure.Count; periodCount++)
+                for (int periodCount = 0; periodCount < TimetableStructure.Structure.Count; periodCount++)
                 {
-                    TimetableStructurePeriod period = GetTimetableStructure().Structure[periodCount];
+                    TimetableStructurePeriod period = TimetableStructure.Structure[periodCount];
                     RowDefinition rowPeriod = new RowDefinition()
                     {
                         //Height = new GridLength(1, GridUnitType.Star)

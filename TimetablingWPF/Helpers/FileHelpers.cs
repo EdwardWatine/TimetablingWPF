@@ -70,7 +70,7 @@ namespace TimetablingWPF
                 WorkerReportsProgress = true,
                 WorkerSupportsCancellation = true
             };
-            LoadingBox box = new LoadingBox("Loading...")
+            LoadingDialog box = new LoadingDialog("Loading...")
             {
                 Owner = owner
             };

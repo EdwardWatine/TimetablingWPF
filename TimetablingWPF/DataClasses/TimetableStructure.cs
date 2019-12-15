@@ -14,19 +14,19 @@ using System.IO;
 
 namespace TimetablingWPF
 {
-    public class TimetableStructure
+    public static class TimetableStructure
     {
-        public TimetableStructure(int weeksPerCycle, IList<TimetableStructurePeriod> structure)
+        public static void SetData(int weeksPerCycle, IList<TimetableStructurePeriod> structure)
         {
             WeeksPerCycle = weeksPerCycle;
             Structure = structure;
             PeriodsPerDay = (from period in structure where period.IsSchedulable select period).Count();
             TotalFreePeriods = weeksPerCycle*5*PeriodsPerDay;
         }
-        public int WeeksPerCycle { get; }
-        public IList<TimetableStructurePeriod> Structure { get; private set; }
-        public int TotalFreePeriods { get; }
-        public int PeriodsPerDay { get; }
+        public static int WeeksPerCycle { get; private set; }
+        public static IList<TimetableStructurePeriod> Structure { get; private set; }
+        public static int TotalFreePeriods { get; private set; }
+        public static int PeriodsPerDay { get; private set; }
     }
     public struct TimetableStructurePeriod : IEquatable<TimetableStructurePeriod>
     {

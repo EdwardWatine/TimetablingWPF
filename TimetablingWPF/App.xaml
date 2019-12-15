@@ -13,6 +13,9 @@
         <BitmapImage x:Key="WarningIcon" UriSource="Media/WarningIcon.png"/>
         <BitmapImage x:Key="ErrorIcon" UriSource="Media/ErrorIcon.png"/>
         <BitmapImage x:Key="UserManualIcon" UriSource="Media/UserManualIcon.png"/>
+        <BitmapImage x:Key="EditAccountIcon" UriSource="Media/EditAccountIcon.png"/>
+        <BitmapImage x:Key="DuplicateIcon" UriSource="Media/DuplicateIcon.png"/>
+        <BitmapImage x:Key="DeleteBinIcon" UriSource="Media/DeleteBinIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
         <Color x:Key="WarningColor">#fc9803</Color>

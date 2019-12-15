@@ -8,6 +8,6 @@ namespace TimetablingWPF
 {
     static class TimetableSettings
     {
-        public static int TeacherMaxPeriods { get; set; } = DataHelpers.GetTimetableStructure().TotalFreePeriods;
+        public static int TeacherMaxPeriods { get; set; } = TimetableStructure.TotalFreePeriods;
     }
 }

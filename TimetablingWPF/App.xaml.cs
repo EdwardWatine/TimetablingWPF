@@ -34,7 +34,7 @@ namespace TimetablingWPF
                 Properties[type] = Activator.CreateInstance(ioc_type.MakeGenericType(new Type[] { type }));
             }
             Properties[typeof(YearGroup)] = new List<YearGroup>() { new YearGroup("8") };
-            Properties[typeof(TimetableStructure)] = new TimetableStructure(2, new List<TimetableStructurePeriod>()
+            TimetableStructure.SetData(2, new List<TimetableStructurePeriod>()
             {
                 new TimetableStructurePeriod("1", true),
                 new TimetableStructurePeriod("2", true),

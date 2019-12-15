@@ -28,30 +28,34 @@ namespace TimetablingWPF
             InitializeComponent();
             MainPage = mainPage;
             DataType = type;
-            void attachMenuCommand(string key, ICommand command,
-                ExecutedRoutedEventHandler executed,
-                CanExecuteRoutedEventHandler canExecute,
+            void attachMenuCommand(string key, CommandBinding binding,
                 object parameter = null)
             {
                 ((MenuItem)Resources[key]).CommandParameter = parameter;
-                ((MenuItem)Resources[key]).CommandBindings.Add(new CommandBinding(command, executed, canExecute));
-                ((MenuItem)Resources[key]).Command = command;
+                ((MenuItem)Resources[key]).CommandBindings.Add(binding);
+                ((MenuItem)Resources[key]).Command = binding.Command;
             }
-            void attachButtonCommand(Button button, ICommand command,
-                ExecutedRoutedEventHandler executed,
-                CanExecuteRoutedEventHandler canExecute,
+            void attachButtonCommand(Button button, CommandBinding binding,
                 object parameter = null)
             {
                 button.CommandParameter = parameter;
-                button.CommandBindings.Add(new CommandBinding(command, executed, canExecute));
-                button.Command = command;
+                button.CommandBindings.Add(binding);
+                button.Command = binding.Command;
             }
-            attachMenuCommand($"miEditItem", DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem, dgMainDataGrid);
-            attachMenuCommand($"miNewItem", DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute, type);
-            attachMenuCommand($"miDeleteItem", DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem, dgMainDataGrid);
-            attachMenuCommand($"miDuplicateItem", DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem, dgMainDataGrid);
+            editBinding = new CommandBinding(DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem);
+            newBinding = new CommandBinding(DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute);
+            dupBinding = new CommandBinding(DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem);
+            delBinding = new CommandBinding(DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem);
 
-            attachButtonCommand(btNewToolbar, DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute, type);
+            attachMenuCommand($"miEditItem", editBinding, dgMainDataGrid);
+            attachMenuCommand($"miNewItem", newBinding, type);
+            attachMenuCommand($"miDeleteItem", delBinding, dgMainDataGrid);
+            attachMenuCommand($"miDuplicateItem", dupBinding, dgMainDataGrid);
+
+            attachButtonCommand(btNewToolbar, newBinding, type);
+            attachButtonCommand(btEditToolbar, editBinding, dgMainDataGrid);
+            attachButtonCommand(btDuplicateToolbar,dupBinding, dgMainDataGrid);
+            attachButtonCommand(btDeleteToolbar, delBinding, dgMainDataGrid);
 
             dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type];
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
@@ -76,6 +80,11 @@ namespace TimetablingWPF
             }
         }
         public MainPage MainPage { get; set; }
+
+        readonly CommandBinding newBinding;
+        readonly CommandBinding editBinding;
+        readonly CommandBinding dupBinding;
+        readonly CommandBinding delBinding;
         public Type DataType { get; }
         private readonly Dictionary<Type, Type> TypeTab = new Dictionary<Type, Type>()
         {

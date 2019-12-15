@@ -29,15 +29,13 @@ namespace TimetablingWPF
         }
         public int ToInt()
         {
-            TimetableStructure structure = DataHelpers.GetTimetableStructure();
-            return 5 * (structure.PeriodsPerDay * Week + Day) + Period;
+            return 5 * (TimetableStructure.PeriodsPerDay * Week + Day) + Period;
         }
         public static TimetableSlot FromInt(int from)
         {
-            TimetableStructure structure = DataHelpers.GetTimetableStructure();
-            return new TimetableSlot(from / (structure.PeriodsPerDay * 5),
-                from % (structure.PeriodsPerDay * 5) / 5,
-                from % (structure.PeriodsPerDay * 5) % 5);
+            return new TimetableSlot(from / (TimetableStructure.PeriodsPerDay * 5),
+                from % (TimetableStructure.PeriodsPerDay * 5) / 5,
+                from % (TimetableStructure.PeriodsPerDay * 5) % 5);
         }
         public override string ToString()
         {
