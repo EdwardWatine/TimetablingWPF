@@ -14,6 +14,7 @@ using System.Windows.Input;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Globalization;
+using TimetablingWPF.StructureClasses;
 
 namespace TimetablingWPF
 {
@@ -34,17 +35,15 @@ namespace TimetablingWPF
                 Properties[type] = Activator.CreateInstance(ioc_type.MakeGenericType(new Type[] { type }));
             }
             Properties[typeof(YearGroup)] = new List<YearGroup>() { new YearGroup("8") };
-            TimetableStructure.SetData(2, new List<TimetableStructurePeriod>()
+            TimetableStructure.SetData(new List<TimetableStructureWeek>()
             {
-                new TimetableStructurePeriod("1", true),
-                new TimetableStructurePeriod("2", true),
-                new TimetableStructurePeriod("Brk", false),
-                new TimetableStructurePeriod("3", true),
-                new TimetableStructurePeriod("4", true),
-                new TimetableStructurePeriod("Lch", false),
-                new TimetableStructurePeriod("5", true)
+                new TimetableStructureWeek("A", DataHelpers.ShortenedDaysOfTheWeek, 
+                new List<string>(){"1", "2", "Brk", "3", "4", "Lch", "5" }, new List<int>(){2, 5, 9, 12, 16, 19, 23, 26, 30, 33 }),
+                new TimetableStructureWeek("B", DataHelpers.ShortenedDaysOfTheWeek,
+                new List<string>(){"1", "2", "Brk", "3", "4", "Lch", "5" }, new List<int>(){2, 5, 9, 12, 16, 19, 23, 26, 30, 33 })
             });
             StartWindow window = new StartWindow();
+            //MainWindow window = new MainWindow(true);
             window.Show();
         }
 

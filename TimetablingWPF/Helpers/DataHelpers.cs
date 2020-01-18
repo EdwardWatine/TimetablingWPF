@@ -9,20 +9,20 @@ using System.Windows;
 
 namespace TimetablingWPF
 {
-    class DataHelpers
+    public static class DataHelpers
     {
+        public static readonly List<string> ShortenedDaysOfTheWeek = new List<string>() { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
         public static string WeekToString(int week)
         {
-            return Convert.ToString((char)('A' + week));
+            return TimetableStructure.Weeks[week].Name;
         }
-        public static string DayToString(int day)
+        public static string DayToString(int week, int day)
         {
-            string[] days = { "Mon", "Tue", "Wed", "Thu", "Fri" };
-            return days[day];
+            return TimetableStructure.Weeks[week].DayNames[day];
         }
-        public static TimetableStructurePeriod PeriodNumToPeriod(int period)
+        public static string PeriodToString(int week, int period)
         {
-            return TimetableStructure.Structure[period];
+            return TimetableStructure.Weeks[week].PeriodNames[period];
         }
         public static IList<T> GetData<T>()
         {

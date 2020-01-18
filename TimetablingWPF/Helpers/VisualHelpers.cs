@@ -19,10 +19,10 @@ namespace TimetablingWPF
         public static StackPanel GenerateTimetable(IEnumerable<TimetableSlot> slots, MouseButtonEventHandler leftClickHandler = null,
             MouseButtonEventHandler rightClickHandler = null)
         {
-            string[] days = new string[5] { "Mon", "Tue", "Wed", "Thu", "Fri" };
             StackPanel returnPanel = new StackPanel() { Orientation = Orientation.Horizontal };
-            for (int week = 0; week < TimetableStructure.WeeksPerCycle; week++)
+            for (int week = 0; week < TimetableStructure.Weeks.Count; week++)
             {
+                StructureClasses.TimetableStructureWeek structureWeek = TimetableStructure.Weeks[week];
                 Grid gridWeek = new Grid()
                 {
                     Width = 200
@@ -31,7 +31,7 @@ namespace TimetablingWPF
                 gridWeek.RowDefinitions.Add(new RowDefinition());
                 gridWeek.Children.Add(SetInternalBorder(new TextBlock()
                 {
-                    Text = WeekToString(week),
+                    Text = structureWeek.Name,
                     Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                     Padding = new Thickness(2),
                     TextAlignment = TextAlignment.Center
@@ -39,7 +39,7 @@ namespace TimetablingWPF
                 );
 
 
-                for (int day = 0; day < 5; day++)
+                for (int day = 0; day < structureWeek.DayNames.Count; day++)
                 {
                     ColumnDefinition columnDay = new ColumnDefinition()
                     {
@@ -49,7 +49,7 @@ namespace TimetablingWPF
 
                     TextBlock dayHeading = new TextBlock()
                     {
-                        Text = days[day],
+                        Text = structureWeek.DayNames[day],
                         Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                         Padding = new Thickness(2),
                         TextAlignment = TextAlignment.Center
@@ -59,9 +59,8 @@ namespace TimetablingWPF
                     gridWeek.Children.Add(dayBorder);
                 }
 
-                for (int periodCount = 0; periodCount < TimetableStructure.Structure.Count; periodCount++)
+                for (int period = 0; period < structureWeek.PeriodNames.Count; period++)
                 {
-                    TimetableStructurePeriod period = TimetableStructure.Structure[periodCount];
                     RowDefinition rowPeriod = new RowDefinition()
                     {
                         //Height = new GridLength(1, GridUnitType.Star)
@@ -70,18 +69,18 @@ namespace TimetablingWPF
 
                     TextBlock periodHeading = new TextBlock()
                     {
-                        Text = period.Name,
+                        Text = structureWeek.PeriodNames[period],
                         Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
                         Padding = new Thickness(2)
                     };
                     Border periodBorder = SetInternalBorder(periodHeading);
-                    Grid.SetRow(periodBorder, periodCount + 1);
+                    Grid.SetRow(periodBorder, period + 1);
                     gridWeek.Children.Add(periodBorder);
 
-                    for (int day = 0; day < 5; day++)
+                    for (int day = 0; day < structureWeek.DayNames.Count; day++)
                     {
-                        bool schedulable = period.IsSchedulable;
-                        TimetableSlot slot = new TimetableSlot(week, day, periodCount);
+                        bool schedulable = structureWeek.PeriodIsSchedulable(day, period);
+                        TimetableSlot slot = new TimetableSlot(week, day, period);
                         bool isUnavailable = slots.Contains(slot);
                         Rectangle rect = new Rectangle()
                         {
@@ -96,7 +95,7 @@ namespace TimetablingWPF
                         }
                         Border rectBorder = SetInternalBorder(rect);
                         Grid.SetColumn(rectBorder, day + 1);
-                        Grid.SetRow(rectBorder, periodCount + 1);
+                        Grid.SetRow(rectBorder, period + 1);
                         gridWeek.Children.Add(rectBorder);
                     }
                 }
@@ -142,7 +141,7 @@ namespace TimetablingWPF
                     Cursor = Cursors.Hand,
                     Margin = new Thickness(-5, 0, 0, 0)
                 };
-                img.SetBinding(Image.HeightProperty, binding);
+                img.SetBinding(FrameworkElement.HeightProperty, binding);
                 img.MouseDown += @event;
                 sp.Children.Add(img);
             }

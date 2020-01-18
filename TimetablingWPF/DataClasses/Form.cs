@@ -20,7 +20,7 @@ namespace TimetablingWPF
         private YearGroup _year;
         public YearGroup YearGroup
         {
-            get { return _year; }
+            get => _year;
             set
             {
                 if (value != _year)

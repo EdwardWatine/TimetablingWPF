@@ -61,8 +61,8 @@ namespace TimetablingWPF
             DependencyProperty.Register("RepresentationPath", typeof(string), typeof(ItemList));
         public string RepresentationPath
         {
-            get { return (string)GetValue(RepresentationPathProperty); }
-            set { SetValue(RepresentationPathProperty, value); }
+            get => (string)GetValue(RepresentationPathProperty);
+            set => SetValue(RepresentationPathProperty, value);
         }
     }
 }

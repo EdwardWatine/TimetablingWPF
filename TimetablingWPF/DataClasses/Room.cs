@@ -18,7 +18,7 @@ namespace TimetablingWPF
         private int _quantity;
         public int Quantity
         {
-            get { return _quantity; }
+            get => _quantity;
             set
             {
                 if (value != _quantity)
@@ -31,7 +31,7 @@ namespace TimetablingWPF
         private bool _critical;
         public bool Critical
         {
-            get { return _critical; }
+            get => _critical;
             set
             {
                 if (value != _critical)

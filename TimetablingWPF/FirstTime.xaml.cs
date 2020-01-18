@@ -43,15 +43,23 @@ namespace TimetablingWPF
 
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
-            Hyperlink link = e.Source as Hyperlink;
-            if (LoadData(link.Tag.ToString(), () => {
-                Window window = new MainWindow(true);
-                window.Show();
-                window.Activate();
-                Window.GetWindow(this).Close(); }, Window.GetWindow(this)))
+            Hyperlink link = (Hyperlink)e.Source;
+            LoadData(link.Tag.ToString(), (worker_args) =>
             {
-                RegisterOpenFile(link.Tag.ToString());
-            }
+                if (worker_args.Cancelled)
+                {
+                    icRecentFiles.Items.Remove(link);
+                }
+                else
+                {
+                    RegisterOpenFile(link.Tag.ToString());
+                    Window window = new MainWindow(true);
+                    window.Show();
+                    window.Activate();
+                    Window.GetWindow(this).Close();
+                }
+            }, Window.GetWindow(this)
+                );
         }
 
         public void OpenFile(object sender, RoutedEventArgs e)
@@ -59,10 +67,14 @@ namespace TimetablingWPF
             string fpath = OpenFileDialogHelper();
             if (fpath != null)
             {
-                if (LoadData(fpath, () => { new MainWindow(true).Show(); Window.GetWindow(this).Close(); }, Window.GetWindow(this)))
-                {
-                    RegisterOpenFile(fpath);
-                }
+                LoadData(fpath, (worker_args) => {
+                    if (!worker_args.Cancelled)
+                    {
+                        RegisterOpenFile(fpath);
+                        new MainWindow(true).Show();
+                        Window.GetWindow(this).Close();
+                    }
+                }, Window.GetWindow(this));
             }
         }
 
@@ -70,6 +82,19 @@ namespace TimetablingWPF
         {
             ImportDialog dialog = new ImportDialog(Window.GetWindow(this));
             dialog.ShowDialog();
+        }
+        private void NewTimetable(object sender, RoutedEventArgs e)
+        {
+            string fpath = SaveFileDialogHelper("Create New File");
+            if (fpath != null)
+            {
+                TimetableStructureDialog structureDialog = new TimetableStructureDialog(Window.GetWindow(this), false);
+                if (!structureDialog.ShowDialog() ?? false) { return; }
+                SaveData(fpath);
+                RegisterOpenFile(fpath);
+                new MainWindow(true).Show();
+                Window.GetWindow(this).Close();
+            }
         }
     }
 
@@ -99,17 +124,6 @@ namespace TimetablingWPF
         }
     }
 
-    public class URISetatter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            Uri URI = (Uri)value;
-            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.AbsolutePath) : URI.LocalPath;
-        }
-        public object ConvertBack(object value, Type targetType, object paramter, System.Globalization.CultureInfo culture)
-        {
-            return null;
-        }
-    }
+    
 }
 

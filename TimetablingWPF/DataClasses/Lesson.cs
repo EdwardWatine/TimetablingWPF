@@ -23,7 +23,7 @@ namespace TimetablingWPF
         private int _lpc;
         public int LessonsPerCycle
         {
-            get { return _lpc; }
+            get => _lpc;
             set
             {
                 if (value != _lpc)
@@ -36,7 +36,7 @@ namespace TimetablingWPF
         private int _length;
         public int LessonLength
         {
-            get { return _length; }
+            get => _length;
             set
             {
                 if (value != _length)
@@ -49,7 +49,7 @@ namespace TimetablingWPF
         private Subject _subject;
         public Subject Subject
         {
-            get { return _subject; }
+            get => _subject;
             set
             {
                 if (value != _subject)

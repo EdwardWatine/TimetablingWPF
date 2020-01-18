@@ -42,15 +42,21 @@ namespace TimetablingWPF
         }
         public void SaveFile(object sender, ExecutedRoutedEventArgs e)
         {
-            FileHelpers.SaveDataToFile((string)Application.Current.Properties["CURRENT_FILE_PATH"]);
+            string fpath = (string)Application.Current.Properties["CURRENT_FILE_PATH"];
+            if (fpath != null)
+            {
+                FileHelpers.SaveData(fpath);
+                return;
+            }
+            SaveAs(sender, e);
         }
         public void SaveAs(object sender, ExecutedRoutedEventArgs e)
         {
             string fpath = FileHelpers.SaveFileDialogHelper();
             if (fpath != null)
             {
-                FileHelpers.SetCurrentFilePath(fpath);
-                FileHelpers.SaveDataToFile(fpath);
+                FileHelpers.SaveData(fpath);
+                FileHelpers.RegisterOpenFile(fpath);
             }
         }
         public void OpenFile(object sender, ExecutedRoutedEventArgs e)
@@ -59,10 +65,7 @@ namespace TimetablingWPF
             if (fpath != null && fpath != (string)Application.Current.Properties["CURRENT_FILE_PATH"])
             {
                 DataHelpers.ClearData();
-                if (FileHelpers.LoadData(fpath, owner: Window.GetWindow(this)))
-                {
-                    FileHelpers.RegisterOpenFile(fpath);
-                }
+                FileHelpers.LoadData(fpath, (worker_args) => { if (!worker_args.Cancelled) { FileHelpers.RegisterOpenFile(fpath); } }, Window.GetWindow(this));
             }
         }
     }

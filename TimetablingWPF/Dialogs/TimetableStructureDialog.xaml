@@ -3,10 +3,31 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:TimetablingWPF"
-        mc:Ignorable="d"
-        Title="TimetableStructureDialog" Height="450" Width="800">
+        xmlns:local="clr-namespace:TimetablingWPF" ResizeMode="CanResize"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
+        xmlns:tlkt="http://schemas.xceed.com/wpf/xaml/toolkit"
+        Title="TimetableStructureDialog">
+    <Window.Background>
+        <SolidColorBrush Color="{DynamicResource PrimaryColor}"/>
+    </Window.Background>
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Create Timetable Structure" Style="{StaticResource DialogText}"/>
+        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Grid.Row="1" HorizontalAlignment="Stretch">
+            <StackPanel Name="spWeeks" Orientation="Horizontal" HorizontalAlignment="Center"/>
+        </ScrollViewer>
+        <Grid Margin="10" HorizontalAlignment="Stretch" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+
+            </Grid.ColumnDefinitions>
+            <Button Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" Click="Confirm" FontSize="13">Confirm</Button>
+            <Button Padding="2" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Column="1" IsCancel="True" FontSize="13">Cancel</Button>
+        </Grid>
     </Grid>
 </Window>

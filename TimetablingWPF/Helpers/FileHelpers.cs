@@ -13,6 +13,7 @@ namespace TimetablingWPF
 {
     public static class FileHelpers
     {
+        public const int FORMATVERSION = 1;
         private static void WriteIntEnum(IEnumerable<int> enumerable, BinaryWriter writer)
         {
             IList<int> list = enumerable.ToList();
@@ -63,31 +64,38 @@ namespace TimetablingWPF
             Properties.Settings.Default.RECENT_FILES.Remove(fpath);
             Properties.Settings.Default.Save();
         }
-        public static bool LoadData(string fpath, Action done = null, Window owner = null)
+        public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Window owner = null)
         {
             BackgroundWorker worker = new BackgroundWorker()
             {
                 WorkerReportsProgress = true,
                 WorkerSupportsCancellation = true
             };
+            worker.Dispose(); //Doesn't do anything
             LoadingDialog box = new LoadingDialog("Loading...")
             {
                 Owner = owner
             };
             worker.DoWork += delegate (object sender, DoWorkEventArgs e) { 
-                LoadDataFromFile(fpath, worker); };
+                LoadDataFromFile(fpath, worker, e);
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                }
+            };
             worker.ProgressChanged += delegate (object sender, ProgressChangedEventArgs e)
             {
                 box.pbProgressBar.Value = e.ProgressPercentage;
                 box.tbTextBlock.Text = (string)e.UserState;
             };
-            worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e) { box.Close(); done?.Invoke(); };
+            worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e) {
+                box.Close();
+                done?.Invoke(e);
+            };
+            box.Show();
             worker.RunWorkerAsync();
-            worker.Dispose();
-            box.ShowDialog();
-            return !worker.CancellationPending;
         }
-        public static void LoadDataFromFile(string fpath, BackgroundWorker worker = null)
+        public static void LoadDataFromFile(string fpath, BackgroundWorker worker = null, DoWorkEventArgs e = null)
         {
             int total = 7;
             int count = 0;
@@ -95,16 +103,22 @@ namespace TimetablingWPF
             {
                 worker?.ReportProgress(count * 100 / 7, $"Loading {things} ({count + 1}/{total})");
                 count++;
+                if (worker?.CancellationPending ?? false)
+                {
+                    e.Cancel = true;
+                }
             };
-            UpdateWorker("Lessons");
             if (!File.Exists(fpath))
             {
                 VisualHelpers.ShowErrorBox($"File path {fpath} does not exist.", "File not found!");
                 RecentFilesRemove(fpath);
                 worker.CancelAsync();
+                return;
             }
+            UpdateWorker("Lessons");
             FileStream fileStream = File.OpenRead(fpath);
             BinaryReader reader = new BinaryReader(fileStream);
+            int version = reader.ReadInt32();
             LoadEnum(() =>
             {
                 string name = reader.ReadString();
@@ -114,6 +128,7 @@ namespace TimetablingWPF
             UpdateWorker("Teachers");
             LoadBDCEnum<Teacher>(t =>
             {
+                t.MaxPeriodsPerCycle = reader.ReadInt32();
                 LoadEnum(() => t.UnavailablePeriods.Add(TimetableSlot.FromInt(reader.ReadInt32())), reader);
             }, reader);
             UpdateWorker("Subjects");
@@ -155,11 +170,16 @@ namespace TimetablingWPF
             reader.Close();
             fileStream.Close();
         }
+        public static void SaveData(string fpath)
+        {
+            SaveDataToFile(fpath);
+        }
         public static void SaveDataToFile(string fpath)
         {
             MemoryStream all_data = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(all_data);
             IList<YearGroup> year_list = GetData<YearGroup>();
+            writer.Write(FORMATVERSION);
             writer.Write(year_list.Count);
             for (int i = 0; i < year_list.Count; i++)
             {
@@ -169,6 +189,8 @@ namespace TimetablingWPF
             }
             WriteBDCEnum(GetData<Teacher>(), writer, t =>
             {
+                writer.Write(t.MaxPeriodsPerCycle);
+                writer.Write(t.UnavailablePeriods.Count);
                 WriteIntEnum(t.UnavailablePeriods.Select(p => p.ToInt()), writer);
             });
             WriteBDCEnum(GetData<Subject>(), writer, s =>
@@ -216,16 +238,17 @@ namespace TimetablingWPF
                 Filter = "Timetable files (*.TTBL)|*.TTBL|All files (*.*)|*.*",
                 InitialDirectory = Properties.Settings.Default.LAST_ACCESSED_PATH,
                 ValidateNames = true,
-                DefaultExt = ".ttbl"
+                DefaultExt = ".ttbl",
             };
             if (dialog.ShowDialog() == true)
             {
                 Properties.Settings.Default.LAST_ACCESSED_PATH = dialog.FileName;
+                Properties.Settings.Default.Save();
                 return dialog.FileName;
             }
             return null;
         }
-        public static string SaveFileDialogHelper()
+        public static string SaveFileDialogHelper(string title = "Save As")
         {
             SaveFileDialog dialog = new SaveFileDialog
             {
@@ -239,6 +262,7 @@ namespace TimetablingWPF
             if (dialog.ShowDialog() == true)
             {
                 Properties.Settings.Default.LAST_ACCESSED_PATH = dialog.FileName;
+                Properties.Settings.Default.Save();
                 return dialog.FileName;
             }
             return null;

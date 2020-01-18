@@ -81,8 +81,8 @@ namespace TimetablingWPF
         /// </summary>
         public object Parent
         {
-            get { return _parent; }
-            set { _parent = (TThis)value; }
+            get => _parent;
+            set => _parent = (TThis)value;
         }
         private TThis _parent;
         /// <summary>

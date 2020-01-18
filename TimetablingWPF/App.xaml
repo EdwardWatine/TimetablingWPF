@@ -16,6 +16,7 @@
         <BitmapImage x:Key="EditAccountIcon" UriSource="Media/EditAccountIcon.png"/>
         <BitmapImage x:Key="DuplicateIcon" UriSource="Media/DuplicateIcon.png"/>
         <BitmapImage x:Key="DeleteBinIcon" UriSource="Media/DeleteBinIcon.png"/>
+        <BitmapImage x:Key="WhiteBinIcon" UriSource="Media/WhiteBinIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
         <Color x:Key="WarningColor">#fc9803</Color>
@@ -42,6 +43,7 @@
                 <Setter Property="FontSize" Value="15"/>
                 <Setter Property="Margin" Value="5,0,5,5"/>
                 <Setter Property="Padding" Value="5"/>
+                <Setter Property="TextAlignment" Value="Center"/>
             </Style.Setters>
         </Style>
         <Style x:Key="GridLineInternalBlack" TargetType="Border">
@@ -85,14 +87,14 @@
                         <StackPanel Orientation="Horizontal">
                             <Border Tag="{DynamicResource SecondaryColor}" Name="CheckboxBorder" Width="14" Height="14" BorderBrush="#000" BorderThickness="1" VerticalAlignment="Center" Margin="4,0,0,0">
                                 <Border.Background>
-                                    <SolidColorBrush Color="{Binding Path=Tag, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Border}}"/>
+                                    <SolidColorBrush Color="{Binding Path=Tag, Mode=OneWay, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Border}}"/>
                                 </Border.Background>
                                 <Path Tag="{DynamicResource PrimaryColor}" StrokeThickness="2" Width="8" Height="9" Name="Checkmark">
                                     <Path.Data>
                                         <PathGeometry Figures="M 0 4 L 0 4 M 3 9 L 3 9"/>
                                     </Path.Data>
                                     <Path.Stroke>
-                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Path}, Path=Tag, Mode=OneWay}"/>
+                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Path}, Path=Tag, Mode=OneWay}"/>
                                     </Path.Stroke>
                                 </Path>
                             </Border>
@@ -143,12 +145,12 @@
                             <Grid Margin="4,0,0,0">
                                 <Ellipse Width="14" Height="14" StrokeThickness="1" Stroke="#000" Name="RadioBorder" Tag="{DynamicResource SecondaryColor}">
                                     <Ellipse.Fill>
-                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Ellipse}, Path=Tag, Mode=OneWay}"/>
+                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Ellipse}, Path=Tag, Mode=OneWay}"/>
                                     </Ellipse.Fill>
                                 </Ellipse>
                                 <Ellipse Tag="{DynamicResource PrimaryColor}" Width="0" Height="0" Name="Radiomark" VerticalAlignment="Center" HorizontalAlignment="Center">
                                     <Ellipse.Fill>
-                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource AncestorType=Ellipse}, Path=Tag, Mode=OneWay}"/>
+                                        <SolidColorBrush Color="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=Ellipse}, Path=Tag, Mode=OneWay}"/>
                                     </Ellipse.Fill>
                                 </Ellipse>
                             </Grid>

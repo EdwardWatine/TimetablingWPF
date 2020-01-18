@@ -29,6 +29,7 @@ namespace TimetablingWPF
         {
             WindowState = fullscreen ? WindowState.Maximized : WindowState.Normal;
             InitializeComponent();
+            Title = $"Timetabler - {Application.Current.Properties["CURRENT_FILE_PATH"]}";
             //Subject Science = new Subject("Science");
 
             //Room sgroup = new Room("Science Rooms", 5);

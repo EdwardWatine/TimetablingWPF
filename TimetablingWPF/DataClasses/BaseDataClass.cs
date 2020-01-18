@@ -44,7 +44,7 @@ namespace TimetablingWPF
 
         public string Name
         {
-            get { return _name; }
+            get => _name;
             set
             {
                 if (value != _name)

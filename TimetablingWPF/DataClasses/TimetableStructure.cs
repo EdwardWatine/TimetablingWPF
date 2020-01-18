@@ -11,59 +11,24 @@ using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.IO;
+using TimetablingWPF.StructureClasses;
 
 namespace TimetablingWPF
 {
     public static class TimetableStructure
     {
-        public static void SetData(int weeksPerCycle, IList<TimetableStructurePeriod> structure)
+        public static void SetData(IList<TimetableStructureWeek> weeks)
         {
-            WeeksPerCycle = weeksPerCycle;
-            Structure = structure;
-            PeriodsPerDay = (from period in structure where period.IsSchedulable select period).Count();
-            TotalFreePeriods = weeksPerCycle*5*PeriodsPerDay;
+            Weeks = weeks;
+            TotalSchedulable = 0;
+            foreach (TimetableStructureWeek week in Weeks)
+            {
+                TotalSchedulable += week.TotalSchedulable;
+            }
         }
-        public static int WeeksPerCycle { get; private set; }
-        public static IList<TimetableStructurePeriod> Structure { get; private set; }
-        public static int TotalFreePeriods { get; private set; }
-        public static int PeriodsPerDay { get; private set; }
+        public static IList<TimetableStructureWeek> Weeks { get; private set; }
+        public static int TotalSchedulable { get; private set; }
     }
-    public struct TimetableStructurePeriod : IEquatable<TimetableStructurePeriod>
-    {
-        public TimetableStructurePeriod(string name, bool isSchedulable)
-        {
-            Name = name;
-            IsSchedulable = isSchedulable;
-        }
-        public string Name { get; }
-        public bool IsSchedulable { get; }
-
-        public override bool Equals(object obj)
-        {
-            return obj is TimetableStructurePeriod tsp && Equals(tsp);
-        }
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode() + (IsSchedulable ? 0 : 17);
-        }
-
-        public static bool operator ==(TimetableStructurePeriod left, TimetableStructurePeriod right)
-        {
-            return left.Equals(right);
-        }
-
-        public static bool operator !=(TimetableStructurePeriod left, TimetableStructurePeriod right)
-        {
-            return !left.Equals(right);
-        }
-
-        public bool Equals(TimetableStructurePeriod other)
-        {
-            return Name == other.Name && IsSchedulable == other.IsSchedulable;
-        }
-    }
-
     public class YearGroup
     {
         public YearGroup(string year)
@@ -91,7 +56,7 @@ namespace TimetablingWPF
         {
             return obj is YearGroup yg && yg.Year == Year;
         }
-        
+
         public override int GetHashCode()
         {
             return Year.GetHashCode();
@@ -105,5 +70,41 @@ namespace TimetablingWPF
         {
             return !left.Equals(right);
         }
+    }
+}
+namespace TimetablingWPF.StructureClasses{
+    public class TimetableStructureWeek
+    {
+        public TimetableStructureWeek(string name, IList<string> days, IList<string> periods, IList<int> unschedulable)
+        {
+            Name = name;
+            DayNames = days;
+            PeriodNames = periods;
+            TotalPeriods = periods.Count * days.Count;
+            TotalSchedulable = TotalPeriods;
+            for (int i = 0; i < TotalPeriods; i++)
+            {
+                AllPeriods.Add(true);
+            }
+            foreach (int index in unschedulable)
+            {
+                AllPeriods[index] = false;
+                TotalSchedulable--;
+            }
+        }
+        public bool PeriodIsSchedulable(int day, int period)
+        {
+            return AllPeriods[day * PeriodNames.Count + period];
+        }
+        public static int IndexesToPeriodNum(int day, int period, int numPeriods)
+        {
+            return day * numPeriods + period;
+        }
+        public string Name { get; }
+        public IList<string> DayNames { get; }
+        public IList<string> PeriodNames { get; }
+        public IList<bool> AllPeriods { get; } = new List<bool>();
+        public int TotalPeriods { get; }
+        public int TotalSchedulable { get; }
     }
 }

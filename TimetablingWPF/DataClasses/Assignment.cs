@@ -27,21 +27,37 @@ namespace TimetablingWPF
             Day = day;
             Period = period;
         }
-        public int ToInt()
-        {
-            return 5 * (TimetableStructure.PeriodsPerDay * Week + Day) + Period;
-        }
-        public static TimetableSlot FromInt(int from)
-        {
-            return new TimetableSlot(from / (TimetableStructure.PeriodsPerDay * 5),
-                from % (TimetableStructure.PeriodsPerDay * 5) / 5,
-                from % (TimetableStructure.PeriodsPerDay * 5) % 5);
-        }
         public override string ToString()
         {
-            return $"{DataHelpers.WeekToString(Week)} {DataHelpers.DayToString(Day)} P{DataHelpers.PeriodNumToPeriod(Period).Name}";
+            return $"{DataHelpers.WeekToString(Week)} {DataHelpers.DayToString(Week, Day)} {DataHelpers.PeriodToString(Week, Period)}";
+        }
+        public int ToInt()
+        {
+            return ToIntFromInts(Week, Day, Period);
+        }
+        public static int ToIntFromInts(int week, int day, int period)
+        {
+            int total = 0;
+            for (int i = 0; i < week; i++)
+            {
+                total += TimetableStructure.Weeks[i].TotalPeriods;
+            }
+            total += day * TimetableStructure.Weeks[week].PeriodNames.Count;
+            total += period;
+            return total;
         }
 
+        public static TimetableSlot FromInt(int num)
+        {
+            int week;
+            for (week = 0; num <= TimetableStructure.Weeks[week].TotalPeriods; week++)
+            {
+                num -= TimetableStructure.Weeks[week].TotalPeriods;
+            }
+            int day = num / TimetableStructure.Weeks[week].PeriodNames.Count;
+            int period = num % TimetableStructure.Weeks[week].PeriodNames.Count;
+            return new TimetableSlot(week, day, period);
+        }
         public override bool Equals(object obj)
         {
             if (!(obj is TimetableSlot))
@@ -54,7 +70,7 @@ namespace TimetablingWPF
 
         public override int GetHashCode()
         {
-            return new Tuple<int, int, int>(Week, Day, Period).GetHashCode();
+            return ToInt();
         }
 
         public static bool operator ==(TimetableSlot left, TimetableSlot right)

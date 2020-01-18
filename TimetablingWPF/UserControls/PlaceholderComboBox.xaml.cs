@@ -43,40 +43,35 @@ namespace TimetablingWPF
 
         public string Placeholder
         {
-            get { return (string)GetValue(PlaceholderProperty); }
-            set { SetValue(PlaceholderProperty, value); }
+            get => (string)GetValue(PlaceholderProperty);
+            set => SetValue(PlaceholderProperty, value);
         }
 
         public IEnumerable ItemsSource
         {
-            get { return (IEnumerable)GetValue(ItemsSourceProperty); }
-            set { SetValue(ItemsSourceProperty, value); }
+            get => (IEnumerable)GetValue(ItemsSourceProperty);
+            set => SetValue(ItemsSourceProperty, value);
         }
 
         public object SelectedItem
         {
-            get { return GetValue(SelectedItemProperty); }
-            set { SetValue(SelectedItemProperty, value); }
+            get => GetValue(SelectedItemProperty);
+            set => SetValue(SelectedItemProperty, value);
         }
 
         public bool IsReadOnly
         {
-            get { return (bool)GetValue(IsReadOnlyProperty); }
-            set { SetValue(IsReadOnlyProperty, value); }
+            get => (bool)GetValue(IsReadOnlyProperty);
+            set => SetValue(IsReadOnlyProperty, value);
         }
 
         public bool IsEditable
         {
-            get { return (bool)GetValue(IsEditableProperty); }
-            set { SetValue(IsEditableProperty, value); }
+            get => (bool)GetValue(IsEditableProperty);
+            set => SetValue(IsEditableProperty, value);
         }
 
-        public string Text
-        {
-            get => comboBox.Text;
-            set => comboBox.Text = value;
-        }
-
+        public string Text => comboBox.Text;
         public T GetObject<T>() where T : BaseDataClass, new()
         {
             if (SelectedItem == null)
@@ -90,19 +85,4 @@ namespace TimetablingWPF
             return (T)SelectedItem;
         }
     }
-
-    public class BoxToVisibilityConverter : IMultiValueConverter
-    {
-        public object Convert(object[] value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            return value[0] == null && string.IsNullOrEmpty((string)value[1]) ? Visibility.Visible : Visibility.Hidden;
-        }
-
-        public object[] ConvertBack(object value, Type[] targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    
 }

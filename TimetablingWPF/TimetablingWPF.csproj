@@ -190,6 +190,7 @@
     <Compile Include="UserControls\ApplicationMenu.xaml.cs">
       <DependentUpon>ApplicationMenu.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\EditableText.cs" />
     <Compile Include="UserControls\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
@@ -206,6 +207,7 @@
     <Resource Include="Media\EditAccountIcon.png" />
     <Resource Include="Media\DuplicateIcon.png" />
     <Resource Include="Media\DeleteBinIcon.png" />
+    <Resource Include="Media\WhiteBinIcon.png" />
     <Content Include="UserControls\DoubleMenu.xaml.cs">
       <DependentUpon>DoubleMenu.xaml</DependentUpon>
     </Content>

@@ -10,5 +10,9 @@ namespace TimetablingWPF
 {
     public static class GenericExtensions
     {
+        public static void InsertDefaultIndex<T>(this IList<T> list, int index, T item)
+        {
+            list.Insert(Math.Min(list.Count, index), item);
+        }
     }
 }
