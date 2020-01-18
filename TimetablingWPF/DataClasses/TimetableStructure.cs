@@ -82,6 +82,10 @@ namespace TimetablingWPF.StructureClasses{
             PeriodNames = periods;
             TotalPeriods = periods.Count * days.Count;
             TotalSchedulable = TotalPeriods;
+            for (int i = 0; i < DayNames.Count; i++)
+            {
+                DaySchedulable.Add(0);
+            }
             for (int i = 0; i < TotalPeriods; i++)
             {
                 AllPeriods.Add(true);
@@ -90,11 +94,16 @@ namespace TimetablingWPF.StructureClasses{
             {
                 AllPeriods[index] = false;
                 TotalSchedulable--;
+                DaySchedulable[index / PeriodNames.Count]++;
             }
         }
         public bool PeriodIsSchedulable(int day, int period)
         {
-            return AllPeriods[day * PeriodNames.Count + period];
+            return AllPeriods[IndexesToPeriodNum(day, period, PeriodNames.Count)];
+        }
+        public bool DayIsSchedulable(int day)
+        {
+            return DaySchedulable[day] != PeriodNames.Count;
         }
         public static int IndexesToPeriodNum(int day, int period, int numPeriods)
         {
@@ -104,6 +113,7 @@ namespace TimetablingWPF.StructureClasses{
         public IList<string> DayNames { get; }
         public IList<string> PeriodNames { get; }
         public IList<bool> AllPeriods { get; } = new List<bool>();
+        private IList<int> DaySchedulable { get; } = new List<int>();
         public int TotalPeriods { get; }
         public int TotalSchedulable { get; }
     }

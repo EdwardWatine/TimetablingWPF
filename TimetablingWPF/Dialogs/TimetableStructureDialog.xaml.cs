@@ -309,7 +309,7 @@ namespace TimetablingWPF
         }
         private void SaveData()
         {
-            if (!ShowWarning || ShowWarningBox("All data related to the timetable will be deleted. Are you sure you want to continue?") == MessageBoxResult.Cancel)
+            if (ShowWarning && ShowWarningBox("All data related to the timetable will be deleted. Are you sure you want to continue?") == MessageBoxResult.Cancel)
             {
                 return;
             }

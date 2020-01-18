@@ -257,7 +257,8 @@ namespace TimetablingWPF
                 ValidateNames = true,
                 OverwritePrompt = true,
                 DefaultExt = ".ttbl",
-                AddExtension = true
+                AddExtension = true,
+                Title = title
             };
             if (dialog.ShowDialog() == true)
             {

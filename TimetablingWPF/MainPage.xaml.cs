@@ -41,7 +41,7 @@ namespace TimetablingWPF
         }
         private static void CloseTab(ItemActionCallbackArgs<TabablzControl> args)
         {
-            if (!((ITab)(args.DragablzItem.Content)).Cancel())
+            if (!((ITab)args.DragablzItem.Content).Cancel())
             {
                 args.Cancel();
             }

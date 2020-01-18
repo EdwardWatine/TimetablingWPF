@@ -41,6 +41,7 @@ namespace TimetablingWPF
 
                 for (int day = 0; day < structureWeek.DayNames.Count; day++)
                 {
+                    if (!structureWeek.DayIsSchedulable(day)) { continue; }
                     ColumnDefinition columnDay = new ColumnDefinition()
                     {
                         Width = new GridLength(1, GridUnitType.Star),
@@ -79,6 +80,7 @@ namespace TimetablingWPF
 
                     for (int day = 0; day < structureWeek.DayNames.Count; day++)
                     {
+                        if (!structureWeek.DayIsSchedulable(day)) { continue; }
                         bool schedulable = structureWeek.PeriodIsSchedulable(day, period);
                         TimetableSlot slot = new TimetableSlot(week, day, period);
                         bool isUnavailable = slots.Contains(slot);
