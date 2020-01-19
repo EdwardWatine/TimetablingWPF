@@ -102,7 +102,7 @@ namespace TimetablingWPF
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             Uri URI = (Uri)value;
-            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.AbsolutePath) : URI.LocalPath;
+            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.LocalPath) : URI.LocalPath;
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

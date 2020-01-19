@@ -13,17 +13,12 @@ namespace TimetablingWPF
 {
     public static class FileHelpers
     {
-        public const int FORMATVERSION = 1;
-        private static void WriteIntEnum(IEnumerable<int> enumerable, BinaryWriter writer)
+        public const int FORMATVERSION = 2;
+        public static void WriteIntEnum(IEnumerable<int> enumerable, BinaryWriter writer)
         {
-            IList<int> list = enumerable.ToList();
-            writer.Write(list.Count);
-            for (int i = 0; i < list.Count; i++)
-            {
-                writer.Write(list[i]);
-            }
+            WriteList(enumerable.ToList(), (i, index) => writer.Write(i), writer);
         }
-        private static void WriteBDCEnum<T>(IEnumerable<T> enumerable, BinaryWriter writer, Action<T> action) where T : BaseDataClass
+        public static void WriteBDCEnum<T>(IEnumerable<T> enumerable, BinaryWriter writer, Action<T> action) where T : BaseDataClass
         {
             IList<T> list = enumerable.ToList();
             writer.Write(list.Count);
@@ -35,7 +30,15 @@ namespace TimetablingWPF
                 action(obj);
             }
         }
-        private static void LoadEnum(Action action, BinaryReader reader)
+        public static void WriteList<T>(IList<T> list, Action<T, int> action, BinaryWriter writer)
+        {
+            writer.Write(list.Count);
+            for (int i = 0; i < list.Count; i++)
+            {
+                action(list[i], i);
+            }
+        }
+        public static void LoadEnum(Action action, BinaryReader reader)
         {
             int count = reader.ReadInt32();
             for (int i = 0; i < count; i++)
@@ -43,7 +46,21 @@ namespace TimetablingWPF
                 action();
             }
         }
-        private static void LoadBDCEnum<T>(Action<T> action, BinaryReader reader) where T : BaseDataClass, new()
+        public static IList<T> LoadAndReturnList<T>(Func<T> func, BinaryReader reader)
+        {
+            int count = reader.ReadInt32();
+            IList<T> retval = new List<T>(count);
+            for (int i = 0; i < count; i++)
+            {
+                retval.Add(func());
+            }
+            return retval;
+        }
+        public static IList<int> LoadAndReturnIntList(BinaryReader reader)
+        {
+            return LoadAndReturnList(() => reader.ReadInt32(), reader);
+        }
+        public static void LoadBDCEnum<T>(Action<T> action, BinaryReader reader) where T : BaseDataClass, new()
         {
             LoadEnum(() =>
             {
@@ -72,12 +89,23 @@ namespace TimetablingWPF
                 WorkerSupportsCancellation = true
             };
             worker.Dispose(); //Doesn't do anything
+            if (!File.Exists(fpath))
+            {
+                VisualHelpers.ShowErrorBox($"File path {fpath} does not exist.", "File not found!");
+                RecentFilesRemove(fpath);
+                worker.CancelAsync();
+                return;
+            }
             LoadingDialog box = new LoadingDialog("Loading...")
             {
                 Owner = owner
             };
-            worker.DoWork += delegate (object sender, DoWorkEventArgs e) { 
-                LoadDataFromFile(fpath, worker, e);
+            worker.DoWork += delegate (object sender, DoWorkEventArgs e) {
+                FileStream fstream = new FileStream(fpath, FileMode.Open);
+                BinaryReader reader = new BinaryReader(fstream);
+                LoadingFormats.GetLoadingDelegate(reader.ReadInt32()).Invoke(fpath, reader, worker, e);
+                reader.Dispose();
+                fstream.Close();
                 if (worker.CancellationPending)
                 {
                     e.Cancel = true;
@@ -95,81 +123,6 @@ namespace TimetablingWPF
             box.Show();
             worker.RunWorkerAsync();
         }
-        public static void LoadDataFromFile(string fpath, BackgroundWorker worker = null, DoWorkEventArgs e = null)
-        {
-            int total = 7;
-            int count = 0;
-            void UpdateWorker(string things)
-            {
-                worker?.ReportProgress(count * 100 / 7, $"Loading {things} ({count + 1}/{total})");
-                count++;
-                if (worker?.CancellationPending ?? false)
-                {
-                    e.Cancel = true;
-                }
-            };
-            if (!File.Exists(fpath))
-            {
-                VisualHelpers.ShowErrorBox($"File path {fpath} does not exist.", "File not found!");
-                RecentFilesRemove(fpath);
-                worker.CancelAsync();
-                return;
-            }
-            UpdateWorker("Lessons");
-            FileStream fileStream = File.OpenRead(fpath);
-            BinaryReader reader = new BinaryReader(fileStream);
-            int version = reader.ReadInt32();
-            LoadEnum(() =>
-            {
-                string name = reader.ReadString();
-                YearGroup year = new YearGroup(name);
-                year.Commit();
-            }, reader);
-            UpdateWorker("Teachers");
-            LoadBDCEnum<Teacher>(t =>
-            {
-                t.MaxPeriodsPerCycle = reader.ReadInt32();
-                LoadEnum(() => t.UnavailablePeriods.Add(TimetableSlot.FromInt(reader.ReadInt32())), reader);
-            }, reader);
-            UpdateWorker("Subjects");
-            IList<Teacher> teacher_list = GetData<Teacher>();
-            LoadBDCEnum<Subject>(s =>
-            {
-                LoadEnum(() => s.Teachers.Add(teacher_list[reader.ReadInt32()]), reader);
-            }, reader);
-            UpdateWorker("Forms");
-            IList<YearGroup> year_list = GetData<YearGroup>();
-            LoadBDCEnum<Form>(f =>
-            {
-                f.YearGroup = year_list[reader.ReadInt32()];
-            }, reader);
-            UpdateWorker("Rooms");
-            LoadBDCEnum<Room>(r =>
-            {
-                r.Quantity = reader.ReadInt32();
-                r.Critical = reader.ReadBoolean();
-            }, reader);
-            UpdateWorker("Groups");
-            IList<Subject> subject_list = GetData<Subject>();
-            IList<Room> room_list = GetData<Room>();
-            LoadBDCEnum<Group>(g =>
-            {
-                LoadEnum(() => g.Subjects.Add(subject_list[reader.ReadInt32()]), reader);
-                LoadEnum(() => g.Rooms.Add(room_list[reader.ReadInt32()]), reader);
-            }, reader);
-            UpdateWorker("Lessons");
-            IList<Form> form_list = GetData<Form>();
-            LoadBDCEnum<Lesson>(l =>
-            {
-                LoadEnum(() => l.Forms.Add(form_list[reader.ReadInt32()]), reader);
-                l.LessonsPerCycle = reader.ReadInt32();
-                l.LessonLength = reader.ReadInt32();
-                l.Subject = subject_list[reader.ReadInt32()];
-                LoadEnum(() => l.Assignments.Add(new Assignment(teacher_list[reader.ReadInt32()], l, reader.ReadInt32())), reader);
-            }, reader);
-            reader.Close();
-            fileStream.Close();
-        }
         public static void SaveData(string fpath)
         {
             SaveDataToFile(fpath);
@@ -180,13 +133,24 @@ namespace TimetablingWPF
             BinaryWriter writer = new BinaryWriter(all_data);
             IList<YearGroup> year_list = GetData<YearGroup>();
             writer.Write(FORMATVERSION);
-            writer.Write(year_list.Count);
-            for (int i = 0; i < year_list.Count; i++)
+            WriteList(TimetableStructure.Weeks, (w, i) =>
             {
-                YearGroup year = year_list[i];
-                year.StorageIndex = i;
-                writer.Write(year.Year);
-            }
+                writer.Write(w.Name);
+                WriteList(w.DayNames, (d, i2) =>
+                {
+                    writer.Write(d);
+                }, writer);
+                WriteList(w.PeriodNames, (p, i2) =>
+                {
+                    writer.Write(p);
+                }, writer);
+                WriteIntEnum(w.UnavailablePeriods, writer);
+            }, writer);
+            WriteList(year_list, (y, i) =>
+            {
+                y.StorageIndex = i;
+                writer.Write(y.Year);
+            }, writer);
             WriteBDCEnum(GetData<Teacher>(), writer, t =>
             {
                 writer.Write(t.MaxPeriodsPerCycle);
@@ -217,12 +181,12 @@ namespace TimetablingWPF
                 writer.Write(l.LessonsPerCycle);
                 writer.Write(l.LessonLength);
                 writer.Write(l.Subject.StorageIndex);
-                writer.Write(l.Assignments.Count);
-                foreach (Assignment assignment in l.Assignments)
+                WriteList(l.Assignments, (a, i) =>
                 {
-                    writer.Write(assignment.Teacher.StorageIndex);
-                    writer.Write(assignment.LessonCount);
-                }
+                    writer.Write(a.Teacher.StorageIndex);
+                    writer.Write(a.LessonCount);
+                }, writer);
+                
             });
             all_data.Seek(0, SeekOrigin.Begin);
             FileStream stream = File.OpenWrite(fpath);

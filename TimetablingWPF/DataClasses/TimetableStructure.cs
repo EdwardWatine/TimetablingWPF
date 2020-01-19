@@ -82,6 +82,7 @@ namespace TimetablingWPF.StructureClasses{
             PeriodNames = periods;
             TotalPeriods = periods.Count * days.Count;
             TotalSchedulable = TotalPeriods;
+            UnavailablePeriods = unschedulable;
             for (int i = 0; i < DayNames.Count; i++)
             {
                 DaySchedulable.Add(0);
@@ -112,6 +113,7 @@ namespace TimetablingWPF.StructureClasses{
         public string Name { get; }
         public IList<string> DayNames { get; }
         public IList<string> PeriodNames { get; }
+        public IList<int> UnavailablePeriods { get; }
         public IList<bool> AllPeriods { get; } = new List<bool>();
         private IList<int> DaySchedulable { get; } = new List<int>();
         public int TotalPeriods { get; }
