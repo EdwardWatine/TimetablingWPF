@@ -13,7 +13,6 @@ namespace TimetablingWPF
 {
     public static class FileHelpers
     {
-        public const int FORMATVERSION = 2;
         public static void WriteIntEnum(IEnumerable<int> enumerable, BinaryWriter writer)
         {
             WriteList(enumerable.ToList(), (i, index) => writer.Write(i), writer);
@@ -96,32 +95,37 @@ namespace TimetablingWPF
                 worker.CancelAsync();
                 return;
             }
-            LoadingDialog box = new LoadingDialog("Loading...")
+            Application.Current.Dispatcher.Invoke(() =>
             {
-                Owner = owner
-            };
-            worker.DoWork += delegate (object sender, DoWorkEventArgs e) {
-                FileStream fstream = new FileStream(fpath, FileMode.Open);
-                BinaryReader reader = new BinaryReader(fstream);
-                LoadingFormats.GetLoadingDelegate(reader.ReadInt32()).Invoke(fpath, reader, worker, e);
-                reader.Dispose();
-                fstream.Close();
-                if (worker.CancellationPending)
+                LoadingDialog box = new LoadingDialog("Loading...")
                 {
-                    e.Cancel = true;
-                }
-            };
-            worker.ProgressChanged += delegate (object sender, ProgressChangedEventArgs e)
-            {
-                box.pbProgressBar.Value = e.ProgressPercentage;
-                box.tbTextBlock.Text = (string)e.UserState;
-            };
-            worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e) {
-                box.Close();
-                done?.Invoke(e);
-            };
-            box.Show();
-            worker.RunWorkerAsync();
+                    Owner = owner
+                };
+                worker.DoWork += delegate (object sender, DoWorkEventArgs e)
+                {
+                    FileStream fstream = new FileStream(fpath, FileMode.Open);
+                    BinaryReader reader = new BinaryReader(fstream);
+                    LoadingFormats.GetLoadingDelegate(reader.ReadInt32()).Invoke(fpath, reader, worker, e);
+                    reader.Dispose();
+                    fstream.Close();
+                    if (worker.CancellationPending)
+                    {
+                        e.Cancel = true;
+                    }
+                };
+                worker.ProgressChanged += delegate (object sender, ProgressChangedEventArgs e)
+                {
+                    box.pbProgressBar.Value = e.ProgressPercentage;
+                    box.tbTextBlock.Text = (string)e.UserState;
+                };
+                worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e)
+                {
+                    box.Close();
+                    done?.Invoke(e);
+                };
+                box.Show();
+                worker.RunWorkerAsync();
+            });
         }
         public static void SaveData(string fpath)
         {
@@ -132,7 +136,7 @@ namespace TimetablingWPF
             MemoryStream all_data = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(all_data);
             IList<YearGroup> year_list = GetData<YearGroup>();
-            writer.Write(FORMATVERSION);
+            writer.Write(LoadingFormats.LATEST);
             WriteList(TimetableStructure.Weeks, (w, i) =>
             {
                 writer.Write(w.Name);

@@ -68,13 +68,18 @@ namespace TimetablingWPF
                 FileHelpers.LoadData(fpath, (worker_args) => { if (!worker_args.Cancelled) { FileHelpers.RegisterOpenFile(fpath); } }, Window.GetWindow(this));
             }
         }
-    }
 
-    public static class MenuCommands
-    {
-        static RoutedUICommand ImportCommand = new RoutedUICommand("Import", "Import", typeof(MenuCommands),
-            new InputGestureCollection() {
-                new KeyGesture(Key.I, ModifierKeys.Control)
-            });
+        private void BlockingViewClick(object sender, RoutedEventArgs e)
+        {
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is BlockingWindow)
+                {
+                    window.Activate();
+                    return;
+                }
+            }
+            new BlockingWindow().Show();
+        }
     }
 }

@@ -44,7 +44,7 @@ namespace TimetablingWPF
             });
             StartWindow window = new StartWindow();
             //MainWindow window = new MainWindow(true);
-            window.Show();
+            
         }
 
     }

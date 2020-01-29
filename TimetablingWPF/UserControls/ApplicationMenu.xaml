@@ -16,6 +16,11 @@
             <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
             <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs" InputGestureText="Ctrl+Shift+S"/>
         </MenuItem>
-        <MenuItem Header="Hello2"/>
+        <MenuItem Header="_View">
+            <MenuItem Header="_Data Views">
+                <MenuItem Header="_Teacher"/>
+            </MenuItem>
+            <MenuItem Header="_Blocking View" Click="BlockingViewClick"/>
+        </MenuItem>
     </Menu>
 </UserControl>

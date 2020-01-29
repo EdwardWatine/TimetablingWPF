@@ -7,5 +7,155 @@
         mc:Ignorable="d" Closing="WindowClosing" SizeToContent="WidthAndHeight"
         Title="MainWindow" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
         >
-    
+    <Window.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{DynamicResource SecondaryColor}" Offset="0.0"/>
+            <GradientStop Color="{DynamicResource PrimaryColor}" Offset="0.75"/>
+
+        </LinearGradientBrush>
+    </Window.Background>
+    <Window.Resources>
+
+        <local:URISetatter x:Key="URISetatter"/>
+        <Style x:Key="HyperlinkStyle" TargetType="Hyperlink">
+            <Style.Triggers>
+
+                <Trigger Property="IsMouseOver" Value="True">
+
+                    <Setter Property="TextBlock.TextDecorations" Value="Underline"/>
+                    <Setter Property="Cursor" Value="Arrow"/>
+
+                </Trigger>
+
+            </Style.Triggers>
+
+            <Setter Property="Foreground" Value="{StaticResource SecondaryBrush}" />
+
+            <Setter Property="TextBlock.TextDecorations" Value="{x:Null}" />
+        </Style>
+
+        <Style x:Key="ButtonBorderStyle" TargetType="Border">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="CornerRadius" Value="15"/>
+        </Style>
+
+        <Style x:Key="ButtonStyle" TargetType="Button">
+            <Setter Property="OverridesDefaultStyle" Value="True"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Name="Border" Style="{StaticResource ButtonBorderStyle}" Tag="{StaticResource SecondaryColor}">
+                            <Border.Background>
+                                <SolidColorBrush x:Name="BorderBg" Color="{Binding Path=Tag, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Border}}"/>
+                            </Border.Background>
+                            <StackPanel Orientation="Vertical">
+                                <Image Height="100" Width="100" Source="{TemplateBinding local:ButtonProperties.Image}"/>
+                                <TextBlock FontSize="15" Text="{TemplateBinding local:ButtonProperties.Text}"/>
+                            </StackPanel>
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup Name="CommonStates">
+                                    <VisualState Name="Normal">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="BorderBg"
+                                                            Storyboard.TargetProperty="Color" To="{StaticResource SecondaryColor}" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="MouseOver">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="BorderBg" 
+                                                            Storyboard.TargetProperty="Color" To="#DDDDDD" Duration="0:0:0.2"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState Name="Pressed">
+                                        <Storyboard>
+                                            <ColorAnimation Storyboard.TargetName="BorderBg" 
+                                                            Storyboard.TargetProperty="Color" To="#777777" Duration="0"/>
+                                        </Storyboard>
+                                    </VisualState>
+
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </Window.Resources>
+
+    <Grid Height="450" Width="800">
+         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="3*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.ColumnSpan="2" FontSize="72" Foreground="#4E4E94" Padding="25,0,0,0">
+            Get Timetabling!
+        </TextBlock>
+        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" 
+                    Grid.Row="1" Orientation="Horizontal">
+            <Button Style="{StaticResource ButtonStyle}" Margin="0,0,40,0" HorizontalAlignment="Center" Click="NewTimetable"
+                    local:ButtonProperties.Image="{StaticResource NewFileIcon}"
+                    local:ButtonProperties.Text="Create a new Timetable"/>
+            <Button Style="{StaticResource ButtonStyle}" Margin="0,0,0,0" Click="LaunchManual" HorizontalAlignment="Center"
+                    local:ButtonProperties.Image="{StaticResource UserManualIcon}"
+                    local:ButtonProperties.Text="Access the help manual"/>
+
+        </StackPanel>
+        <Grid Grid.Row="1" Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Margin="0,30,0,0" HorizontalAlignment="Center" Foreground="#FFFFFF" FontSize="24">
+                Recent Files
+            </TextBlock>
+            <Grid Grid.Row="1" Margin="0,20,0,0" Name="tbNoRecentFiles" Visibility="Collapsed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="No recent files..." Foreground="#FFFFFF" FontSize="12" HorizontalAlignment="Center"/>
+            </Grid>
+            <ItemsControl Grid.Row="1" Name="icRecentFiles"
+                          HorizontalAlignment="Stretch" Margin="10,0,0,0">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+
+                        <TextBlock HorizontalAlignment="Left" Margin="0,20,0,0" FontSize="12">
+                            <InlineUIContainer>
+                                <Image MaxHeight="{Binding ElementName=fpath, Path=ActualHeight}"
+                                       Source="{StaticResource FileIcon}"/>
+                            </InlineUIContainer>         
+                            <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding Converter={StaticResource URISetatter}}">
+                                <TextBlock x:Name="fpath" 
+                                           Text="{Binding Converter={StaticResource URISetatter}, ConverterParameter=filename}"
+                                           ToolTip="{Binding Converter={StaticResource URISetatter}}"/>
+                            </Hyperlink>
+                        </TextBlock>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <Grid Grid.Row="2" VerticalAlignment="Bottom" Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" HorizontalAlignment="Center" Foreground="#FFFFFF" FontSize="12">
+                    <InlineUIContainer>
+                        <Image MaxHeight="{Binding ElementName=fpath, Path=ActualHeight}" 
+                                Source="{StaticResource FolderIcon}"/>
+                    </InlineUIContainer>
+                            
+                    <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="OpenFile" Foreground="#FFFFFF">
+                        <TextBlock x:Name="fpath" Text="Open File"/>
+                    </Hyperlink>
+                 </TextBlock>
+            </Grid>
+        </Grid>
+    </Grid>
 </Window>

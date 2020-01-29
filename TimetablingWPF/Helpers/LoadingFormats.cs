@@ -12,6 +12,7 @@ namespace TimetablingWPF
 {
     public static class LoadingFormats
     {
+        public const int LATEST = 2;
         public delegate void LoadingDelegate(string fpath, BinaryReader reader, BackgroundWorker worker = null, DoWorkEventArgs e = null);
         private static readonly Dictionary<int, LoadingDelegate> versionMapping = new Dictionary<int, LoadingDelegate>()
         {
