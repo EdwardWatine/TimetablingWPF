@@ -16,7 +16,7 @@ using System.IO;
 namespace TimetablingWPF
 {
     /// <summary>
-    /// Base form for all data objects
+    /// Base class for all data objects
     /// </summary>
     /// 
 
@@ -25,12 +25,12 @@ namespace TimetablingWPF
 
         public BaseDataClass()
         {
-            ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this);
-            void SubscribeToCollectionChange(PropertyInfo prop, INotifyCollectionChanged val)
+            ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this);  //Links to all the RelationalCollections on instance creation
+            void SubscribeToCollectionChange(PropertyInfo prop, INotifyCollectionChanged val) //Propagates changes in internal collections
             {
                 void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
                 {
-                    if ((e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || e.NewItems[0] != e.OldItems[0]) && !Frozen)
+                    if ((e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || e.NewItems[0] != e.OldItems[0]) && !Frozen) //Ensures that the change is propagated if it wasn't propagated by another object
                     {
                         NotifyPropertyChanged(prop.Name);
                     }
@@ -69,7 +69,7 @@ namespace TimetablingWPF
         {
             if (!Commited)
             {
-                Application.Current.Dispatcher.Invoke(()=>((IList)Application.Current.Properties[GetType()]).Add(this));
+                Application.Current.Dispatcher.Invoke(()=>((IList)Application.Current.Properties[GetType()]).Add(this)); //Adds itself to the correct data list from the main UI thread to prevent threading issues
                 Commited = true;
             }
         }
@@ -130,8 +130,8 @@ namespace TimetablingWPF
             copy.PropertyChanged = null;
             copy.Unfreeze();
 
-            copy.ApplyOnType<ICloneable>((prop, val) => prop.SetValue(copy, val.Clone()));
-            copy.ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this);
+            copy.ApplyOnType<ICloneable>((prop, val) => prop.SetValue(copy, val.Clone())); //copies all copyable objects
+            copy.ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this); //reassigns the parent of copied lists
             return copy;
         }
 
@@ -148,14 +148,14 @@ namespace TimetablingWPF
             ApplyOnType<IFreezable>((prop, val) => val.Unfreeze());
         }
 
-        private void ApplyOnType<T>(Action<PropertyInfo, T> action)
+        private void ApplyOnType<T>(Action<PropertyInfo, T> action) //Helper function to apply a function to each property of a certain type on the class
         {
             foreach (PropertyInfo prop in GetType().GetProperties())
             {
                 object val = prop.GetValue(this);
-                if (val is T)
+                if (val is T casted)
                 {
-                    action(prop, (T)val);
+                    action(prop, casted);
                 }
             };
         }
@@ -164,11 +164,7 @@ namespace TimetablingWPF
         {
             if (left is null)
             {
-                if (right is null)
-                {
-                    return true;
-                }
-                return false;
+                return right is null;
             }
             return left.Equals(right);
         }
