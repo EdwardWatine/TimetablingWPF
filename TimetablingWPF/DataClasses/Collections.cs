@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace TimetablingWPF
 {
+    //Provides some extra functionality on top of the existing observable collection
     public class ObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>, ICloneable
     {
         public ObservableCollection() { }
@@ -68,7 +69,7 @@ namespace TimetablingWPF
         }
     }
     /// <summary>
-    /// A list which reflects updates in itself with the list in the added form
+    /// A list which reflects updates in itself with the list in the added class
     /// </summary>
     /// <typeparam name="TContent">The type of the objects in this list</typeparam>
     /// <typeparam name="TThis">The type of the object declaring this list</typeparam>
