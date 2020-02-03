@@ -147,6 +147,7 @@
     <Compile Include="BlockingContent\BlockingWindow.xaml.cs">
       <DependentUpon>BlockingWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataClasses\DataContainer.cs" />
     <Compile Include="DataClasses\Interfaces.cs" />
     <Compile Include="DataClasses\Lesson.cs" />
     <Compile Include="DataClasses\Teacher.cs" />
@@ -191,6 +192,7 @@
     <Compile Include="Tabs\GroupTab.xaml.cs">
       <DependentUpon>GroupTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Tabs\TabBase.cs" />
     <Compile Include="UserControls\ApplicationMenu.xaml.cs">
       <DependentUpon>ApplicationMenu.xaml</DependentUpon>
     </Compile>

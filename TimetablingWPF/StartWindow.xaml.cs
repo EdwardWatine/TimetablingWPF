@@ -54,23 +54,15 @@ namespace TimetablingWPF
             Hyperlink link = (Hyperlink)e.Source;
             LoadData(link.Tag.ToString(), (worker_args) =>
             {
-                if (worker_args.Cancelled)
-                {
-                    icRecentFiles.Items.Remove(link);
-                }
-                else
-                {
-                    RegisterOpenFile(link.Tag.ToString());
-                    Window window = new MainWindow(true);
-                    window.Show();
-                    window.Activate();
-                    Close();
-                }
-            }, this
-                );
+                RegisterOpenFile(link.Tag.ToString());
+                Window window = new MainWindow(true);
+                window.Show();
+                window.Activate();
+                Close();
+            }, () => icRecentFiles.Items.Remove(link), this);
         }
 
-        public void OpenFile(object sender, RoutedEventArgs e)
+        private void OpenFile(object sender, RoutedEventArgs e)
         {
             string fpath = OpenFileDialogHelper();
             if (fpath != null)
@@ -79,16 +71,13 @@ namespace TimetablingWPF
             }
         }
 
-        public void OpenFileFromPath(string fpath)
+        private void OpenFileFromPath(string fpath)
         {
             LoadData(fpath, (worker_args) => {
-                if (!worker_args.Cancelled)
-                {
-                    RegisterOpenFile(fpath);
-                    new MainWindow(true).Show();
-                    Close();
-                }
-            }, this);
+                RegisterOpenFile(fpath);
+                new MainWindow(true).Show();
+                Close();
+            }, owner: this);
         }
 
         private void LaunchManual(object sender, RoutedEventArgs e)
@@ -108,10 +97,6 @@ namespace TimetablingWPF
                 new MainWindow(true).Show();
                 Close();
             }
-        }
-        public void WindowClosing(object sender, CancelEventArgs e)
-        {
-
         }
     }
 

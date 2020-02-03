@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimetablingWPF"
-        mc:Ignorable="d" Closing="WindowClosing" SizeToContent="WidthAndHeight"
+        mc:Ignorable="d" SizeToContent="WidthAndHeight"
         Title="MainWindow" WindowStartupLocation="CenterScreen" ResizeMode="CanMinimize"
         >
     <Window.Background>
@@ -46,7 +46,7 @@
                     <ControlTemplate TargetType="Button">
                         <Border Name="Border" Style="{StaticResource ButtonBorderStyle}" Tag="{StaticResource SecondaryColor}">
                             <Border.Background>
-                                <SolidColorBrush x:Name="BorderBg" Color="{Binding Path=Tag, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Border}}"/>
+                                <SolidColorBrush x:Name="BorderBg" Color="{Binding Path=Tag, Mode=OneWay, RelativeSource={RelativeSource AncestorType={x:Type Border}}}"/>
                             </Border.Background>
                             <StackPanel Orientation="Vertical">
                                 <Image Height="100" Width="100" Source="{TemplateBinding local:ButtonProperties.Image}"/>

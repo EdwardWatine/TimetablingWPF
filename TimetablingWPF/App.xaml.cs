@@ -29,20 +29,16 @@ namespace TimetablingWPF
             Properties["APPLICATION_NAME"] = "Timetabler";
             Properties["CURRENT_FILE_PATH"] = null;
             Properties["USER_TYPES"] = new Type[] { typeof(Teacher), typeof(Subject), typeof(Lesson), typeof(Form), typeof(Group), typeof(Room) };
-            Type ioc_type = typeof(InternalObservableCollection<>);
-            foreach (Type type in (Type[])Properties["USER_TYPES"])
-            {
-                Properties[type] = Activator.CreateInstance(ioc_type.MakeGenericType(new Type[] { type }));
-            }
-            Properties[typeof(YearGroup)] = new List<YearGroup>() { new YearGroup("8") };
+            DataContainer data = new DataContainer();
+            data.YearGroups.Add(new YearGroup("8"));
+            Properties["CURRENT_DATA"] = data;
             TimetableStructure.SetData(new List<TimetableStructureWeek>()
             {
-                new TimetableStructureWeek("A", DataHelpers.ShortenedDaysOfTheWeek, 
+                new TimetableStructureWeek("A", DataHelpers.ShortenedDaysOfTheWeek,
                 new List<string>(){"1", "2", "Brk", "3", "4", "Lch", "5" }, new List<int>(){2, 5, 9, 12, 16, 19, 23, 26, 30, 33 }),
                 new TimetableStructureWeek("B", DataHelpers.ShortenedDaysOfTheWeek,
                 new List<string>(){"1", "2", "Brk", "3", "4", "Lch", "5" }, new List<int>(){2, 5, 9, 12, 16, 19, 23, 26, 30, 33 })
             });
-            StartWindow window = new StartWindow();
             //MainWindow window = new MainWindow(true);
             
         }

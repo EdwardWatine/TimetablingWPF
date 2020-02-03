@@ -24,15 +24,14 @@ namespace TimetablingWPF
 
         public Stack<TabItem> TabHistory { get; } = new Stack<TabItem>();
 
-        public void NewTab(object tabItem, string title, bool focus = true)
+        public void NewTab(TabItem tabItem, string title, bool focus = true)
         {
-            TabItem tab = (TabItem)tabItem;
-            tab.Header = title;
-            tcMainTabControl.Items.Add(tab);
+            tabItem.Header = title;
+            tcMainTabControl.Items.Add(tabItem);
             if (focus)
             { 
-                tcMainTabControl.SelectedItem = tab;
-                TabHistory.Push(tab);
+                tcMainTabControl.SelectedItem = tabItem;
+                TabHistory.Push(tabItem);
             }
         }
         public void CloseTab(TabItem tabItem)
@@ -41,7 +40,7 @@ namespace TimetablingWPF
         }
         private static void CloseTab(ItemActionCallbackArgs<TabablzControl> args)
         {
-            if (!((ITab)args.DragablzItem.Content).Cancel())
+            if (!((TabBase)args.DragablzItem.Content).Cancel())
             {
                 args.Cancel();
             }
@@ -51,7 +50,7 @@ namespace TimetablingWPF
         {
             TextBlock header = new TextBlock() { Text = type.Name.Pluralize() };
             header.MouseLeftButtonUp += ManualChange;
-            DataClassTabItem dataTab = new DataClassTabItem(this, type) { Header = header };
+            DataClassTabItem dataTab = new DataClassTabItem(type) { Header = header };
             tcMainTabControl.Items.Add(dataTab);
             if (tcMainTabControl.Items.Count == 1)
             {
@@ -98,7 +97,7 @@ namespace TimetablingWPF
 
         public TabEmptiedResponse TabEmptiedHandler(TabablzControl tabControl, Window window)
         {
-            return Application.Current.Windows.Count == 1 ? TabEmptiedResponse.DoNothing : TabEmptiedResponse.CloseWindowOrLayoutBranch;
+            return TabEmptiedResponse.DoNothing;
         }
     }
 }

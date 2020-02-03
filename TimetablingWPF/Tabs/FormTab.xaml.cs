@@ -23,12 +23,12 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for AssignmentTab.xaml
     /// </summary>
-    public partial class FormTab : TabItem, ITab
+    public partial class FormTab : TabBase
     {
-        public FormTab(Form form, MainPage mainPage, CommandType commandType)
+        public FormTab(Form form, CommandType commandType)
         {
             InitializeComponent();
-            MainPage = mainPage;
+
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalForm = form;
@@ -37,8 +37,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Form";
             txName.Text = form.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxLesson.ItemsSource = GetData<Lesson>();
-            cmbxYear.ItemsSource = GetData<YearGroup>();
+            cmbxLesson.ItemsSource = GetDataContainer().Lessons;
+            cmbxYear.ItemsSource = GetDataContainer().YearGroups;
             ilLessons.ItemsSource = Form.Lessons;
             ilLessons.ListenToCollection(OriginalForm.Lessons);
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Form");
@@ -62,7 +62,7 @@ namespace TimetablingWPF
         private readonly ErrorContainer HAS_NO_YEAR;
         private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
-        public MainPage MainPage { get; set; }
+        
         private readonly CommandType CommandType;
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
@@ -70,12 +70,6 @@ namespace TimetablingWPF
             {
                 MainPage.CloseTab(this);
             }
-        }
-
-        public bool Cancel()
-        {
-            return (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
-                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes);
         }
 
         private void Confirm(object sender, RoutedEventArgs e)

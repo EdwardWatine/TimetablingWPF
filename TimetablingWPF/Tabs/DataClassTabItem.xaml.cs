@@ -21,12 +21,12 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for MainPage.xaml
     /// </summary>
-    public partial class DataClassTabItem : TabItem, ITab
+    public partial class DataClassTabItem : TabBase
     {
-        public DataClassTabItem(MainPage mainPage, Type type)
+        public DataClassTabItem(Type type)
         {
             InitializeComponent();
-            MainPage = mainPage;
+
             DataType = type;
             void attachMenuCommand(string key, CommandBinding binding,
                 object parameter = null)
@@ -52,12 +52,16 @@ namespace TimetablingWPF
             attachMenuCommand($"miDeleteItem", delBinding, dgMainDataGrid);
             attachMenuCommand($"miDuplicateItem", dupBinding, dgMainDataGrid);
 
+            dgMainDataGrid.CommandBindings.Add(delBinding);
+            dgMainDataGrid.InputBindings.Add(new KeyBinding(DataGridCommands.DeleteItem, new KeyGesture(Key.Delete)) { CommandParameter = dgMainDataGrid });
+
+
             attachButtonCommand(btNewToolbar, newBinding, type);
             attachButtonCommand(btEditToolbar, editBinding, dgMainDataGrid);
             attachButtonCommand(btDuplicateToolbar,dupBinding, dgMainDataGrid);
             attachButtonCommand(btDeleteToolbar, delBinding, dgMainDataGrid);
 
-            dgMainDataGrid.ItemsSource = (IList)Application.Current.Properties[type];
+            dgMainDataGrid.ItemsSource = DataHelpers.GetDataContainer().FromType(type);
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
                 CanUserSort = true,
@@ -66,7 +70,7 @@ namespace TimetablingWPF
                 MinWidth = 20,
                 Header = "Name",
                 CellTemplate = (DataTemplate)Resources["NameTemplate"]
-            }); ;
+            });
             int width = new HashSet<string>(Columns[type.Name]).Except(Shortcols).Count();
             width = width == 1 ? 4 : width;
             foreach (string column in Columns[type.Name])
@@ -79,23 +83,11 @@ namespace TimetablingWPF
                 });
             }
         }
-        public MainPage MainPage { get; set; }
-
         readonly CommandBinding newBinding;
         readonly CommandBinding editBinding;
         readonly CommandBinding dupBinding;
         readonly CommandBinding delBinding;
         public Type DataType { get; }
-        private readonly Dictionary<Type, Type> TypeTab = new Dictionary<Type, Type>()
-        {
-            {typeof(Subject), typeof(SubjectTab) },
-            {typeof(Teacher), typeof(TeacherTab) },
-            {typeof(Lesson), typeof(LessonTab) },
-            {typeof(Group), typeof(GroupTab) },
-            {typeof(Form), typeof(FormTab) },
-            {typeof(Room), typeof(RoomTab) }
-
-        };
         private readonly Dictionary<string, string[]> Columns = new Dictionary<string, string[]>()
             {
                 { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
@@ -109,18 +101,13 @@ namespace TimetablingWPF
         private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
             Type type = (Type)e.Parameter;
-            MainPage.NewTab(
-                Activator.CreateInstance(TypeTab[type], new object[] { Activator.CreateInstance(type), MainPage, CommandType.@new }),
-                $"New {type.Name}");
+            MainPage.NewTab(DataHelpers.GenerateItemTab(Activator.CreateInstance(type), CommandType.@new), $"New {type.Name}");
         }
 
         private void ExecuteEditItem(object sender, ExecutedRoutedEventArgs e)
         {
-            object item = (((DataGrid)e.Parameter).SelectedItem);
-            Type type = item.GetType();
-            MainPage.NewTab(
-                Activator.CreateInstance(TypeTab[type], new object[] { item, MainPage, CommandType.edit }),
-                $"Edit {type.Name}");
+            object item = ((DataGrid)e.Parameter).SelectedItem;
+            MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.edit), $"Edit {item.GetType().Name}");
 
         }
 
@@ -132,10 +119,7 @@ namespace TimetablingWPF
         private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
         {
             object item = ((DataGrid)e.Parameter).SelectedItem;
-            Type type = item.GetType();
-            MainPage.NewTab(
-                Activator.CreateInstance(TypeTab[type], new object[] { item, MainPage, CommandType.edit }),
-                $"Edit {type.Name}");
+            MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.copy), $"New {item.GetType().Name}");
         }
 
         private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)
@@ -148,10 +132,11 @@ namespace TimetablingWPF
             DataGrid grid = (DataGrid)e.Parameter;
             int num_sel = grid.SelectedItems.Count;
             string conf_str = num_sel == 1 ? $"'{((BaseDataClass)grid.SelectedItem).Name}'" : $"{num_sel} {grid.Tag}";
-            if (VisualHelpers.ShowWarningBox("Are you sure you want to delete " + conf_str + "?", $"Delete {conf_str}?") == MessageBoxResult.Cancel) { return; }
-            for (int i = 0; i < grid.SelectedItems.Count; i++)
+            if (VisualHelpers.ShowWarningBox("Are you sure you want to delete " + conf_str + "?", $"Delete {conf_str}?") == MessageBoxResult.Cancel) return;
+            IList<BaseDataClass> list = grid.SelectedItems.Cast<BaseDataClass>().ToList();
+            for (int i = 0; i < list.Count; i++)
             {
-                ((BaseDataClass)grid.SelectedItems[i]).Delete();
+                list[i].Delete();
             }
         }
 
@@ -160,7 +145,7 @@ namespace TimetablingWPF
             e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count >= 1;
         }
 
-        public bool Cancel()
+        public override bool Cancel()
         {
             return true;
         }

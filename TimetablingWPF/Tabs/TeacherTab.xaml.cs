@@ -26,12 +26,12 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class TeacherTab : TabItem, ITab
+    public partial class TeacherTab : TabBase
     {
-        public TeacherTab(Teacher teacher, MainPage mainPage, CommandType commandType)
+        public TeacherTab(Teacher teacher, CommandType commandType)
         {
             InitializeComponent();
-            MainPage = mainPage;
+
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalTeacher = teacher;
@@ -40,8 +40,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Teacher";
             txName.Text = teacher.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxSubjects.ItemsSource = GetData<Subject>();
-            cmbxAssignmentLesson.ItemsSource = GetData<Lesson>();
+            cmbxSubjects.ItemsSource = GetDataContainer().Subjects;
+            cmbxAssignmentLesson.ItemsSource = GetDataContainer().Lessons;
             iupdownMax.Value = Teacher.MaxPeriodsPerCycle;
 
             HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
@@ -178,7 +178,7 @@ namespace TimetablingWPF
         private readonly ErrorContainer NOT_ENOUGH_FORM_SLOTS;
         private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
-        public MainPage MainPage { get; set; }
+        
         private readonly CommandType CommandType;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
@@ -216,12 +216,6 @@ namespace TimetablingWPF
             {
                 MainPage.CloseTab(this);
             }
-        }
-
-        public bool Cancel()
-        {
-            return (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
-                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes);
         }
 
         private void Confirm(object sender, RoutedEventArgs e)

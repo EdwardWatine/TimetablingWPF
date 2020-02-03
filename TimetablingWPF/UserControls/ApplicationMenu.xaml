@@ -11,7 +11,7 @@
             <MenuItem Header="_New" Command="ApplicationCommands.New"/>
             <Separator/>
             <MenuItem Header="_Open" Command="ApplicationCommands.Open"/>
-            <MenuItem Header="_Import"/>
+            <MenuItem Header="_Import" Command="local:MenuCommands.ImportCommand"/>
             <Separator/>
             <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
             <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs" InputGestureText="Ctrl+Shift+S"/>

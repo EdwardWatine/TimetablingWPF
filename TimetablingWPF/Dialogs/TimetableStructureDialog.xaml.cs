@@ -28,7 +28,7 @@ namespace TimetablingWPF
             ShowWarning = showWarning;
             Populate();
         }
-        private bool ShowWarning;
+        private readonly bool ShowWarning;
         public void Populate()
         {
             for (int week = 0; week < TimetableStructure.Weeks.Count; week++)

@@ -24,12 +24,12 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class RoomTab : TabItem, ITab
+    public partial class RoomTab : TabBase
     {
-        public RoomTab(Room room, MainPage mainPage, CommandType commandType)
+        public RoomTab(Room room, CommandType commandType)
         {
             InitializeComponent();
-            MainPage = mainPage;
+
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalRoom = room;
@@ -38,7 +38,7 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Room";
             txName.Text = room.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxGroups.ItemsSource = GetData<Group>();
+            cmbxGroups.ItemsSource = GetDataContainer().Groups;
             ilGroups.ItemsSource = Room.Groups;
             ilGroups.ListenToCollection(OriginalRoom.Groups);
 
@@ -68,7 +68,6 @@ namespace TimetablingWPF
         private readonly Room OriginalRoom;
         private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
-        public MainPage MainPage { get; set; }
         private readonly CommandType CommandType;
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
@@ -77,12 +76,6 @@ namespace TimetablingWPF
             {
                 MainPage.CloseTab(this);
             }
-        }
-
-        public bool Cancel()
-        {
-            return (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
-                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes);
         }
 
         private void Confirm(object sender, RoutedEventArgs e)

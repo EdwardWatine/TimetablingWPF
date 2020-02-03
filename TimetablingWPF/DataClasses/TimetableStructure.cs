@@ -29,21 +29,40 @@ namespace TimetablingWPF
         public static IList<TimetableStructureWeek> Weeks { get; private set; }
         public static int TotalSchedulable { get; private set; }
     }
-    public class YearGroup
+    public class YearGroup : INotifyPropertyChanged
     {
         public YearGroup(string year)
         {
             Year = year;
         }
         private bool Committed;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public void NotifyPropertyChanged(string property)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+        }
+
         public InternalObservableCollection<Form> Forms { get; private set; } = new InternalObservableCollection<Form>();
-        public string Year { get; set; }
+        private string _year;
+        public string Year
+        {
+            get => _year; set
+            {
+                if (value != _year)
+                {
+                    NotifyPropertyChanged("Year");
+                    _year = value;
+                }
+            }
+        }
         public int StorageIndex { get; set; }
-        public void Commit()
+        public void Commit(DataContainer container = null)
         {
             if (!Committed)
             {
-                ((IList)Application.Current.Properties[typeof(YearGroup)]).Add(this);
+                container = container ?? DataHelpers.GetDataContainer();
+                container.YearGroups.Add(this);
                 Committed = true;
             }
         }

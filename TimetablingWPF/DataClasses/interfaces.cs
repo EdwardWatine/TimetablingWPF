@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace TimetablingWPF
 {
+    public interface IAddRange
+    {
+        void AddRange(IEnumerable<object> enumerable);
+    }
     public interface IRelationalCollection
     {
         object Parent { get; set; }
@@ -18,10 +22,5 @@ namespace TimetablingWPF
         bool Frozen { get; }
         void Freeze();
         void Unfreeze();
-    }
-    public interface ITab
-    {
-        MainPage MainPage { get; set; }
-        bool Cancel();
     }
 }

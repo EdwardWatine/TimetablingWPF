@@ -23,12 +23,12 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for AssignmentTab.xaml
     /// </summary>
-    public partial class LessonTab : TabItem, ITab
+    public partial class LessonTab : TabBase
     {
-        public LessonTab(Lesson lesson, MainPage mainPage, CommandType commandType)
+        public LessonTab(Lesson lesson, CommandType commandType)
         {
             InitializeComponent();
-            MainPage = mainPage;
+
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalLesson = lesson;
@@ -38,9 +38,10 @@ namespace TimetablingWPF
             txName.Text = lesson.Name;
             txName.SelectionStart = txName.Text.Length;
 
-            cmbxSubject.ItemsSource = GetData<Subject>();
-            cmbxAssignmentTeacher.ItemsSource = GetData<Teacher>();
-            cmbxForm.ItemsSource = GetData<Form>();
+            DataContainer data = GetDataContainer();
+            cmbxSubject.ItemsSource = data.Subjects;
+            cmbxAssignmentTeacher.ItemsSource = data.Teachers;
+            cmbxForm.ItemsSource = data.Forms;
 
             ilAssignments.ItemsSource = Lesson.Assignments;
             ilAssignments.ListenToCollection(OriginalLesson.Assignments);
@@ -55,7 +56,6 @@ namespace TimetablingWPF
         private readonly ErrorContainer HAS_NO_SUBJECT;
         private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
-        public MainPage MainPage { get; set; }
         private readonly CommandType CommandType;
 
         private void AssignmentButtonClick(object sender, RoutedEventArgs e)
@@ -92,12 +92,6 @@ namespace TimetablingWPF
             {
                 MainPage.CloseTab(this);
             }
-        }
-
-        public bool Cancel()
-        {
-            return (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
-                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes);
         }
 
         private void Confirm(object sender, RoutedEventArgs e)

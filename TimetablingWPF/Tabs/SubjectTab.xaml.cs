@@ -24,12 +24,12 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class SubjectTab : TabItem, ITab
+    public partial class SubjectTab : TabBase
     {
-        public SubjectTab(Subject subject, MainPage mainPage, CommandType commandType)
+        public SubjectTab(Subject subject, CommandType commandType)
         {
             InitializeComponent();
-            MainPage = mainPage;
+
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalSubject = subject;
@@ -38,8 +38,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Subject";
             txName.Text = subject.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxGroups.ItemsSource = GetData<Group>();
-            cmbxTeachers.ItemsSource = GetData<Teacher>();
+            cmbxGroups.ItemsSource = GetDataContainer().Groups;
+            cmbxTeachers.ItemsSource = GetDataContainer().Teachers;
             //Errors
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Subject");
@@ -76,18 +76,14 @@ namespace TimetablingWPF
         private readonly Subject OriginalSubject;
         private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
-        public MainPage MainPage { get; set; }
+        
         private readonly CommandType CommandType;
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            if (Cancel()){				MainPage.CloseTab(this);			}
-        }
-
-        public bool Cancel()
-        {
-            return (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
-                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes);
+            if (Cancel()){
+				MainPage.CloseTab(this);
+			}
         }
 
         private void Confirm(object sender, RoutedEventArgs e)

@@ -23,12 +23,12 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for TeacherTab.xaml
     /// </summary>
-    public partial class GroupTab : TabItem, ITab
+    public partial class GroupTab : TabBase
     {
-        public GroupTab(Group group, MainPage mainPage, CommandType commandType)
+        public GroupTab(Group group, CommandType commandType)
         {
             InitializeComponent();
-            MainPage = mainPage;
+
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
             OriginalGroup = group;
@@ -37,8 +37,8 @@ namespace TimetablingWPF
             tbTitle.Text = "Create a new Group";
             txName.Text = group.Name;
             txName.SelectionStart = txName.Text.Length;
-            cmbxSubject.ItemsSource = GetData<Subject>();
-            cmbxRoom.ItemsSource = GetData<Room>();
+            cmbxSubject.ItemsSource = GetDataContainer().Subjects;
+            cmbxRoom.ItemsSource = GetDataContainer().Rooms;
             ilRooms.ItemsSource = Group.Rooms;
             ilRooms.ListenToCollection(OriginalGroup.Rooms);
             ilSubjects.ItemsSource = Group.Subjects;
@@ -73,20 +73,14 @@ namespace TimetablingWPF
         private readonly Group OriginalGroup;
         private readonly ErrorContainer HAS_NO_NAME;
         private readonly ErrorManager ErrManager;
-        public MainPage MainPage { get; set; }
         private readonly CommandType CommandType;
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
             if (Cancel())
-            {                MainPage.CloseTab(this);
+            {
+                MainPage.CloseTab(this);
             }
-        }
-
-        public bool Cancel()
-        {
-            return (System.Windows.MessageBox.Show("Are you sure you want to discard your changes?",
-                "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes);
         }
 
         private void Confirm(object sender, RoutedEventArgs e)

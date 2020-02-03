@@ -65,11 +65,12 @@ namespace TimetablingWPF
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.
         /// </summary>
-        public virtual void Commit()
+        public virtual void Commit(DataContainer container = null)
         {
             if (!Commited)
             {
-                Application.Current.Dispatcher.Invoke(()=>((IList)Application.Current.Properties[GetType()]).Add(this)); //Adds itself to the correct data list from the main UI thread to prevent threading issues
+                container = container ?? DataHelpers.GetDataContainer();
+                container.AddFromBDC(this);
                 Commited = true;
             }
         }
@@ -88,6 +89,15 @@ namespace TimetablingWPF
                     NotifyPropertyChanged(prop.Name);
                 }
             }
+        }
+        public void MergeWith(BaseDataClass merger)
+        {
+            Type type = GetType();
+            if (type != merger.GetType())
+            {
+                throw new ArgumentException("The merger class must be the same as the calling class.");
+            }
+            ApplyOnType<IAddRange>((prop, val) => val.AddRange((IEnumerable<object>)prop.GetValue(merger)));
         }
         /// <summary>
         /// Event when property is changed
@@ -110,7 +120,7 @@ namespace TimetablingWPF
         /// <summary>
         /// Will remove all instances of self from <see cref="RelationalCollection{T}"/>. Will then remove self from the properties list
         /// </summary>
-        public void Delete()
+        public void Delete(DataContainer container = null)
         {
             void delete(PropertyInfo prop, IRelationalCollection val)
             {
@@ -120,7 +130,7 @@ namespace TimetablingWPF
                 }
             }
             ApplyOnType<IRelationalCollection>(delete);
-            ((IList)Application.Current.Properties[GetType()]).Remove(this);
+            (container ?? DataHelpers.GetDataContainer()).FromType(GetType()).Remove(this);
         }
 
         public object Clone()

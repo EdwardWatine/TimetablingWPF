@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace TimetablingWPF
 {
@@ -24,17 +25,36 @@ namespace TimetablingWPF
         {
             return TimetableStructure.Weeks[week].PeriodNames[period];
         }
-        public static IList<T> GetData<T>()
+        public static DataContainer GetDataContainer()
         {
-            return (IList<T>)Application.Current.Properties[typeof(T)];
+            return (DataContainer)Application.Current.Properties["CURRENT_DATA"];
+        }
+        public static void SetDataContainer(DataContainer container)
+        {
+            TimetableStructure.SetData(container.TimetableStructure);
+            GetDataContainer().SetFromContainer(container);
         }
         public static void ClearData()
         {
-            ((IList)Application.Current.Properties[typeof(YearGroup)]).Clear();
-            foreach (Type type in (IList<Type>)Application.Current.Properties["USER_TYPES"])
-            {
-                ((IList)Application.Current.Properties[type]).Clear();
-            }
+            GetDataContainer().ClearData();
         }
+        public static string GetCurrentFilePath()
+        {
+            return (string)Application.Current.Properties["CURRENT_FILE_PATH"];
+        }
+        public static TabItem GenerateItemTab(object item, CommandType commandType)
+        {
+            return (TabItem)Activator.CreateInstance(TabMappings[item.GetType()], new object[] { item, commandType });
+        }
+        public static readonly Dictionary<Type, Type> TabMappings = new Dictionary<Type, Type>()
+        {
+            {typeof(Subject), typeof(SubjectTab) },
+            {typeof(Teacher), typeof(TeacherTab) },
+            {typeof(Lesson), typeof(LessonTab) },
+            {typeof(Group), typeof(GroupTab) },
+            {typeof(Form), typeof(FormTab) },
+            {typeof(Room), typeof(RoomTab) }
+
+        };
     }
 }

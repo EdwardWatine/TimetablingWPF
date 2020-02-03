@@ -10,20 +10,42 @@ using System.Threading.Tasks;
 namespace TimetablingWPF
 {
     //Provides some extra functionality on top of the existing observable collection
-    public class ObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>, ICloneable
+    public class ObservableCollection<T> : System.Collections.ObjectModel.ObservableCollection<T>, ICloneable, IAddRange
     {
+        protected bool SuppressEvent { get; set; } = false;
         public ObservableCollection() { }
         public ObservableCollection(IEnumerable<T> collection) : base(collection) { }
+        protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
+        {
+            if (!SuppressEvent)
+            {
+                base.OnCollectionChanged(e);
+            }
+        }
         public void AddRange(IEnumerable<T> enumerable)
         {
+            bool flag = SuppressEvent;
+            SuppressEvent = true;
             foreach (T item in enumerable)
             {
                 Add(item);
             }
+            SuppressEvent = flag || false;
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, enumerable.ToList()));
+        }
+        public void SetData(IEnumerable<T> enumerable)
+        {
+            Clear();
+            AddRange(enumerable);
         }
         public virtual object Clone()
         {
             return new ObservableCollection<T>(this);
+        }
+
+        public void AddRange(IEnumerable<object> enumerable)
+        {
+            AddRange(enumerable.Cast<T>());
         }
     }
     /// <remarks>
@@ -108,73 +130,93 @@ namespace TimetablingWPF
         /// Adds a new item to the list, and adds the parent in the list of the added item
         /// </summary>
         /// <param name="item">Item to add to the list</param>
-        public new void Add(TContent item)
+        protected override void InsertItem(int index, TContent item)
         {
             if (_parent == null)
             {
                 throw new InvalidOperationException("Parent is not set");
             }
-            base.Add(item);
+            base.InsertItem(index, item);
             if (Frozen)
             {
-                frozenAddElements.Add(item);
+                frozenAddElements.Enqueue(item);
                 return;
             }
             AddToOther(item);
         }
+        protected virtual void OnlyInsert(int index, TContent item)
+        {
+            if (_parent == null)
+            {
+                throw new InvalidOperationException("Parent is not set");
+            }
+            base.InsertItem(index, item);
+        }
         private void AddToOther(TContent item)
         {
-            ((ObservableCollection<TThis>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item)).Add(_parent);
+            RelationalCollection<TThis, TContent> target = ((RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item));
+            target.OnlyInsert(target.Count, _parent);
         }
-        public new void Remove(TContent item)
+        protected override void RemoveItem(int index)
         {
             if (Parent == null)
             {
                 throw new InvalidOperationException("Parent is not set");
             }
-            base.Remove(item);
+            base.RemoveItem(index);
+            TContent item = this[index];
             if (Frozen)
             {
-                frozenRemoveElements.Add(item);
+                frozenRemoveElements.Enqueue(item);
                 return;
             }
             RemoveFromOther(item);
         }
+        protected override void ClearItems()
+        {
+            foreach (TContent obj in this)
+            {
+                RemoveFromOther(obj);
+            }
+            base.ClearItems();
+        }
+        protected override void SetItem(int index, TContent item)
+        {
+            RemoveFromOther(this[index]);
+            base.SetItem(index, item);
+            AddToOther(item);
+        }
+        protected virtual void OnlyRemove(int index)
+        {
+            base.RemoveItem(index);
+        }
         private void RemoveFromOther(TContent item)
         {
-            ((ObservableCollection<TThis>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item)).Remove(_parent);
+            RelationalCollection<TThis, TContent> target = (RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item);
+            target.OnlyRemove(target.IndexOf(_parent));
         }
         public void Freeze()
         {
             Frozen = true;
         }
-        public new void AddRange(IEnumerable<TContent> enumerable)
-        {
-            foreach (TContent item in enumerable)
-            {
-                Add(item);
-            }
-        }
         public void Unfreeze()
         {
             Frozen = false;
-            foreach (TContent element in frozenRemoveElements)
+            while (frozenAddElements.Count > 0)
             {
-                RemoveFromOther(element);
+                AddToOther(frozenAddElements.Dequeue());
             }
-            foreach (TContent element in frozenAddElements)
+            while (frozenRemoveElements.Count > 0)
             {
-                AddToOther(element);
+                RemoveFromOther(frozenRemoveElements.Dequeue());
             }
-            frozenRemoveElements.Clear();
-            frozenAddElements.Clear();
         }
         public override object Clone()
         {
             return new RelationalCollection<TContent, TThis>(OtherSetProperty, this) { Parent = Parent };
         }
         public bool Frozen { get; private set; } = false;
-        private readonly IList<TContent> frozenAddElements = new List<TContent>();
-        private readonly IList<TContent> frozenRemoveElements = new List<TContent>();
+        private readonly Queue<TContent> frozenAddElements = new Queue<TContent>();
+        private readonly Queue<TContent> frozenRemoveElements = new Queue<TContent>();
     }
 }

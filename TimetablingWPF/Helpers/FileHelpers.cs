@@ -59,13 +59,13 @@ namespace TimetablingWPF
         {
             return LoadAndReturnList(() => reader.ReadInt32(), reader);
         }
-        public static void LoadBDCEnum<T>(Action<T> action, BinaryReader reader) where T : BaseDataClass, new()
+        public static void LoadBDCEnum<T>(Action<T> action, DataContainer container, BinaryReader reader) where T : BaseDataClass, new()
         {
             LoadEnum(() =>
             {
                 T obj = new T() { Name = reader.ReadString() };
                 action(obj);
-                obj.Commit();
+                obj.Commit(container);
             }, reader);
         }
         public static void RegisterOpenFile(string fpath)
@@ -80,7 +80,7 @@ namespace TimetablingWPF
             Properties.Settings.Default.RECENT_FILES.Remove(fpath);
             Properties.Settings.Default.Save();
         }
-        public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Window owner = null)
+        public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Action onCancel = null, Window owner = null, bool save = true)
         {
             BackgroundWorker worker = new BackgroundWorker()
             {
@@ -105,7 +105,7 @@ namespace TimetablingWPF
                 {
                     FileStream fstream = new FileStream(fpath, FileMode.Open);
                     BinaryReader reader = new BinaryReader(fstream);
-                    LoadingFormats.GetLoadingDelegate(reader.ReadInt32()).Invoke(fpath, reader, worker, e);
+                    e.Result = LoadingFormats.GetLoadingDelegate(reader.ReadInt32()).Invoke(fpath, reader, worker, e);
                     reader.Dispose();
                     fstream.Close();
                     if (worker.CancellationPending)
@@ -120,7 +120,18 @@ namespace TimetablingWPF
                 };
                 worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e)
                 {
+                    if (!(e.Error is null)) throw e.Error;
                     box.Close();
+                    if (e.Cancelled)
+                    {
+                        onCancel?.Invoke();
+                        return;
+                    }
+                    if (save)
+                    {
+                        DataContainer data = (DataContainer)e.Result;
+                        SetDataContainer(data);
+                    }
                     done?.Invoke(e);
                 };
                 box.Show();
@@ -135,7 +146,14 @@ namespace TimetablingWPF
         {
             MemoryStream all_data = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(all_data);
-            IList<YearGroup> year_list = GetData<YearGroup>();
+            DataContainer data = GetDataContainer();
+            IList<YearGroup> year_list = data.YearGroups;
+            IList<Teacher> teacher_list = data.Teachers;
+            IList<Form> form_list = data.Forms;
+            IList<Lesson> lesson_list = data.Lessons;
+            IList<Group> group_list = data.Groups;
+            IList<Room> room_list = data.Rooms;
+            IList<Subject> subject_list = data.Subjects;
             writer.Write(LoadingFormats.LATEST);
             WriteList(TimetableStructure.Weeks, (w, i) =>
             {
@@ -155,31 +173,31 @@ namespace TimetablingWPF
                 y.StorageIndex = i;
                 writer.Write(y.Year);
             }, writer);
-            WriteBDCEnum(GetData<Teacher>(), writer, t =>
+            WriteBDCEnum(teacher_list, writer, t =>
             {
                 writer.Write(t.MaxPeriodsPerCycle);
                 writer.Write(t.UnavailablePeriods.Count);
                 WriteIntEnum(t.UnavailablePeriods.Select(p => p.ToInt()), writer);
             });
-            WriteBDCEnum(GetData<Subject>(), writer, s =>
+            WriteBDCEnum(subject_list, writer, s =>
             {
                 WriteIntEnum(s.Teachers.Select(t => t.StorageIndex), writer);
             });
-            WriteBDCEnum(GetData<Form>(), writer, f =>
+            WriteBDCEnum(form_list, writer, f =>
             {
                 writer.Write(f.YearGroup.StorageIndex);
             });
-            WriteBDCEnum(GetData<Room>(), writer, r =>
+            WriteBDCEnum(room_list, writer, r =>
             {
                 writer.Write(r.Quantity);
                 writer.Write(r.Critical);
             });
-            WriteBDCEnum(GetData<Group>(), writer, g =>
+            WriteBDCEnum(group_list, writer, g =>
             {
                 WriteIntEnum(g.Subjects.Select(s => s.StorageIndex), writer);
                 WriteIntEnum(g.Rooms.Select(r => r.StorageIndex), writer);
             });
-            WriteBDCEnum(GetData<Lesson>(), writer, l =>
+            WriteBDCEnum(lesson_list, writer, l =>
             {
                 WriteIntEnum(l.Forms.Select(f => f.StorageIndex), writer);
                 writer.Write(l.LessonsPerCycle);
@@ -199,7 +217,7 @@ namespace TimetablingWPF
             writer.Close();
             all_data.Close();
         }
-        public static string OpenFileDialogHelper()
+        public static string OpenFileDialogHelper(string title = "Open")
         {
             OpenFileDialog dialog = new OpenFileDialog
             {
@@ -207,6 +225,7 @@ namespace TimetablingWPF
                 InitialDirectory = Properties.Settings.Default.LAST_ACCESSED_PATH,
                 ValidateNames = true,
                 DefaultExt = ".ttbl",
+                Title = title
             };
             if (dialog.ShowDialog() == true)
             {

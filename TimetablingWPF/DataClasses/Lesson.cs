@@ -106,9 +106,5 @@ namespace TimetablingWPF
                 assignment.Teacher.Assignments.Remove(assignment);
             }
         }
-        public override void Commit()
-        {
-            base.Commit();
-        }
     }
 }
