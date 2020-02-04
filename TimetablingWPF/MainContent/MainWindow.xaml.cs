@@ -23,7 +23,7 @@ namespace TimetablingWPF
     /// </summary>
     /// 
 
-    public partial class MainWindow : Window
+    public partial class MainWindow : WindowBase
     {
         public MainWindow(bool loadDataTabs = false, bool fullscreen = true)
         {

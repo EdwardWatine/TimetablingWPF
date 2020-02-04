@@ -143,6 +143,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="WindowBase.cs" />
     <Content Include="DefunctCode.txt" />
     <Compile Include="BlockingContent\BlockingWindow.xaml.cs">
       <DependentUpon>BlockingWindow.xaml</DependentUpon>

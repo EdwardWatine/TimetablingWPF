@@ -131,6 +131,7 @@ namespace TimetablingWPF
                     {
                         DataContainer data = (DataContainer)e.Result;
                         SetDataContainer(data);
+                        GetDataContainer().UpdateSave();
                     }
                     done?.Invoke(e);
                 };
@@ -141,6 +142,7 @@ namespace TimetablingWPF
         public static void SaveData(string fpath)
         {
             SaveDataToFile(fpath);
+            GetDataContainer().UpdateSave();
         }
         public static void SaveDataToFile(string fpath)
         {
@@ -176,7 +178,6 @@ namespace TimetablingWPF
             WriteBDCEnum(teacher_list, writer, t =>
             {
                 writer.Write(t.MaxPeriodsPerCycle);
-                writer.Write(t.UnavailablePeriods.Count);
                 WriteIntEnum(t.UnavailablePeriods.Select(p => p.ToInt()), writer);
             });
             WriteBDCEnum(subject_list, writer, s =>
@@ -247,7 +248,7 @@ namespace TimetablingWPF
                 AddExtension = true,
                 Title = title
             };
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() ?? false)
             {
                 Properties.Settings.Default.LAST_ACCESSED_PATH = dialog.FileName;
                 Properties.Settings.Default.Save();
@@ -258,10 +259,29 @@ namespace TimetablingWPF
         public static void SetCurrentFilePath(string fpath)
         {
             Application.Current.Properties["CURRENT_FILE_PATH"] = fpath;
-            foreach (Window window in Application.Current.Windows)
+            SetWindowHeaders();
+        }
+        public static string GetCurrentFilePath()
+        {
+            return (string)Application.Current.Properties["CURRENT_FILE_PATH"];
+        }
+        public static void SetWindowHeaders()
+        {
+            string header = $"Timetabler - {Application.Current.Properties["CURRENT_FILE_PATH"]}";
+            if (GetDataContainer().Unsaved)
             {
-                window.Title = $"Timetabler - {fpath}";
+                header = "*" + header + " [unsaved]";
             }
+            Application.Current.Dispatcher.Invoke(() =>
+            {
+                foreach (Window window in Application.Current.Windows)
+                {
+                    if (window is WindowBase)
+                    {
+                        window.Title = header;
+                    }
+                }
+            });
         }
     }
 

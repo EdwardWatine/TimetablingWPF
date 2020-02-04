@@ -18,6 +18,41 @@ namespace TimetablingWPF
         public InternalObservableCollection<Room> Rooms { get; } = new InternalObservableCollection<Room>();
         public InternalObservableCollection<Subject> Subjects { get; } = new InternalObservableCollection<Subject>();
         public InternalObservableCollection<Group> Groups { get; } = new InternalObservableCollection<Group>();
+        public bool Unsaved { get; private set; } = false;
+        public DataContainer()
+        {
+            Teachers.CollectionChanged += SetUnsaved;
+            Forms.CollectionChanged += SetUnsaved;
+            YearGroups.CollectionChanged += SetUnsaved;
+            Lessons.CollectionChanged += SetUnsaved;
+            Rooms.CollectionChanged += SetUnsaved;
+            Subjects.CollectionChanged += SetUnsaved;
+            Groups.CollectionChanged += SetUnsaved;
+        }
+        private void SetUnsaved(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            Unsaved = true;
+            Teachers.CollectionChanged -= SetUnsaved;
+            Forms.CollectionChanged -= SetUnsaved;
+            YearGroups.CollectionChanged -= SetUnsaved;
+            Lessons.CollectionChanged -= SetUnsaved;
+            Rooms.CollectionChanged -= SetUnsaved;
+            Subjects.CollectionChanged -= SetUnsaved;
+            Groups.CollectionChanged -= SetUnsaved;
+            FileHelpers.SetWindowHeaders();
+        }
+        public void UpdateSave()
+        {
+            Unsaved = false;
+            Teachers.CollectionChanged += SetUnsaved;
+            Forms.CollectionChanged += SetUnsaved;
+            YearGroups.CollectionChanged += SetUnsaved;
+            Lessons.CollectionChanged += SetUnsaved;
+            Rooms.CollectionChanged += SetUnsaved;
+            Subjects.CollectionChanged += SetUnsaved;
+            Groups.CollectionChanged += SetUnsaved;
+            FileHelpers.SetWindowHeaders();
+        }
         public void AddFromBDC(BaseDataClass dataClass)
         {
             if (dataClass is Teacher teacher) Teachers.Add(teacher);
@@ -43,12 +78,14 @@ namespace TimetablingWPF
         }
         public void SetFromContainer(DataContainer container)
         {
+            TimetableStructure = container.TimetableStructure;
             Teachers.SetData(container.Teachers);
             Lessons.SetData(container.Lessons);
             Forms.SetData(container.Forms);
             Groups.SetData(container.Groups);
             Rooms.SetData(container.Rooms);
             Subjects.SetData(container.Subjects);
+            YearGroups.SetData(container.YearGroups);
         }
         public void ClearData()
         {
@@ -58,6 +95,7 @@ namespace TimetablingWPF
             Groups.Clear();
             Rooms.Clear();
             Subjects.Clear();
+            YearGroups.Clear();
         }
     }
 }

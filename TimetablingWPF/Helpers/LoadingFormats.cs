@@ -53,7 +53,7 @@ namespace TimetablingWPF
                         );
                 }, reader)
             );
-            UpdateWorker("Lessons");
+            UpdateWorker("Year Groups");
             LoadEnum(() =>
             {
                 string name = reader.ReadString();

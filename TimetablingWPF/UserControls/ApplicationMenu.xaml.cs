@@ -42,6 +42,9 @@ namespace TimetablingWPF
 
         public void NewFile(object sender, ExecutedRoutedEventArgs e)
         {
+            MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
+            if (result == MessageBoxResult.Yes) SaveFile(null, null);
+            if (result == MessageBoxResult.Cancel) return;
             string fpath = SaveFileDialogHelper("Create New File");
             if (fpath != null)
             {
@@ -73,6 +76,9 @@ namespace TimetablingWPF
         }
         public void OpenFile(object sender, ExecutedRoutedEventArgs e)
         {
+            MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
+            if (result == MessageBoxResult.Yes) SaveFile(null, null);
+            if (result == MessageBoxResult.Cancel) return;
             string fpath = OpenFileDialogHelper();
             if (fpath != null && fpath != GetCurrentFilePath())
             {

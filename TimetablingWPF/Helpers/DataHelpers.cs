@@ -38,10 +38,6 @@ namespace TimetablingWPF
         {
             GetDataContainer().ClearData();
         }
-        public static string GetCurrentFilePath()
-        {
-            return (string)Application.Current.Properties["CURRENT_FILE_PATH"];
-        }
         public static TabItem GenerateItemTab(object item, CommandType commandType)
         {
             return (TabItem)Activator.CreateInstance(TabMappings[item.GetType()], new object[] { item, commandType });

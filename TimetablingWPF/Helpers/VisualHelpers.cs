@@ -157,5 +157,9 @@ namespace TimetablingWPF
         {
             return MessageBox.Show(msg, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel);
         }
+        public static MessageBoxResult ShowUnsavedBox()
+        {
+            return MessageBox.Show("Your data has not been saved. Save the file?", "Unsaved Data", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation);
+        }
     }
 }
