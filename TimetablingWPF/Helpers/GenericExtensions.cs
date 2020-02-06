@@ -14,5 +14,15 @@ namespace TimetablingWPF
         {
             list.Insert(Math.Min(list.Count, index), item);
         }
+        /// <summary>
+        /// Removes whitespace from a string
+        /// </summary>
+        /// <remarks>Taken from https://stackoverflow.com/a/30732794 </remarks>
+        /// <param name="str"></param>
+        /// <returns></returns>
+        public static string RemoveWhitespace(this string str)
+        {
+            return string.Join("", str.Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+        }
     }
 }

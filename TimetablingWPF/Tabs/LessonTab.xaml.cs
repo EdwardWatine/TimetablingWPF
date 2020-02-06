@@ -111,7 +111,7 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            Lesson.Name = txName.Text;
+            Lesson.Name = txName.Text.Trim();
             Lesson.Subject = (Subject)cmbxSubject.SelectedItem;
             Lesson.LessonLength = (int)iupdownLength.Value;
             Lesson.LessonsPerCycle = (int)iupdownPerCycle.Value;

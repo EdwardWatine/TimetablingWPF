@@ -234,7 +234,7 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            Teacher.Name = txName.Text;
+            Teacher.Name = txName.Text.Trim();
             Teacher.MaxPeriodsPerCycle = iupdownMax.Value ?? Teacher.MaxPeriodsPerCycle;
             Teacher.Unfreeze();
             if (CommandType == CommandType.edit) {

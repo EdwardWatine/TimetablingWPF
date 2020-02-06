@@ -99,7 +99,7 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            Group.Name = txName.Text;
+            Group.Name = txName.Text.Trim();
             Group.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalGroup.UpdateWithClone(Group);

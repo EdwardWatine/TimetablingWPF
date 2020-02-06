@@ -29,7 +29,7 @@ namespace TimetablingWPF
         {
             WindowState = fullscreen ? WindowState.Maximized : WindowState.Normal;
             InitializeComponent();
-            Title = $"Timetabler - {Application.Current.Properties["CURRENT_FILE_PATH"]}";
+            Title = GetWindowHeader();
             //Subject Science = new Subject("Science");
 
             //Room sgroup = new Room("Science Rooms", 5);
@@ -42,11 +42,17 @@ namespace TimetablingWPF
                 }
             }
             Content = mp;
-            return;
-
+        }
+        public override void ExecuteFindFilter()
+        {
+            ((DataClassTabItem)GetMainPage().tcMainTabControl.SelectedItem).ExecuteToggleFilter();
+        }
+        public override bool CanExecuteFindFilter()
+        {
+            return GetMainPage().tcMainTabControl.SelectedItem is DataClassTabItem;
         }
 
-        public MainPage GetMainPage()
+    public MainPage GetMainPage()
         {
             return (MainPage)Content;
         }

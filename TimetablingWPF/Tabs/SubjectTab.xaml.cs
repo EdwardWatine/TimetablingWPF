@@ -102,7 +102,7 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            Subject.Name = txName.Text;
+            Subject.Name = txName.Text.Trim();
             Subject.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalSubject.UpdateWithClone(Subject);

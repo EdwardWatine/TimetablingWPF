@@ -29,6 +29,7 @@ namespace TimetablingWPF
                 action(obj);
             }
         }
+
         public static void WriteList<T>(IList<T> list, Action<T, int> action, BinaryWriter writer)
         {
             writer.Write(list.Count);
@@ -267,11 +268,7 @@ namespace TimetablingWPF
         }
         public static void SetWindowHeaders()
         {
-            string header = $"Timetabler - {Application.Current.Properties["CURRENT_FILE_PATH"]}";
-            if (GetDataContainer().Unsaved)
-            {
-                header = "*" + header + " [unsaved]";
-            }
+            string header = GetWindowHeader();
             Application.Current.Dispatcher.Invoke(() =>
             {
                 foreach (Window window in Application.Current.Windows)
@@ -282,6 +279,15 @@ namespace TimetablingWPF
                     }
                 }
             });
+        }
+        public static string GetWindowHeader()
+        {
+            string header = $"Timetabler - {Application.Current.Properties["CURRENT_FILE_PATH"]}";
+            if (GetDataContainer().Unsaved)
+            {
+                header = "*" + header + " [unsaved]";
+            }
+            return header;
         }
     }
 

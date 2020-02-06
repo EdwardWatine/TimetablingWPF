@@ -143,13 +143,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Helpers\BDCComparer.cs" />
     <Compile Include="WindowBase.cs" />
     <Content Include="DefunctCode.txt" />
     <Compile Include="BlockingContent\BlockingWindow.xaml.cs">
       <DependentUpon>BlockingWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataClasses\DataContainer.cs" />
-    <Compile Include="DataClasses\Interfaces.cs" />
+    <Compile Include="Helpers\Interfaces.cs" />
     <Compile Include="DataClasses\Lesson.cs" />
     <Compile Include="DataClasses\Teacher.cs" />
     <Compile Include="DataClasses\TimetableSettings.cs" />

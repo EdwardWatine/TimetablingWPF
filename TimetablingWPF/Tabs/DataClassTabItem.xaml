@@ -69,7 +69,7 @@
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Critical}"/>
         </DataTemplate>
     </TabItem.Resources>
-    <StackPanel Orientation="Vertical">
+    <StackPanel Orientation="Vertical" Name="spMain">
         <ToolBarTray>
             <ToolBar Height="30">
                 <ToolBar.Resources>
@@ -95,6 +95,10 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
+        <StackPanel Orientation="Horizontal" Name="spFilter" Visibility="Collapsed">
+            <TextBlock Style="{StaticResource BlackDialogText}" Text="Name:"/>
+            <TextBox x:Name="filterName" Width="50" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
+        </StackPanel>
         <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
                           SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
             <DataGrid.ContextMenu>

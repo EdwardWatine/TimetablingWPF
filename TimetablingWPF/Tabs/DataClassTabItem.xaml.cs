@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Humanizer;
+using static TimetablingWPF.GenericHelpers;
 
 namespace TimetablingWPF
 {
@@ -26,7 +28,6 @@ namespace TimetablingWPF
         public DataClassTabItem(Type type)
         {
             InitializeComponent();
-
             DataType = type;
             void attachMenuCommand(string key, CommandBinding binding,
                 object parameter = null)
@@ -42,26 +43,27 @@ namespace TimetablingWPF
                 button.CommandBindings.Add(binding);
                 button.Command = binding.Command;
             }
-            editBinding = new CommandBinding(DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem);
-            newBinding = new CommandBinding(DataGridCommands.NewItem, ExecuteNewItem, GenericHelpers.CanAlwaysExecute);
-            dupBinding = new CommandBinding(DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem);
-            delBinding = new CommandBinding(DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem);
+            CommandBinding editBinding = new CommandBinding(DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem);
+            CommandBinding newBinding = new CommandBinding(DataGridCommands.NewItem, ExecuteNewItem, CanAlwaysExecute);
+            CommandBinding dupBinding = new CommandBinding(DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem);
+            CommandBinding delBinding = new CommandBinding(DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem);
 
-            attachMenuCommand($"miEditItem", editBinding, dgMainDataGrid);
-            attachMenuCommand($"miNewItem", newBinding, type);
-            attachMenuCommand($"miDeleteItem", delBinding, dgMainDataGrid);
-            attachMenuCommand($"miDuplicateItem", dupBinding, dgMainDataGrid);
+            attachMenuCommand($"miEditItem", editBinding);
+            attachMenuCommand($"miNewItem", newBinding);
+            attachMenuCommand($"miDeleteItem", delBinding);
+            attachMenuCommand($"miDuplicateItem", dupBinding);
 
             dgMainDataGrid.CommandBindings.Add(delBinding);
-            dgMainDataGrid.InputBindings.Add(new KeyBinding(DataGridCommands.DeleteItem, new KeyGesture(Key.Delete)) { CommandParameter = dgMainDataGrid });
+            dgMainDataGrid.InputBindings.Add(new KeyBinding(DataGridCommands.DeleteItem, new KeyGesture(Key.Delete)));
 
+            attachButtonCommand(btNewToolbar, newBinding);
+            attachButtonCommand(btEditToolbar, editBinding);
+            attachButtonCommand(btDuplicateToolbar,dupBinding);
+            attachButtonCommand(btDeleteToolbar, delBinding);
 
-            attachButtonCommand(btNewToolbar, newBinding, type);
-            attachButtonCommand(btEditToolbar, editBinding, dgMainDataGrid);
-            attachButtonCommand(btDuplicateToolbar,dupBinding, dgMainDataGrid);
-            attachButtonCommand(btDeleteToolbar, delBinding, dgMainDataGrid);
+            filterName.TextChanged += delegate (object sender, TextChangedEventArgs e) { RefreshFilter(); };
 
-            dgMainDataGrid.ItemsSource = DataHelpers.GetDataContainer().FromType(type);
+            dgMainDataGrid.ItemsSource = new ListCollectionView(DataHelpers.GetDataContainer().FromType(type));
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
                 CanUserSort = true,
@@ -82,11 +84,9 @@ namespace TimetablingWPF
                     CellTemplate = (DataTemplate)Resources[$"{column}Template"]
                 });
             }
+            dgMainDataGrid.UnselectAll();
         }
-        readonly CommandBinding newBinding;
-        readonly CommandBinding editBinding;
-        readonly CommandBinding dupBinding;
-        readonly CommandBinding delBinding;
+        
         public Type DataType { get; }
         private readonly Dictionary<string, string[]> Columns = new Dictionary<string, string[]>()
             {
@@ -100,40 +100,38 @@ namespace TimetablingWPF
         private readonly HashSet<string> Shortcols = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length", "Quantity", "Critical", "Subject", "Year Group" };
         private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
-            Type type = (Type)e.Parameter;
-            MainPage.NewTab(DataHelpers.GenerateItemTab(Activator.CreateInstance(type), CommandType.@new), $"New {type.Name}");
+            MainPage.NewTab(DataHelpers.GenerateItemTab(Activator.CreateInstance(DataType), CommandType.@new), $"New {DataType.Name}");
         }
 
         private void ExecuteEditItem(object sender, ExecutedRoutedEventArgs e)
         {
-            object item = ((DataGrid)e.Parameter).SelectedItem;
+            object item = dgMainDataGrid.SelectedItem;
             MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.edit), $"Edit {item.GetType().Name}");
 
         }
 
         private void CanExecuteEditItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count == 1;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1 && dgMainDataGrid.IsFocused;
         }
 
         private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
         {
-            object item = ((DataGrid)e.Parameter).SelectedItem;
+            object item = dgMainDataGrid.SelectedItem;
             MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.copy), $"New {item.GetType().Name}");
         }
 
         private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count == 1;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1 && dgMainDataGrid.IsFocused;
         }
 
         private void ExecuteDeleteItem(object sender, ExecutedRoutedEventArgs e)
         {
-            DataGrid grid = (DataGrid)e.Parameter;
-            int num_sel = grid.SelectedItems.Count;
-            string conf_str = num_sel == 1 ? $"'{((BaseDataClass)grid.SelectedItem).Name}'" : $"{num_sel} {grid.Tag}";
+            int num_sel = dgMainDataGrid.SelectedItems.Count;
+            string conf_str = num_sel == 1 ? $"'{((BaseDataClass)dgMainDataGrid.SelectedItem).Name}'" : $"{num_sel} {dgMainDataGrid.Tag}";
             if (VisualHelpers.ShowWarningBox("Are you sure you want to delete " + conf_str + "?", $"Delete {conf_str}?") == MessageBoxResult.Cancel) return;
-            IList<BaseDataClass> list = grid.SelectedItems.Cast<BaseDataClass>().ToList();
+            IList<BaseDataClass> list = dgMainDataGrid.SelectedItems.Cast<BaseDataClass>().ToList();
             for (int i = 0; i < list.Count; i++)
             {
                 list[i].Delete();
@@ -142,9 +140,43 @@ namespace TimetablingWPF
 
         private void CanExecuteDeleteItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = ((DataGrid)e.Parameter).SelectedItems.Count >= 1;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count >= 1 && dgMainDataGrid.IsFocused;
         }
 
+        public void ExecuteToggleFilter()
+        {
+            bool visible = spFilter.Visibility == Visibility.Visible;
+            if (visible)
+            {
+                spFilter.Visibility = Visibility.Collapsed;
+                return;
+            }
+            spFilter.Visibility = Visibility.Visible;
+            filterName.Focus();
+        }
+        public void RefreshFilter()
+        {
+            string nameFilter = filterName.Text.RemoveWhitespace().ToUpperInvariant();
+            ListCollectionView data = (ListCollectionView)dgMainDataGrid.ItemsSource;
+            if (string.IsNullOrWhiteSpace(nameFilter))
+            {
+                data.Filter = null;
+                data.CustomSort = null;
+                return;
+            }
+
+            data.Filter = new Predicate<object>(o => {
+                string name = ((BaseDataClass)o).Name.RemoveWhitespace().ToUpperInvariant();
+                bool contains = name.Contains(nameFilter);
+                if (nameFilter.Length < name.Length)
+                {
+                    name = name.Substring(0, nameFilter.Length);
+                }
+                int maxDistance = nameFilter.Length * 3 / 8;
+                return contains || DamerauLevenshteinDistance(name, nameFilter, maxDistance > 3 ? maxDistance : 3) != int.MaxValue;
+            });
+            data.CustomSort = new BDCSortingComparer(nameFilter);
+        }
         public override bool Cancel()
         {
             return true;
@@ -160,6 +192,8 @@ namespace TimetablingWPF
             "DuplicateItem", "DuplicateItem", typeof(DataGridCommands));
         public static readonly RoutedUICommand DeleteItem = new RoutedUICommand(
             "DeleteItem", "DeleteItem", typeof(DataGridCommands));
+        public static readonly RoutedUICommand ToggleFilter = new RoutedUICommand(
+            "ToggleFilter", "ToggleFilter", typeof(DataGridCommands));
     }
 
     public enum CommandType

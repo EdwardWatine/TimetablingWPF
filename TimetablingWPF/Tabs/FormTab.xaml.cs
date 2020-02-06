@@ -89,7 +89,7 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            Form.Name = txName.Text;
+            Form.Name = txName.Text.Trim();
             Form.YearGroup = (YearGroup)cmbxYear.SelectedItem;
             Form.Unfreeze();
             if (CommandType == CommandType.edit) {

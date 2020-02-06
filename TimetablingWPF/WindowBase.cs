@@ -29,5 +29,7 @@ namespace TimetablingWPF
                 }
             };
         }
+        public virtual bool CanExecuteFindFilter() { return false; }
+        public virtual void ExecuteFindFilter() { }
     }
 }

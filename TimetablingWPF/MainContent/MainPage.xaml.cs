@@ -20,6 +20,7 @@ namespace TimetablingWPF
         {
             InitializeComponent();
             tcMainTabControl.ClosingItemCallback = CloseTab;
+            tcMainTabControl.SelectionChanged += TabChanged;
         }
 
         public Stack<TabItem> TabHistory { get; } = new Stack<TabItem>();
@@ -49,7 +50,6 @@ namespace TimetablingWPF
         public void NewDataSetTab(Type type)
         {
             TextBlock header = new TextBlock() { Text = type.Name.Pluralize() };
-            header.MouseLeftButtonUp += ManualChange;
             DataClassTabItem dataTab = new DataClassTabItem(type) { Header = header };
             tcMainTabControl.Items.Add(dataTab);
             if (tcMainTabControl.Items.Count == 1)
@@ -76,12 +76,16 @@ namespace TimetablingWPF
             }
         }
 
-        private void ManualChange(object sender, MouseButtonEventArgs e)
+        private void TabChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (tcMainTabControl.SelectedItem != TabHistory.FirstOrDefault())
+            if (e.AddedItems.Count == 1 && e.AddedItems[0] is TabBase item)
             {
-                TabHistory.Clear();
-                TabHistory.Push((TabItem)tcMainTabControl.SelectedItem);
+                //item.OnSelect();
+                if (item != TabHistory.FirstOrDefault())
+                {
+                    TabHistory.Clear();
+                    TabHistory.Push(item);
+                }
             }
         }
     }

@@ -17,5 +17,6 @@ namespace TimetablingWPF
             return MessageBox.Show("Are you sure you want to discard your changes?",
                 "Discard changes?", MessageBoxButton.YesNo) == MessageBoxResult.Yes;
         }
+        public virtual void OnSelect() { }
     }
 }

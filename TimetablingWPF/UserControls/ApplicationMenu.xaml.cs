@@ -31,13 +31,16 @@ namespace TimetablingWPF
 
         private void ApplicationMenu_Loaded(object sender, RoutedEventArgs e)
         {
-            Window window = Window.GetWindow(this);
-            window.CommandBindings.Add(new CommandBinding(ApplicationCommands.New, NewFile));
-            window.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, OpenFile));
-            window.CommandBindings.Add(new CommandBinding(MenuCommands.ImportCommand, ImportFile));
-            window.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveFile));
-            window.CommandBindings.Add(new CommandBinding(ApplicationCommands.SaveAs, SaveAs));
-            window.InputBindings.Add(new InputBinding(ApplicationCommands.SaveAs, new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift)));
+            ParentWindow = (WindowBase)Window.GetWindow(this);
+            ParentWindow.CommandBindings.Add(new CommandBinding(ApplicationCommands.New, NewFile));
+            ParentWindow.CommandBindings.Add(new CommandBinding(ApplicationCommands.Open, OpenFile));
+            ParentWindow.CommandBindings.Add(new CommandBinding(MenuCommands.ImportCommand, ImportFile));
+
+            ParentWindow.CommandBindings.Add(new CommandBinding(ApplicationCommands.Save, SaveFile));
+            ParentWindow.CommandBindings.Add(new CommandBinding(ApplicationCommands.SaveAs, SaveAs));
+            ParentWindow.InputBindings.Add(new InputBinding(ApplicationCommands.SaveAs, new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift)));
+
+            ParentWindow.CommandBindings.Add(new CommandBinding(MenuCommands.FindFilterCommand, ExecuteFindFilter, CanExecuteFindFilter));
         }
 
         public void NewFile(object sender, ExecutedRoutedEventArgs e)
@@ -48,7 +51,7 @@ namespace TimetablingWPF
             string fpath = SaveFileDialogHelper("Create New File");
             if (fpath != null)
             {
-                TimetableStructureDialog structureDialog = new TimetableStructureDialog(Window.GetWindow(this), false);
+                TimetableStructureDialog structureDialog = new TimetableStructureDialog(ParentWindow, false);
                 if (!structureDialog.ShowDialog() ?? false) { return; }
                 ClearData();
                 SaveData(fpath);
@@ -83,7 +86,7 @@ namespace TimetablingWPF
             if (fpath != null && fpath != GetCurrentFilePath())
             {
                 ClearData();
-                LoadData(fpath, worker_args => RegisterOpenFile(fpath), owner: Window.GetWindow(this));
+                LoadData(fpath, worker_args => RegisterOpenFile(fpath), owner: ParentWindow);
             }
         }
         public void ImportFile(object sender, ExecutedRoutedEventArgs e)
@@ -91,7 +94,7 @@ namespace TimetablingWPF
             string fpath = OpenFileDialogHelper();
             if (fpath != null && fpath != GetCurrentFilePath())
             {
-                ImportDialog window = new ImportDialog(Window.GetWindow(this));
+                ImportDialog window = new ImportDialog(ParentWindow);
                 window.ShowDialog();
                 if (!window.DialogResult ?? false) return; 
                 LoadData(fpath, (complete) =>
@@ -163,8 +166,16 @@ namespace TimetablingWPF
                         }
                     }
                     
-                }, owner: Window.GetWindow(this), save: false);
+                }, owner: ParentWindow, save: false);
             }
+        }
+        public void ExecuteFindFilter(object sender, ExecutedRoutedEventArgs e)
+        {
+            ParentWindow.ExecuteFindFilter();
+        }
+        public void CanExecuteFindFilter(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = ParentWindow.CanExecuteFindFilter();
         }
         public void BlockingViewClick(object sender, RoutedEventArgs e)
         {
@@ -178,12 +189,18 @@ namespace TimetablingWPF
             }
             new BlockingWindow().Show();
         }
+        public WindowBase ParentWindow { get; private set; }
     }
     public static class MenuCommands
     {
         public static readonly RoutedUICommand ImportCommand = new RoutedUICommand("Import", "Import", typeof(MenuCommands),
             new InputGestureCollection() {
                 new KeyGesture(Key.I, ModifierKeys.Control)
+            });
+        public static readonly RoutedUICommand FindFilterCommand = new RoutedUICommand("FindFilter", "FindFilter", typeof(MenuCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.F, ModifierKeys.Control)
             });
     }
 }

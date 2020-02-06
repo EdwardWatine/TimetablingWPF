@@ -16,6 +16,9 @@
             <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
             <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs" InputGestureText="Ctrl+Shift+S"/>
         </MenuItem>
+        <MenuItem Header="_Edit">
+            <MenuItem Header="_Find/Filter" Command="local:MenuCommands.FindFilterCommand"/>
+        </MenuItem>
         <MenuItem Header="_View">
             <MenuItem Header="_Data Views">
                 <MenuItem Header="_Teacher"/>

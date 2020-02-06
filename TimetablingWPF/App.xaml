@@ -26,6 +26,13 @@
         <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}"/>
         <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}"/>
         <SolidColorBrush x:Key="PressedBrush" Color="#707070"/>
+        <Style x:Key="{x:Static SystemParameters.FocusVisualStyleKey}">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate/>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style x:Key="PrimaryBackground" TargetType="Panel">
             <Setter Property="Background" Value="{StaticResource PrimaryBrush}"/>
         </Style>
@@ -44,6 +51,11 @@
                 <Setter Property="Margin" Value="5,0,5,5"/>
                 <Setter Property="Padding" Value="5"/>
                 <Setter Property="TextAlignment" Value="Center"/>
+            </Style.Setters>
+        </Style>
+        <Style x:Key="BlackDialogText" TargetType="TextBlock" BasedOn="{StaticResource DialogText}">
+            <Style.Setters>
+                <Setter Property="Foreground" Value="#000"/>
             </Style.Setters>
         </Style>
         <Style x:Key="GridLineInternalBlack" TargetType="Border">

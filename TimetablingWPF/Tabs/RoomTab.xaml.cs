@@ -94,7 +94,7 @@ namespace TimetablingWPF
                     return;
                 }
             }
-            Room.Name = txName.Text;
+            Room.Name = txName.Text.Trim();
             Room.Critical = checkCritical.IsChecked ?? false;
             Room.Quantity = iupdown.Value ?? 0;
             Room.Unfreeze();
