@@ -10,30 +10,25 @@ namespace TimetablingWPF
 {
     public class BDCSortingComparer : IComparer
     {
-        public BDCSortingComparer(string target)
-        {
-            Target = target;
-        }
-
-        private readonly string Target;
+        public string Filter { get; set; }
 
         public int Compare(object x, object y)
         {
             string xname = ((BaseDataClass)x).Name.RemoveWhitespace().ToUpperInvariant();
             string yname = ((BaseDataClass)y).Name.RemoveWhitespace().ToUpperInvariant();
             int ymod = 0, xmod = 0;
-            if (Target.Length >= 3)
+            if (Filter.Length >= 3)
             {
-                if (yname.Contains(Target)) ymod = yname.Length;
-                if (xname.Contains(Target)) xmod = xname.Length;
+                if (yname.Contains(Filter)) ymod = yname.Length;
+                if (xname.Contains(Filter)) xmod = xname.Length;
             }
             if (xname.Length < yname.Length)
             {
-                int xdist = DamerauLevenshteinDistance(xname, Target);
-                return xdist - xmod + ymod - DamerauLevenshteinDistance(yname, Target, xdist - xmod + ymod);
+                int xdist = DamerauLevenshteinDistance(xname, Filter);
+                return xdist - xmod + ymod - DamerauLevenshteinDistance(yname, Filter, xdist - xmod + ymod);
             }
-            int ydist = DamerauLevenshteinDistance(yname, Target);
-            return DamerauLevenshteinDistance(xname, Target, xmod + ydist - ymod) - xmod - ydist + ymod;
+            int ydist = DamerauLevenshteinDistance(yname, Filter);
+            return DamerauLevenshteinDistance(xname, Filter, xmod + ydist - ymod) - xmod - ydist + ymod;
         }
     }
 }
