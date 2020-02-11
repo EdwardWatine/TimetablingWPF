@@ -98,6 +98,7 @@ namespace TimetablingWPF
                 { "Room", new string[]{"Quantity", "Critical", "Groups"} }
             };
         private readonly HashSet<string> Shortcols = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length", "Quantity", "Critical", "Subject", "Year Group" };
+        private readonly BDCSortingComparer FilterComparer = new BDCSortingComparer();
         private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
             MainPage.NewTab(DataHelpers.GenerateItemTab(Activator.CreateInstance(DataType), CommandType.@new), $"New {DataType.Name}");
@@ -175,7 +176,8 @@ namespace TimetablingWPF
                 int maxDistance = nameFilter.Length * 3 / 8;
                 return contains || DamerauLevenshteinDistance(name, nameFilter, maxDistance > 3 ? maxDistance : 3) != int.MaxValue;
             });
-            data.CustomSort = new BDCSortingComparer(nameFilter);
+            FilterComparer.Filter = nameFilter;
+            data.CustomSort = FilterComparer;
         }
         public override bool Cancel()
         {
