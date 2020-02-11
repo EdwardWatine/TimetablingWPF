@@ -173,8 +173,7 @@ namespace TimetablingWPF
                 {
                     name = name.Substring(0, nameFilter.Length);
                 }
-                int maxDistance = nameFilter.Length * 3 / 8;
-                return contains || DamerauLevenshteinDistance(name, nameFilter, maxDistance > 3 ? maxDistance : 3) != int.MaxValue;
+                return contains || DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
             });
             FilterComparer.Filter = nameFilter;
             data.CustomSort = FilterComparer;
