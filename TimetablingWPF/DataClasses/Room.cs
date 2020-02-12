@@ -15,6 +15,13 @@ namespace TimetablingWPF
 {
     public class Room : BaseDataClass
     {
+        static Room()
+        {
+            Type type = typeof(Room);
+            RegisterProperty(type, type.GetProperty("Quantity"));
+            RegisterProperty(type, type.GetProperty("Critical"));
+            RegisterProperty(type, type.GetProperty("Groups"));
+        }
         private int _quantity;
         public int Quantity
         {

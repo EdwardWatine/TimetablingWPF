@@ -40,7 +40,7 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
             cmbxGroups.ItemsSource = GetDataContainer().Groups;
             ilGroups.ItemsSource = Room.Groups;
-            ilGroups.ListenToCollection(OriginalRoom.Groups);
+            if (commandType != CommandType.@new) ilGroups.ListenToCollection(OriginalRoom.Groups);
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Room");
         }

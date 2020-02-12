@@ -26,6 +26,35 @@ namespace TimetablingWPF
         {
             InitializeComponent();
         }
+        private void MouseMoveLink(object sender, MouseEventArgs e)
+        {
+            if (Keyboard.IsKeyDown(Key.LeftCtrl)) ((Hyperlink)sender).TextDecorations = TextDecorations.Underline;
+            else ((Hyperlink)sender).TextDecorations = null;
+        }
+        private void MouseLeaveLink(object sender, MouseEventArgs e)
+        {
+            ((Hyperlink)sender).TextDecorations = null;
+        }
+        private void LinkClick(object sender, RoutedEventArgs e)
+        {
+            if (!Keyboard.IsKeyDown(Key.LeftCtrl)) return;
+            object obj = ((Hyperlink)sender).Tag;
+            if (Window.GetWindow(this) is MainWindow main)
+            {
+
+                main.GetMainPage().NewTab(DataHelpers.GenerateItemTab(obj, CommandType.edit), $"Edit {obj.ToString()}");
+                return;
+            }
+            foreach (Window window in Application.Current.Windows)
+            {
+                if (window is MainWindow mainWindow)
+                {
+                    mainWindow.GetMainPage().NewTab(DataHelpers.GenerateItemTab(obj, CommandType.edit), $"Edit {obj.ToString()}");
+                    mainWindow.Activate();
+                    return;
+                }
+            }
+        }
         private void RemoveItemClick(object sender, MouseButtonEventArgs e)
         {
             ((IList)ItemsSource).Remove(((FrameworkElement)sender).Tag);

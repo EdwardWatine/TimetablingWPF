@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 
@@ -6,6 +7,13 @@ namespace TimetablingWPF
 {
     public class Teacher : BaseDataClass
     {
+        static Teacher()
+        {
+            Type type = typeof(Teacher);
+            RegisterProperty(type, type.GetProperty("UnavailablePeriods"));
+            RegisterProperty(type, type.GetProperty("Subjects"));
+            RegisterProperty(type, type.GetProperty("Assignments"));
+        }
         public Teacher()
         {
             Assignments.CollectionChanged += AssignmentsChanged;

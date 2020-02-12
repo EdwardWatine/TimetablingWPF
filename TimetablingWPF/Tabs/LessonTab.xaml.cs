@@ -44,10 +44,13 @@ namespace TimetablingWPF
             cmbxForm.ItemsSource = data.Forms;
 
             ilAssignments.ItemsSource = Lesson.Assignments;
-            ilAssignments.ListenToCollection(OriginalLesson.Assignments);
+            
             ilForms.ItemsSource = Lesson.Forms;
-            ilForms.ListenToCollection(OriginalLesson.Forms);
-
+            if (commandType != CommandType.@new)
+            {
+                ilForms.ListenToCollection(OriginalLesson.Forms);
+                ilAssignments.ListenToCollection(OriginalLesson.Assignments);
+            }
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Lesson");
             HAS_NO_SUBJECT = new ErrorContainer(ErrManager, (e) => cmbxSubject.SelectedItem == null, (e) => "No subject has been selected.", ErrorType.Error, false);
         }

@@ -24,7 +24,6 @@
 
                     <Setter Property="TextBlock.TextDecorations" Value="Underline"/>
                     <Setter Property="Cursor" Value="Arrow"/>
-
                 </Trigger>
 
             </Style.Triggers>
@@ -132,7 +131,7 @@
                                        Source="{StaticResource FileIcon}"/>
                             </InlineUIContainer>         
                             <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding Converter={StaticResource URISetatter}}">
-                                <TextBlock x:Name="fpath" 
+                                <TextBlock x:Name="fpath"
                                            Text="{Binding Converter={StaticResource URISetatter}, ConverterParameter=filename}"
                                            ToolTip="{Binding Converter={StaticResource URISetatter}}"/>
                             </Hyperlink>

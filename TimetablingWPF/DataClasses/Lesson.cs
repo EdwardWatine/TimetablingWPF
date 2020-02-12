@@ -15,6 +15,15 @@ namespace TimetablingWPF
 {
     public class Lesson : BaseDataClass
     {
+        static Lesson()
+        {
+            Type type = typeof(Lesson);
+            RegisterProperty(type, type.GetProperty("Forms"));
+            RegisterProperty(type, type.GetProperty("LessonsPerCycle"));
+            RegisterProperty(type, type.GetProperty("LessonLength"));
+            RegisterProperty(type, type.GetProperty("Subject"));
+            RegisterProperty(type, type.GetProperty("Assignments"));
+        }
         public Lesson()
         {
             Assignments.CollectionChanged += AssignmentsChanged;

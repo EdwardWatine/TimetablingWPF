@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -73,31 +74,32 @@ namespace TimetablingWPF
                 Header = "Name",
                 CellTemplate = (DataTemplate)Resources["NameTemplate"]
             });
-            int width = new HashSet<string>(Columns[type.Name]).Except(Shortcols).Count();
+            System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+            int width = BaseDataClass.ExposedProperties[type].Count(prop => typeof(IList).IsAssignableFrom(prop.PropertyType));
             width = width == 1 ? 4 : width;
-            foreach (string column in Columns[type.Name])
+            foreach (PropertyInfo prop in BaseDataClass.ExposedProperties[type])
             {
+                bool islist = typeof(IList).IsAssignableFrom(prop.PropertyType);
+                DataTemplate cellTemplate = new DataTemplate(type);
+                FrameworkElementFactory tbFactory = new FrameworkElementFactory(typeof(TextBlock));
+                tbFactory.SetValue(StyleProperty, Resources["tbStyle"]);
+                Binding binding = new Binding(prop.Name);
+                if (prop.PropertyType == typeof(ObservableCollection<TimetableSlot>)) binding.Converter = new ListReportLength();
+                else if (islist) binding.Converter = new ListFormatter();
+                tbFactory.SetBinding(TextBlock.TextProperty, binding);
+                cellTemplate.VisualTree = tbFactory;
+                
                 dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
                 {
-                    Width = new DataGridLength(width, Shortcols.Contains(column) ? DataGridLengthUnitType.Auto : DataGridLengthUnitType.Star),
-                    Header = column,
-                    CellTemplate = (DataTemplate)Resources[$"{column}Template"]
+                    Width = new DataGridLength(width, islist ? DataGridLengthUnitType.Star : DataGridLengthUnitType.Auto),
+                    Header = prop.Name,
+                    CellTemplate = cellTemplate
                 });
             }
             dgMainDataGrid.UnselectAll();
         }
         
         public Type DataType { get; }
-        private readonly Dictionary<string, string[]> Columns = new Dictionary<string, string[]>()
-            {
-                { "Teacher", new string[]{"Subjects", "Assignments", "Unavailable Periods" } },
-                { "Subject", new string[]{"Teachers", "Groups" } },
-                { "Lesson", new string[]{"Subject", "Lessons Per Cycle", "Lesson Length", "Assignments", "Forms" } },
-                { "Group", new string[]{"Subjects", "Rooms" } },
-                { "Form", new string[]{"Year Group", "Lessons" } },
-                { "Room", new string[]{"Quantity", "Critical", "Groups"} }
-            };
-        private readonly HashSet<string> Shortcols = new HashSet<string>() { "Lessons Per Cycle", "Lesson Length", "Quantity", "Critical", "Subject", "Year Group" };
         private readonly BDCSortingComparer FilterComparer = new BDCSortingComparer();
         private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
@@ -113,7 +115,7 @@ namespace TimetablingWPF
 
         private void CanExecuteEditItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1 && dgMainDataGrid.IsFocused;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1;// && dgMainDataGrid.IsFocused;
         }
 
         private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
@@ -124,7 +126,7 @@ namespace TimetablingWPF
 
         private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1 && dgMainDataGrid.IsFocused;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1;// && dgMainDataGrid.IsFocused;
         }
 
         private void ExecuteDeleteItem(object sender, ExecutedRoutedEventArgs e)
@@ -141,7 +143,7 @@ namespace TimetablingWPF
 
         private void CanExecuteDeleteItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = dgMainDataGrid.SelectedItems.Count >= 1 && dgMainDataGrid.IsFocused;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count >= 1;// && dgMainDataGrid.IsFocused;
         }
 
         public void ExecuteToggleFilter()

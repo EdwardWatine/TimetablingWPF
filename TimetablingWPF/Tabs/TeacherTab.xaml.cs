@@ -108,7 +108,7 @@ namespace TimetablingWPF
 
             svPeriods.Content = GenerateTimetable(Teacher.UnavailablePeriods, ToggleSlot, ToggleAll);
             ilSubjects.ItemsSource = Teacher.Subjects;
-            ilSubjects.ListenToCollection(OriginalTeacher.Subjects);
+            if (commandType != CommandType.@new) ilSubjects.ListenToCollection(OriginalTeacher.Subjects);
         }
 
         private void SubjectButtonClick(object sender, RoutedEventArgs e)

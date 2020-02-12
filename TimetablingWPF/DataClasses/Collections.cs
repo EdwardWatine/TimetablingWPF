@@ -154,7 +154,7 @@ namespace TimetablingWPF
         }
         private void AddToOther(TContent item)
         {
-            RelationalCollection<TThis, TContent> target = ((RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item));
+            RelationalCollection<TThis, TContent> target = (RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item);
             target.OnlyInsert(target.Count, _parent);
         }
         protected override void RemoveItem(int index)

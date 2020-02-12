@@ -11,9 +11,6 @@
         <MenuItem x:Key="miNewItem" Header="New item"/>
         <MenuItem x:Key="miDeleteItem" Header="Delete selection"/>
         <MenuItem x:Key="miDuplicateItem" Header="Duplicate item"/>
-        <local:ListFormatter x:Key="ListFormatter"/>
-        <local:ListReportLength x:Key="ListReportLength"/>
-        <local:PeriodsToTable x:Key="PeriodsToTable"/>
         <Style x:Key="tbStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -21,52 +18,6 @@
         </Style>
         <DataTemplate x:Key="NameTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Name}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="Lessons Per CycleTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding LessonsPerCycle}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="Lesson LengthTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding LessonLength}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="SubjectsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subjects, Converter={StaticResource ListFormatter}}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="SubjectTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Subject}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="Unavailable PeriodsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding UnavailablePeriods, Converter={StaticResource ListReportLength}, ConverterParameter=periods}">
-                <TextBlock.ToolTip>
-                    <ToolTip Content="{Binding UnavailablePeriods, Converter={StaticResource PeriodsToTable}}"/>
-                </TextBlock.ToolTip>
-            </TextBlock>
-        </DataTemplate>
-        <DataTemplate x:Key="AssignmentsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Assignments, Converter={StaticResource ListFormatter}}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="TeachersTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Teachers, Converter={StaticResource ListFormatter}}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="RoomsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Rooms, Converter={StaticResource ListFormatter}}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="GroupsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Groups, Converter={StaticResource ListFormatter}}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="FormsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Forms, Converter={StaticResource ListFormatter}}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="LessonsTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Lessons, Converter={StaticResource ListFormatter}}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="Year GroupTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding YearGroup}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="QuantityTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Quantity}"/>
-        </DataTemplate>
-        <DataTemplate x:Key="CriticalTemplate">
-            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Critical}"/>
         </DataTemplate>
     </TabItem.Resources>
     <StackPanel Orientation="Vertical" Name="spMain">

@@ -40,9 +40,14 @@ namespace TimetablingWPF
             cmbxSubject.ItemsSource = GetDataContainer().Subjects;
             cmbxRoom.ItemsSource = GetDataContainer().Rooms;
             ilRooms.ItemsSource = Group.Rooms;
-            ilRooms.ListenToCollection(OriginalGroup.Rooms);
+            
             ilSubjects.ItemsSource = Group.Subjects;
-            ilSubjects.ListenToCollection(OriginalGroup.Subjects);
+            if (commandType != CommandType.@new)
+            {
+                ilSubjects.ListenToCollection(OriginalGroup.Subjects);
+                ilRooms.ListenToCollection(OriginalGroup.Rooms);
+            }
+            
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Group");
         }

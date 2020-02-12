@@ -44,9 +44,12 @@ namespace TimetablingWPF
 
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Subject");
             ilGroups.ItemsSource = Subject.Groups;
-            ilGroups.ListenToCollection(OriginalSubject.Groups);
             ilTeachers.ItemsSource = Subject.Teachers;
-            ilTeachers.ListenToCollection(OriginalSubject.Teachers);
+            if (commandType != CommandType.@new)
+            {
+                ilTeachers.ListenToCollection(OriginalSubject.Teachers);
+                ilGroups.ListenToCollection(OriginalSubject.Groups);
+            }
         }
 
         private void GroupButtonClick(object sender, RoutedEventArgs e)

@@ -11,11 +11,18 @@ using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.IO;
+using System.Reflection;
 
 namespace TimetablingWPF
 {
     public class Form : BaseDataClass
     {
+        static Form()
+        {
+            Type type = typeof(Form);
+            RegisterProperty(type, type.GetProperty("Lessons"));
+            RegisterProperty(type, type.GetProperty("YearGroup"));
+        }
         public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");
         private YearGroup _year;
         public YearGroup YearGroup
