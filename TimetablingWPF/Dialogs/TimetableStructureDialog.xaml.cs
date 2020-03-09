@@ -179,14 +179,14 @@ namespace TimetablingWPF
             {
                 UIElement element = (UIElement)children[i];
                 int row = Grid.GetRow(element);
-                if (row == count)
+                if (row == count) // remove the element if it is on the correct row
                 {
-                    grid.Children.Remove(element);
+                    children.Remove(element);
                     i--;
                 }
                 if (row > count)
                 {
-                    Grid.SetRow(element, row - 1);
+                    Grid.SetRow(element, row - 1); // shifts other elements down one
                 }
             }
             grid.RowDefinitions.RemoveAt(count);
@@ -322,7 +322,7 @@ namespace TimetablingWPF
             {
                 periods.Clear();
                 days.Clear();
-                uv_periods.Clear();
+                uv_periods.Clear(); //resets the lists for each iteration
                 if (!(grid_element is Grid grid)) { continue; }
                 foreach (UIElement parent_element in grid.Children)
                 {
@@ -351,10 +351,10 @@ namespace TimetablingWPF
                     }
                 }
                 int num_periods = periods.Count;
-                weeks.Add(new TimetableStructureWeek(weekName, new List<string>(days), new List<string>(periods),
-                    Enumerable.Range(0, uv_periods.Count / 2).Select(i => TimetableStructureWeek.IndexesToPeriodNum(uv_periods[2*i], uv_periods[2*i + 1], num_periods)).ToList()));
+                weeks.Add(new TimetableStructureWeek(weekName, new List<string>(days), new List<string>(periods), // adds the correct weeks to the list
+                    Enumerable.Range(0, uv_periods.Count / 2).Select(i => TimetableStructureWeek.IndexesToPeriodNum(uv_periods[2*i], uv_periods[2*i + 1], num_periods)).ToList())); // generates the days and the periods
             }
-            TimetableStructure.SetData(weeks);
+            TimetableStructure.SetData(weeks); // set the current structure data
         }
         public void Confirm(object sender, RoutedEventArgs e)
         {
