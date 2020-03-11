@@ -17,7 +17,7 @@ namespace TimetablingWPF
         public ObservableCollection(IEnumerable<T> collection) : base(collection) { }
         protected override void OnCollectionChanged(NotifyCollectionChangedEventArgs e)
         {
-            if (!SuppressEvent)
+            if (!SuppressEvent) // prevent the list from propagating changes, mostly to prevent functions like AddRange propagating multiple events
             {
                 base.OnCollectionChanged(e);
             }
@@ -30,7 +30,7 @@ namespace TimetablingWPF
             {
                 Add(item);
             }
-            SuppressEvent = flag || false;
+            SuppressEvent = flag || false; // ensures that SuppressEvent is not accidently overwritten
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, enumerable.ToList()));
         }
         public void SetData(IEnumerable<T> enumerable)
@@ -68,14 +68,14 @@ namespace TimetablingWPF
             {
                 foreach (object item in e.NewItems)
                 {
-                    ((INotifyPropertyChanged)item).PropertyChanged += ItemPropertyChanged;
+                    ((INotifyPropertyChanged)item).PropertyChanged += ItemPropertyChanged; // link event handler
                 }
             }
             if (e.OldItems != null)
             {
                 foreach (object item in e.OldItems)
                 {
-                    ((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged;
+                    ((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged; // unlink event handler
                 }
             }
         }
@@ -83,7 +83,7 @@ namespace TimetablingWPF
         {
             int index = IndexOf((T)sender);
             NotifyCollectionChangedEventArgs args = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Replace, sender, sender, index);
-            OnCollectionChanged(args);
+            OnCollectionChanged(args); // propagate CollectionChanged when PropertyChanged is raised
         }
         public override object Clone()
         {
