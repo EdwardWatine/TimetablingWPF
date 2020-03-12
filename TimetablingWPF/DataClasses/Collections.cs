@@ -155,7 +155,7 @@ namespace TimetablingWPF
         private void AddToOther(TContent item)
         {
             RelationalCollection<TThis, TContent> target = (RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item);
-            target.OnlyInsert(target.Count, _parent);
+            target.OnlyInsert(target.Count, _parent); // add the item to the corresponding RelationalCollection
         }
         protected override void RemoveItem(int index)
         {
@@ -176,7 +176,7 @@ namespace TimetablingWPF
         {
             foreach (TContent obj in this)
             {
-                RemoveFromOther(obj);
+                RemoveFromOther(obj); // removes the parent from all of its RelationalLists
             }
             base.ClearItems();
         }
@@ -193,7 +193,7 @@ namespace TimetablingWPF
         private void RemoveFromOther(TContent item)
         {
             RelationalCollection<TThis, TContent> target = (RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item);
-            target.OnlyRemove(target.IndexOf(_parent));
+            target.OnlyRemove(target.IndexOf(_parent)); // remove the item to the corresponding RelationalCollection
         }
         public void Freeze()
         {
@@ -204,16 +204,16 @@ namespace TimetablingWPF
             Frozen = false;
             while (frozenAddElements.Count > 0)
             {
-                AddToOther(frozenAddElements.Dequeue());
+                AddToOther(frozenAddElements.Dequeue()); // unfreeze and add the elements
             }
             while (frozenRemoveElements.Count > 0)
             {
-                RemoveFromOther(frozenRemoveElements.Dequeue());
+                RemoveFromOther(frozenRemoveElements.Dequeue()); // unfreeze and remove the elements
             }
         }
         public override object Clone()
         {
-            return new RelationalCollection<TContent, TThis>(OtherSetProperty, this) { Parent = Parent };
+            return new RelationalCollection<TContent, TThis>(OtherSetProperty, this) { Parent = Parent }; // duplicate the RelationalList
         }
         public bool Frozen { get; private set; } = false;
         private readonly Queue<TContent> frozenAddElements = new Queue<TContent>();
