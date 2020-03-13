@@ -7,10 +7,6 @@
       mc:Ignorable="d">
 
     <TabItem.Resources>
-        <MenuItem x:Key="miEditItem" Header="Edit item"/>
-        <MenuItem x:Key="miNewItem" Header="New item"/>
-        <MenuItem x:Key="miDeleteItem" Header="Delete selection"/>
-        <MenuItem x:Key="miDuplicateItem" Header="Duplicate item"/>
         <Style x:Key="tbStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="10"/>
             <Setter Property="HorizontalAlignment" Value="Stretch"/>
@@ -54,12 +50,12 @@
                           SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
             <DataGrid.ContextMenu>
                 <ContextMenu Name="cmContextMenu">
-                    <StaticResource ResourceKey="miNewItem"/>
+                    <MenuItem x:Key="miNewItem" Header="New item"/>
                     <Separator/>
-                    <StaticResource ResourceKey="miEditItem"/>
-                    <StaticResource ResourceKey="miDuplicateItem"/>
+                    <MenuItem x:Key="miEditItem" Header="Edit item"/>
+                    <MenuItem x:Key="miDuplicateItem" Header="Duplicate item"/>
                     <Separator/>
-                    <StaticResource ResourceKey="miDeleteItem"/>
+                    <MenuItem x:Key="miDeleteItem" Header="Delete selection"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>

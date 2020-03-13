@@ -30,37 +30,30 @@ namespace TimetablingWPF
         {
             InitializeComponent();
             DataType = type;
-            void attachMenuCommand(string key, CommandBinding binding,
+            void attachCommand(ICommandSource item, CommandBinding binding, // local function to assist attaching commands
                 object parameter = null)
             {
-                ((MenuItem)Resources[key]).CommandParameter = parameter;
-                ((MenuItem)Resources[key]).CommandBindings.Add(binding);
-                ((MenuItem)Resources[key]).Command = binding.Command;
-            }
-            void attachButtonCommand(Button button, CommandBinding binding,
-                object parameter = null)
-            {
-                button.CommandParameter = parameter;
-                button.CommandBindings.Add(binding);
-                button.Command = binding.Command;
+                item.CommandParameter = parameter;
+                item.Command = binding.Command;
+                if (item is UIElement element) element.CommandBindings.Add(binding);
             }
             CommandBinding editBinding = new CommandBinding(DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem);
             CommandBinding newBinding = new CommandBinding(DataGridCommands.NewItem, ExecuteNewItem, CanAlwaysExecute);
             CommandBinding dupBinding = new CommandBinding(DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem);
             CommandBinding delBinding = new CommandBinding(DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem);
 
-            attachMenuCommand($"miEditItem", editBinding);
-            attachMenuCommand($"miNewItem", newBinding);
-            attachMenuCommand($"miDeleteItem", delBinding);
-            attachMenuCommand($"miDuplicateItem", dupBinding);
+            attachCommand(miEditItem, editBinding);
+            attachCommand(miNewItem, newBinding);
+            attachCommand(miDeleteItem, delBinding);     // attach commands to the context menu
+            attachCommand(miDuplicateItem, dupBinding);
 
             dgMainDataGrid.CommandBindings.Add(delBinding);
             dgMainDataGrid.InputBindings.Add(new KeyBinding(DataGridCommands.DeleteItem, new KeyGesture(Key.Delete)));
 
-            attachButtonCommand(btNewToolbar, newBinding);
-            attachButtonCommand(btEditToolbar, editBinding);
-            attachButtonCommand(btDuplicateToolbar,dupBinding);
-            attachButtonCommand(btDeleteToolbar, delBinding);
+            attachCommand(btNewToolbar, newBinding);
+            attachCommand(btEditToolbar, editBinding);
+            attachCommand(btDuplicateToolbar,dupBinding); // attach commands to the toolbar
+            attachCommand(btDeleteToolbar, delBinding);
 
             filterName.TextChanged += delegate (object sender, TextChangedEventArgs e) { RefreshFilter(); };
 
@@ -108,25 +101,25 @@ namespace TimetablingWPF
 
         private void ExecuteEditItem(object sender, ExecutedRoutedEventArgs e)
         {
-            object item = dgMainDataGrid.SelectedItem;
+            object item = dgMainDataGrid.SelectedItem; // edit item tab
             MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.edit), $"Edit {item.GetType().Name}");
 
         }
 
         private void CanExecuteEditItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1;// && dgMainDataGrid.IsFocused;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1;// && dgMainDataGrid.IsFocused;  grid is selected
         }
 
         private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
         {
-            object item = dgMainDataGrid.SelectedItem;
+            object item = dgMainDataGrid.SelectedItem; // duplicate item tab
             MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.copy), $"New {item.GetType().Name}");
         }
 
         private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1;// && dgMainDataGrid.IsFocused;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count == 1;// && dgMainDataGrid.IsFocused;  // grid is selected
         }
 
         private void ExecuteDeleteItem(object sender, ExecutedRoutedEventArgs e)
@@ -137,13 +130,13 @@ namespace TimetablingWPF
             IList<BaseDataClass> list = dgMainDataGrid.SelectedItems.Cast<BaseDataClass>().ToList();
             for (int i = 0; i < list.Count; i++)
             {
-                list[i].Delete();
+                list[i].Delete(); // deletes items
             }
         }
 
         private void CanExecuteDeleteItem(object sender, CanExecuteRoutedEventArgs e)
         {
-            e.CanExecute = dgMainDataGrid.SelectedItems.Count >= 1;// && dgMainDataGrid.IsFocused;
+            e.CanExecute = dgMainDataGrid.SelectedItems.Count >= 1;// && dgMainDataGrid.IsFocused; // at least one item is selected
         }
 
         public void ExecuteToggleFilter()
@@ -199,7 +192,7 @@ namespace TimetablingWPF
             "ToggleFilter", "ToggleFilter", typeof(DataGridCommands));
     }
 
-    public enum CommandType
+    public enum CommandType // specifies the behaviour of the tab
     {
         @new,
         edit,
