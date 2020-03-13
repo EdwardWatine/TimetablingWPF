@@ -38,10 +38,10 @@ namespace TimetablingWPF
                 })
                 );
 
-
+                int skipped = 0;
                 for (int day = 0; day < structureWeek.DayNames.Count; day++)
                 {
-                    if (!structureWeek.DayIsSchedulable(day)) { continue; }
+                    if (!structureWeek.DayIsSchedulable(day)) { skipped++; continue; }
                     ColumnDefinition columnDay = new ColumnDefinition()
                     {
                         Width = new GridLength(1, GridUnitType.Star),
@@ -56,7 +56,7 @@ namespace TimetablingWPF
                         TextAlignment = TextAlignment.Center
                     };
                     Border dayBorder = SetInternalBorder(dayHeading);
-                    Grid.SetColumn(dayBorder, day + 1);
+                    Grid.SetColumn(dayBorder, day + 1 - skipped);
                     gridWeek.Children.Add(dayBorder);
                 }
 
@@ -77,10 +77,10 @@ namespace TimetablingWPF
                     Border periodBorder = SetInternalBorder(periodHeading);
                     Grid.SetRow(periodBorder, period + 1);
                     gridWeek.Children.Add(periodBorder);
-
+                    skipped = 0;
                     for (int day = 0; day < structureWeek.DayNames.Count; day++)
                     {
-                        if (!structureWeek.DayIsSchedulable(day)) { continue; }
+                        if (!structureWeek.DayIsSchedulable(day)) { skipped++;  continue; }
                         bool schedulable = structureWeek.PeriodIsSchedulable(day, period);
                         TimetableSlot slot = new TimetableSlot(week, day, period);
                         bool isUnavailable = slots.Contains(slot);
@@ -96,7 +96,7 @@ namespace TimetablingWPF
                             rect.MouseLeftButtonDown += leftClickHandler;
                         }
                         Border rectBorder = SetInternalBorder(rect);
-                        Grid.SetColumn(rectBorder, day + 1);
+                        Grid.SetColumn(rectBorder, day + 1 - skipped);
                         Grid.SetRow(rectBorder, period + 1);
                         gridWeek.Children.Add(rectBorder);
                     }

@@ -1,4 +1,4 @@
-﻿<Window x:Class="TimetablingWPF.BlockingWindow"
+﻿<local:WindowBase x:Class="TimetablingWPF.BlockingWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -12,5 +12,16 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <local:ApplicationMenu/>
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Border Style="{StaticResource GridLineExternal}">
+                <TextBlock TextAlignment="Center" Style="{StaticResource DialogText}" Text="Unblocked Lessons"/>
+            </Border>
+        </Grid>
     </Grid>
-</Window>
+</local:WindowBase>

@@ -81,7 +81,7 @@ namespace TimetablingWPF
             Properties.Settings.Default.RECENT_FILES.Remove(fpath);
             Properties.Settings.Default.Save();
         }
-        public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Action onCancel = null, Window owner = null, bool save = true)
+        public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Action<RunWorkerCompletedEventArgs> onCancel = null, Window owner = null, bool save = true)
         {
             BackgroundWorker worker = new BackgroundWorker()
             {
@@ -89,13 +89,6 @@ namespace TimetablingWPF
                 WorkerSupportsCancellation = true
             };
             worker.Dispose(); //Doesn't do anything
-            if (!File.Exists(fpath))
-            {
-                VisualHelpers.ShowErrorBox($"File path {fpath} does not exist.", "File not found!");
-                RecentFilesRemove(fpath);
-                worker.CancelAsync();
-                return;
-            }
             Application.Current.Dispatcher.Invoke(() =>
             {
                 LoadingDialog box = new LoadingDialog("Loading...")
@@ -104,6 +97,13 @@ namespace TimetablingWPF
                 };
                 worker.DoWork += delegate (object sender, DoWorkEventArgs e)
                 {
+                    if (!File.Exists(fpath))
+                    {
+                        VisualHelpers.ShowErrorBox($"File path {fpath} does not exist.", "File not found!");
+                        RecentFilesRemove(fpath);
+                        e.Result = new FileNotFoundException();
+                        return;
+                    }
                     FileStream fstream = new FileStream(fpath, FileMode.Open);
                     BinaryReader reader = new BinaryReader(fstream);
                     e.Result = LoadingFormats.GetLoadingDelegate(reader.ReadInt32()).Invoke(fpath, reader, worker, e);
@@ -121,14 +121,18 @@ namespace TimetablingWPF
                 };
                 worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e)
                 {
-                    if (!(e.Error is null)) throw e.Error;
                     box.Close();
-                    if (e.Cancelled)
+                    if (e.Error != null)
                     {
-                        onCancel?.Invoke();
+                        VisualHelpers.ShowErrorBox($"A {e.Error.GetType().Name} error occured:  {e.Error.Message}");
                         return;
                     }
-                    if (save)
+                    if (e.Cancelled)
+                    {
+                        onCancel?.Invoke(e);
+                        return;
+                    }
+                    if (save && !(e.Result is Exception))
                     {
                         DataContainer data = (DataContainer)e.Result;
                         SetDataContainer(data);

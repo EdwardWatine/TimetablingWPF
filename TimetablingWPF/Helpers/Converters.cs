@@ -97,18 +97,6 @@ namespace TimetablingWPF
             throw new NotImplementedException();
         }
     }
-    public class URISetatter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            Uri URI = (Uri)value;
-            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.LocalPath) : URI.LocalPath;
-        }
-        public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
-        {
-            return null;
-        }
-    }
     public class InverseBoolToVisibility : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -125,6 +113,18 @@ namespace TimetablingWPF
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return (bool)value ? Visibility.Visible : Visibility.Collapsed;
+        }
+        public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+    public class URISetatter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Uri URI = (Uri)value;
+            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.LocalPath) : URI.LocalPath;
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

@@ -92,7 +92,7 @@
             <ColumnDefinition Width="2*"/>
         </Grid.ColumnDefinitions>
         <TextBlock Grid.ColumnSpan="2" FontSize="72" Foreground="#4E4E94" Padding="25,0,0,0">
-            Get Timetabling!
+            Start Timetabling
         </TextBlock>
         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" 
                     Grid.Row="1" Orientation="Horizontal">
@@ -130,7 +130,7 @@
                                 <Image MaxHeight="{Binding ElementName=fpath, Path=ActualHeight}"
                                        Source="{StaticResource FileIcon}"/>
                             </InlineUIContainer>         
-                            <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding Converter={StaticResource URISetatter}}">
+                            <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding}">
                                 <TextBlock x:Name="fpath"
                                            Text="{Binding Converter={StaticResource URISetatter}, ConverterParameter=filename}"
                                            ToolTip="{Binding Converter={StaticResource URISetatter}}"/>

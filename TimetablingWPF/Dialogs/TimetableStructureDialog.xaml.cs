@@ -28,14 +28,14 @@ namespace TimetablingWPF
             ShowWarning = showWarning;
             Populate();
         }
-        private readonly bool ShowWarning;
+        private readonly bool ShowWarning; // This is true if the current timetable is being changed (vs making a new one)
         public void Populate()
         {
             for (int week = 0; week < TimetableStructure.Weeks.Count; week++)
             {
-                spWeeks.Children.Add(GenerateWeek(TimetableStructure.Weeks[week]));
+                spWeeks.Children.Add(GenerateWeek(TimetableStructure.Weeks[week])); // generate each week
             }
-            Button newWeek = new Button()
+            Button newWeek = new Button() // button to add a new week
             {
                 Content = new Image { Source = (ImageSource)Application.Current.Resources["PlusIcon"] },
                 Height = 40,
@@ -49,11 +49,16 @@ namespace TimetablingWPF
 
         private Grid GenerateWeek(TimetableStructureWeek structureWeek)
         {
-            Grid gridWeek = new Grid() { VerticalAlignment = VerticalAlignment.Center, HorizontalAlignment = HorizontalAlignment.Center, Margin = new Thickness(0, 5, 10, 5) };
+            Grid gridWeek = new Grid()
+            {
+                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 5, 10, 5)
+            };
             gridWeek.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
             gridWeek.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
-            gridWeek.RowDefinitions.Add(new RowDefinition());
-            Border weekHeader = SetInternalBorder(new EditableText()
+            gridWeek.RowDefinitions.Add(new RowDefinition()); // set up container grid
+            Border weekHeader = SetInternalBorder(new EditableText() // create the week name
             {
                 Text = structureWeek.Name,
                 Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
@@ -72,7 +77,7 @@ namespace TimetablingWPF
                 };
                 gridWeek.ColumnDefinitions.Add(columnDay);
 
-                EditableText dayHeading = new EditableText()
+                EditableText dayHeading = new EditableText() // add the day name
                 {
                     Text = structureWeek.DayNames[day],
                     Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
@@ -91,7 +96,7 @@ namespace TimetablingWPF
                     //Height = new GridLength(1, GridUnitType.Star)
                 };
                 gridWeek.RowDefinitions.Add(rowPeriod);
-                EditableText periodHeading = new EditableText()
+                EditableText periodHeading = new EditableText() // add the period names
                 {
                     Text = structureWeek.PeriodNames[period],
                     Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
@@ -106,20 +111,20 @@ namespace TimetablingWPF
                 for (int day = 0; day < structureWeek.DayNames.Count; day++)
                 {
                     bool schedulable = structureWeek.PeriodIsSchedulable(day, period);
-                    Rectangle rect = new Rectangle()
+                    Rectangle rect = new Rectangle() // add the individual period
                     {
                         Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(schedulable ? "#00FF00" : "#A8A8A8"),
                         Tag = schedulable
                     };
                     rect.MouseLeftButtonDown += RectLeftClick;
-                    rect.MouseEnter += MouseEntered;
+                    rect.MouseEnter += MouseEntered; // add the appropriate mouse bindings
                     Border rectBorder = SetInternalBorder(rect);
                     Grid.SetColumn(rectBorder, day + 2);
                     Grid.SetRow(rectBorder, period + 1);
                     gridWeek.Children.Add(rectBorder);
                 }
             }
-            Button newPeriod = new Button()
+            Button newPeriod = new Button() // add the button that adds a new period
             {
                 Content = new Image() { Source = (ImageSource)Application.Current.Resources["PlusIcon"] },
                 Tag = gridWeek,
@@ -132,7 +137,7 @@ namespace TimetablingWPF
             gridWeek.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
             Grid.SetRow(newPeriod, gridWeek.RowDefinitions.Count - 1);
             gridWeek.Children.Add(newPeriod);
-            Image removeWeek = new Image()
+            Image removeWeek = new Image() // add the image that removes the week
             {
                 Source = (ImageSource)Application.Current.Resources["WhiteBinIcon"],
                 HorizontalAlignment = HorizontalAlignment.Center,

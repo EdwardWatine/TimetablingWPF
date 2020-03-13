@@ -17,7 +17,7 @@ namespace TimetablingWPF
     /// <summary>
     /// Interaction logic for BlockingWindow.xaml
     /// </summary>
-    public partial class BlockingWindow : Window
+    public partial class BlockingWindow : WindowBase
     {
         public BlockingWindow()
         {

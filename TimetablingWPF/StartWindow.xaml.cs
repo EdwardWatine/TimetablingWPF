@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -28,38 +29,38 @@ namespace TimetablingWPF
     {
         public StartWindow()
         {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
-            Application.Current.MainWindow.SizeToContent = SizeToContent.WidthAndHeight;
-            Application.Current.MainWindow.ResizeMode = ResizeMode.CanMinimize;
-
             InitializeComponent();
-            IList<string> lines = Properties.Settings.Default.RECENT_FILES.Cast<string>().ToList();
+            IList<string> lines = Properties.Settings.Default.RECENT_FILES.Cast<string>().ToList(); // access the recent files
             if (lines.Count == 0)
             {
-                tbNoRecentFiles.Visibility = Visibility.Visible;
+                tbNoRecentFiles.Visibility = Visibility.Visible; // show a message to the user
                 icRecentFiles.Visibility = Visibility.Collapsed;
             }
-            IEnumerable<Uri> uris = lines.Take(6).Select(x => new Uri(x));
+            uris = new ObservableCollection<Uri>(lines.Take(6).Select(x => new Uri(x)));
             icRecentFiles.ItemsSource = uris;
             Show();
-            string fpath = Environment.GetCommandLineArgs().ElementAtOrDefault(1);
+            string fpath = Environment.GetCommandLineArgs().ElementAtOrDefault(1); // enable double click for files
             if (!string.IsNullOrEmpty(fpath))
             {
                 OpenFileFromPath(fpath);
             }
         }
-
+        private readonly ObservableCollection<Uri> uris;
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = (Hyperlink)e.Source;
-            LoadData(link.Tag.ToString(), (worker_args) =>
+            Uri tag = (Uri)link.Tag;
+            LoadData(tag.LocalPath, (worker_args) =>
             {
-                RegisterOpenFile(link.Tag.ToString());
-                Window window = new MainWindow(true);
-                window.Show();
-                window.Activate();
+                if (worker_args.Result is FileNotFoundException)
+                {
+                    uris.Remove(tag); // remove the link if the file is not found
+                    return;
+                }
+                RegisterOpenFile(tag.LocalPath);
+                new MainWindow(true).Show();
                 Close();
-            }, () => icRecentFiles.Items.Remove(link), this);
+            }, owner: this); 
         }
 
         private void OpenFile(object sender, RoutedEventArgs e)
@@ -82,8 +83,7 @@ namespace TimetablingWPF
 
         private void LaunchManual(object sender, RoutedEventArgs e)
         {
-            ImportDialog dialog = new ImportDialog(this);
-            dialog.ShowDialog();
+            
         }
         private void NewTimetable(object sender, RoutedEventArgs e)
         {

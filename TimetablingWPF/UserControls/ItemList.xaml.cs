@@ -41,7 +41,6 @@ namespace TimetablingWPF
             object obj = ((Hyperlink)sender).Tag;
             if (Window.GetWindow(this) is MainWindow main)
             {
-
                 main.GetMainPage().NewTab(DataHelpers.GenerateItemTab(obj, CommandType.edit), $"Edit {obj.ToString()}");
                 return;
             }
