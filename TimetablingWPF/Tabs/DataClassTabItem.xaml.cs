@@ -30,12 +30,12 @@ namespace TimetablingWPF
         {
             InitializeComponent();
             DataType = type;
-            void attachMenuCommand(string key, CommandBinding binding,
+            void attachMenuCommand(MenuItem mitem, CommandBinding binding,
                 object parameter = null)
             {
-                ((MenuItem)Resources[key]).CommandParameter = parameter;
-                ((MenuItem)Resources[key]).CommandBindings.Add(binding);
-                ((MenuItem)Resources[key]).Command = binding.Command;
+                mitem.CommandParameter = parameter;
+                mitem.CommandBindings.Add(binding);
+                mitem.Command = binding.Command;
             }
             void attachButtonCommand(Button button, CommandBinding binding,
                 object parameter = null)
@@ -49,10 +49,10 @@ namespace TimetablingWPF
             CommandBinding dupBinding = new CommandBinding(DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem);
             CommandBinding delBinding = new CommandBinding(DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem);
 
-            attachMenuCommand($"miEditItem", editBinding);
-            attachMenuCommand($"miNewItem", newBinding);
-            attachMenuCommand($"miDeleteItem", delBinding);
-            attachMenuCommand($"miDuplicateItem", dupBinding);
+            attachMenuCommand(miEditItem, editBinding);
+            attachMenuCommand(miNewItem, newBinding);
+            attachMenuCommand(miDeleteItem, delBinding);
+            attachMenuCommand(miDuplicateItem, dupBinding);
 
             dgMainDataGrid.CommandBindings.Add(delBinding);
             dgMainDataGrid.InputBindings.Add(new KeyBinding(DataGridCommands.DeleteItem, new KeyGesture(Key.Delete)));
