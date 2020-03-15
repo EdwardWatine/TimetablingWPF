@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Reflection;
+using System.Collections;
 
 namespace TimetablingWPF
 {
@@ -23,6 +25,10 @@ namespace TimetablingWPF
         public static string RemoveWhitespace(this string str)
         {
             return string.Join("", str.Split(default(string[]), StringSplitOptions.RemoveEmptyEntries));
+        }
+        public static bool IsInterface<T>(this Type type)
+        {
+            return typeof(T).IsAssignableFrom(type);
         }
     }
 }

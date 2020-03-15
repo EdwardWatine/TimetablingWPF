@@ -50,12 +50,12 @@
                           SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
             <DataGrid.ContextMenu>
                 <ContextMenu Name="cmContextMenu">
-                    <MenuItem x:Key="miNewItem" Header="New item"/>
+                    <MenuItem x:Name="miNewItem" Header="New item"/>
                     <Separator/>
-                    <MenuItem x:Key="miEditItem" Header="Edit item"/>
-                    <MenuItem x:Key="miDuplicateItem" Header="Duplicate item"/>
+                    <MenuItem x:Name="miEditItem" Header="Edit item"/>
+                    <MenuItem x:Name="miDuplicateItem" Header="Duplicate item"/>
                     <Separator/>
-                    <MenuItem x:Key="miDeleteItem" Header="Delete selection"/>
+                    <MenuItem x:Name="miDeleteItem" Header="Delete selection"/>
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>

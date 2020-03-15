@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
@@ -30,30 +31,37 @@ namespace TimetablingWPF
         {
             InitializeComponent();
             DataType = type;
-            void attachCommand(ICommandSource item, CommandBinding binding, // local function to assist attaching commands
+            void attachButtonCommand(ButtonBase item, CommandBinding binding, // local function to assist attaching commands
                 object parameter = null)
             {
                 item.CommandParameter = parameter;
                 item.Command = binding.Command;
-                if (item is UIElement element) element.CommandBindings.Add(binding);
+                item.CommandBindings.Add(binding);
+            }
+            void attachMICommand(MenuItem item, CommandBinding binding, // local function to assist attaching commands
+                object parameter = null)
+            {
+                item.CommandParameter = parameter;
+                item.Command = binding.Command;
+                item.CommandBindings.Add(binding);
             }
             CommandBinding editBinding = new CommandBinding(DataGridCommands.EditItem, ExecuteEditItem, CanExecuteEditItem);
             CommandBinding newBinding = new CommandBinding(DataGridCommands.NewItem, ExecuteNewItem, CanAlwaysExecute);
             CommandBinding dupBinding = new CommandBinding(DataGridCommands.DuplicateItem, ExecuteDuplicateItem, CanExecuteDuplicateItem);
             CommandBinding delBinding = new CommandBinding(DataGridCommands.DeleteItem, ExecuteDeleteItem, CanExecuteDeleteItem);
 
-            attachCommand(miEditItem, editBinding);
-            attachCommand(miNewItem, newBinding);
-            attachCommand(miDeleteItem, delBinding);     // attach commands to the context menu
-            attachCommand(miDuplicateItem, dupBinding);
+            attachMICommand(miEditItem, editBinding);
+            attachMICommand(miNewItem, newBinding);
+            attachMICommand(miDeleteItem, delBinding);     // attach commands to the context menu
+            attachMICommand(miDuplicateItem, dupBinding);
 
             dgMainDataGrid.CommandBindings.Add(delBinding);
             dgMainDataGrid.InputBindings.Add(new KeyBinding(DataGridCommands.DeleteItem, new KeyGesture(Key.Delete)));
 
-            attachCommand(btNewToolbar, newBinding);
-            attachCommand(btEditToolbar, editBinding);
-            attachCommand(btDuplicateToolbar,dupBinding); // attach commands to the toolbar
-            attachCommand(btDeleteToolbar, delBinding);
+            attachButtonCommand(btNewToolbar, newBinding);
+            attachButtonCommand(btEditToolbar, editBinding);
+            attachButtonCommand(btDuplicateToolbar,dupBinding); // attach commands to the toolbar
+            attachButtonCommand(btDeleteToolbar, delBinding);
 
             filterName.TextChanged += delegate (object sender, TextChangedEventArgs e) { RefreshFilter(); };
 
@@ -68,27 +76,51 @@ namespace TimetablingWPF
                 CellTemplate = (DataTemplate)Resources["NameTemplate"]
             });
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
-            int width = BaseDataClass.ExposedProperties[type].Count(prop => typeof(IList).IsAssignableFrom(prop.PropertyType));
+            int width = BaseDataClass.ExposedProperties[type].Count(prop => prop.PropertyInfo.PropertyType.IsInterface<IList>());
             width = width == 1 ? 4 : width;
-            foreach (PropertyInfo prop in BaseDataClass.ExposedProperties[type])
+            foreach (CustomPropertyInfo prop in BaseDataClass.ExposedProperties[type])
             {
-                bool islist = typeof(IList).IsAssignableFrom(prop.PropertyType);
+                bool islist = prop.PropertyInfo.PropertyType.IsInterface<IList>();
                 DataTemplate cellTemplate = new DataTemplate(type);
                 FrameworkElementFactory tbFactory = new FrameworkElementFactory(typeof(TextBlock));
                 tbFactory.SetValue(StyleProperty, Resources["tbStyle"]);
-                Binding binding = new Binding(prop.Name);
-                if (prop.PropertyType == typeof(ObservableCollection<TimetableSlot>)) binding.Converter = new ListReportLength();
-                else if (islist) binding.Converter = new ListFormatter();
+                Binding binding = new Binding(prop.PropertyInfo.Name);
+                if (prop.PropertyInfo.PropertyType == typeof(ObservableCollection<TimetableSlot>))
+                {
+                    binding.Converter = new ListReportLength();
+                    tbFactory.SetBinding(ToolTipProperty, new Binding(prop.PropertyInfo.Name)
+                    {
+                        Converter = new PeriodsToTable()
+                    });
+                }
+                else if (islist)
+                {
+                    binding.Converter = new ListFormatter();
+                }
+                else
+                {
+                    binding.Converter = new PropertyConverter()
+                    {
+                        CustomConverter = o => prop.Display(o)
+                    };
+                }
                 tbFactory.SetBinding(TextBlock.TextProperty, binding);
                 cellTemplate.VisualTree = tbFactory;
                 
                 dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
                 {
                     Width = new DataGridLength(width, islist ? DataGridLengthUnitType.Star : DataGridLengthUnitType.Auto),
-                    Header = prop.Name,
+                    Header = prop.Alias,
                     CellTemplate = cellTemplate
                 });
             }
+            dgMainDataGrid.MouseDoubleClick += delegate (object sender, MouseButtonEventArgs e)
+            {
+                if (e.LeftButton == MouseButtonState.Pressed && dgMainDataGrid.SelectedItems.Count == 1)
+                {
+                    new InformationWindow((BaseDataClass)dgMainDataGrid.SelectedItem).Show();
+                }
+            };
             dgMainDataGrid.UnselectAll();
         }
         
@@ -145,16 +177,18 @@ namespace TimetablingWPF
             if (visible)
             {
                 spFilter.Visibility = Visibility.Collapsed;
+                RefreshFilter();
                 return;
             }
             spFilter.Visibility = Visibility.Visible;
+            RefreshFilter();
             filterName.Focus();
         }
         public void RefreshFilter()
         {
             string nameFilter = filterName.Text.RemoveWhitespace().ToUpperInvariant();
             ListCollectionView data = (ListCollectionView)dgMainDataGrid.ItemsSource;
-            if (string.IsNullOrWhiteSpace(nameFilter))
+            if (string.IsNullOrWhiteSpace(nameFilter) || spFilter.Visibility != Visibility.Visible)
             {
                 data.Filter = null;
                 data.CustomSort = null;

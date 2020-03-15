@@ -10,6 +10,19 @@ using System.Windows.Data;
 
 namespace TimetablingWPF
 {
+    public class PropertyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return CustomConverter(value);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+        public Func<object, string> CustomConverter { get; set; }
+    }
     public class ListFormatter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

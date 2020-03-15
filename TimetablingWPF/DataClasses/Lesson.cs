@@ -18,11 +18,11 @@ namespace TimetablingWPF
         static Lesson()
         {
             Type type = typeof(Lesson);
-            RegisterProperty(type, type.GetProperty("Forms"));
-            RegisterProperty(type, type.GetProperty("LessonsPerCycle"));
-            RegisterProperty(type, type.GetProperty("LessonLength"));
-            RegisterProperty(type, type.GetProperty("Subject"));
-            RegisterProperty(type, type.GetProperty("Assignments"));
+            RegisterProperty(type, "Forms");
+            RegisterProperty(type, "LessonsPerCycle");
+            RegisterProperty(type, "LessonLength");
+            RegisterProperty(type, "Subject");
+            RegisterProperty(type, "Assignments");
         }
         public Lesson()
         {

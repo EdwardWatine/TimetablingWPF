@@ -143,6 +143,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataClasses\CustomPropertyInfo.cs" />
+    <Compile Include="InformationWindow.xaml.cs">
+      <DependentUpon>InformationWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Helpers\BDCComparer.cs" />
     <Compile Include="WindowBase.cs" />
     <Content Include="DefunctCode.txt" />
@@ -236,6 +240,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Dialogs\TimetableStructureDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="InformationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

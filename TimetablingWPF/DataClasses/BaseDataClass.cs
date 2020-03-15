@@ -62,16 +62,16 @@ namespace TimetablingWPF
         public const string Wildcard = "Any";
         public bool Frozen { get; private set; } = false;
         public int StorageIndex { get; set; }
-        public static Dictionary<Type, IList<PropertyInfo>> ExposedProperties { get; } = new Dictionary<Type, IList<PropertyInfo>>();
-        protected static void RegisterProperty(Type declaringType, PropertyInfo property)
+        public static Dictionary<Type, IList<CustomPropertyInfo>> ExposedProperties { get; } = new Dictionary<Type, IList<CustomPropertyInfo>>();
+        protected static void RegisterProperty(Type declaringType, string property, string alias = null, Func<object, string> display = null)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
-            if (!ExposedProperties.TryGetValue(declaringType, out IList<PropertyInfo> list))
+            if (!ExposedProperties.TryGetValue(declaringType, out IList<CustomPropertyInfo> list))
             {
-                list = new List<PropertyInfo>();
+                list = new List<CustomPropertyInfo>();
                 ExposedProperties[declaringType] = list;
             }
-            list.Add(property);
+            list.Add(new CustomPropertyInfo(declaringType, property, alias, display));
         }
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.

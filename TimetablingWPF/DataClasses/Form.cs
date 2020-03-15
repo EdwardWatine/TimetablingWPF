@@ -20,8 +20,8 @@ namespace TimetablingWPF
         static Form()
         {
             Type type = typeof(Form);
-            RegisterProperty(type, type.GetProperty("Lessons"));
-            RegisterProperty(type, type.GetProperty("YearGroup"));
+            RegisterProperty(type, "Lessons");
+            RegisterProperty(type, "YearGroup");
         }
         public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");
         private YearGroup _year;

@@ -10,9 +10,10 @@ namespace TimetablingWPF
         static Teacher()
         {
             Type type = typeof(Teacher);
-            RegisterProperty(type, type.GetProperty("UnavailablePeriods"));
-            RegisterProperty(type, type.GetProperty("Subjects"));
-            RegisterProperty(type, type.GetProperty("Assignments"));
+            RegisterProperty(type, "UnavailablePeriods", "Unavailable Periods");
+            RegisterProperty(type, "MaxPeriodsPerCycle", "Maximum periods per cycle", o => $"{o}/{TimetableStructure.TotalSchedulable}");
+            RegisterProperty(type, "Subjects");
+            RegisterProperty(type, "Assignments");
         }
         public Teacher()
         {

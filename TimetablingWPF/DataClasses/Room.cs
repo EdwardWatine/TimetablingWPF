@@ -18,9 +18,9 @@ namespace TimetablingWPF
         static Room()
         {
             Type type = typeof(Room);
-            RegisterProperty(type, type.GetProperty("Quantity"));
-            RegisterProperty(type, type.GetProperty("Critical"));
-            RegisterProperty(type, type.GetProperty("Groups"));
+            RegisterProperty(type, "Quantity");
+            RegisterProperty(type, "Critical");
+            RegisterProperty(type, "Groups");
         }
         private int _quantity;
         public int Quantity
