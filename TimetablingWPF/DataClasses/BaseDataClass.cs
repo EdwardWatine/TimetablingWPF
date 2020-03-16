@@ -156,13 +156,13 @@ namespace TimetablingWPF
             return copy;
         }
 
-        public void Freeze()
+        public virtual void Freeze()
         {
             if (Frozen) { return; }
             Frozen = true;
             ApplyOnType<IFreezable>((prop, val) => val.Freeze());
         }
-        public void Unfreeze()
+        public virtual void Unfreeze()
         {
             if (!Frozen) { return; }
             Frozen = false;
