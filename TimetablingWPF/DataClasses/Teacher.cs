@@ -7,7 +7,7 @@ namespace TimetablingWPF
 {
     public class Teacher : BaseDataClass
     {
-        static Teacher()
+        static Teacher() // static constructor to expose properties
         {
             Type type = typeof(Teacher);
             RegisterProperty(type, "UnavailablePeriods", "Unavailable Periods");
@@ -26,7 +26,7 @@ namespace TimetablingWPF
 
         private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
         private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();
-        private void AssignmentsChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void AssignmentsChanged(object sender, NotifyCollectionChangedEventArgs e) // intercept changes to assignment to deal with the frozen case
         {
             if (e.NewItems != null)
             {
@@ -57,7 +57,7 @@ namespace TimetablingWPF
                 }
             }
         }
-        public new void Unfreeze()
+        public override void Unfreeze()
         {
             base.Unfreeze();
             foreach (Assignment assignment in frozenAssignmentsAdd)
