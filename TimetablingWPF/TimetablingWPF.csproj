@@ -149,6 +149,9 @@
     </Compile>
     <Compile Include="Helpers\BDCComparer.cs" />
     <Compile Include="WindowBase.cs" />
+    <Compile Include="YearWindow.xaml.cs">
+      <DependentUpon>YearWindow.xaml</DependentUpon>
+    </Compile>
     <Content Include="DefunctCode.txt" />
     <Compile Include="BlockingContent\BlockingWindow.xaml.cs">
       <DependentUpon>BlockingWindow.xaml</DependentUpon>
@@ -215,11 +218,17 @@
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="YearWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Resource Include="Media\UserManualIcon.png" />
     <Resource Include="Media\EditAccountIcon.png" />
     <Resource Include="Media\DuplicateIcon.png" />
     <Resource Include="Media\DeleteBinIcon.png" />
     <Resource Include="Media\WhiteBinIcon.png" />
+    <Resource Include="Media\DownArrowIcon.png" />
+    <Resource Include="Media\UpArrowIcon.png" />
     <Content Include="UserControls\DoubleMenu.xaml.cs">
       <DependentUpon>DoubleMenu.xaml</DependentUpon>
     </Content>

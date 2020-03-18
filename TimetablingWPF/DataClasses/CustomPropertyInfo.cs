@@ -13,7 +13,7 @@ namespace TimetablingWPF
         {
             PropertyInfo = type.GetProperty(property);
             Alias = alias ?? property;
-            Display = display;
+            Display = display ?? new Func<object, string>(o => Alias);
         }
         public PropertyInfo PropertyInfo { get; }
         public string Alias { get; set; }

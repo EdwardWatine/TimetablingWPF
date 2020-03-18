@@ -17,7 +17,7 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="Create Timetable Structure" Style="{StaticResource DialogText}"/>
-        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Visible" Grid.Row="1" HorizontalAlignment="Stretch">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Visible" Grid.Row="1" HorizontalAlignment="Stretch">
             <StackPanel Name="spWeeks" Orientation="Horizontal" HorizontalAlignment="Center"/>
         </ScrollViewer>
         <Grid Margin="10" HorizontalAlignment="Stretch" Grid.Row="2">

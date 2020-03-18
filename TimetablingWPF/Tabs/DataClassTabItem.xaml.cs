@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
@@ -64,8 +65,10 @@ namespace TimetablingWPF
             attachButtonCommand(btDeleteToolbar, delBinding);
 
             filterName.TextChanged += delegate (object sender, TextChangedEventArgs e) { RefreshFilter(); };
-
-            dgMainDataGrid.ItemsSource = new ListCollectionView(DataHelpers.GetDataContainer().FromType(type));
+            IList data = DataHelpers.GetDataContainer().FromType(type);
+            ListCollectionView view = new ListCollectionView(data);
+            ((INotifyCollectionChanged)data).CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) { view.Refresh(); };
+            dgMainDataGrid.ItemsSource = view;
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {
                 CanUserSort = true,

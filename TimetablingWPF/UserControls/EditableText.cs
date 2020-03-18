@@ -9,15 +9,12 @@ using System.Windows.Input;
 
 namespace TimetablingWPF
 {
-    public partial class EditableText : TextBox
+    public class EditableText : TextBox
     {
         private string lastText;
         public new string Text
         {
-            get
-            {
-                return base.Text;
-            }
+            get => base.Text;
             set
             {
                 lastText = value;
@@ -39,6 +36,14 @@ namespace TimetablingWPF
                         Text = lastText;
                     }
                     lastText = Text;
+                }
+            };
+            KeyDown += delegate (object sender, KeyEventArgs e)
+            {
+                if (e.Key == Key.Escape)
+                {
+                    Text = lastText;
+                    Keyboard.ClearFocus();
                 }
             };
             PreviewMouseLeftButtonDown += delegate (object sender, MouseButtonEventArgs e)

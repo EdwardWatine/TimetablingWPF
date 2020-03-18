@@ -18,8 +18,11 @@
         </MenuItem>
         <MenuItem Header="_Edit">
             <MenuItem Header="_Find/Filter" Command="local:MenuCommands.FindFilterCommand"/>
+            <Separator/>
+            <MenuItem Header="Change _Timetable" Click="ChangeTimetable"/>
         </MenuItem>
         <MenuItem Header="_View">
+            <MenuItem Header="_Year Groups" Click="YearView"/>
             <MenuItem Header="_Data Views">
                 <MenuItem Header="_Teacher"/>
             </MenuItem>

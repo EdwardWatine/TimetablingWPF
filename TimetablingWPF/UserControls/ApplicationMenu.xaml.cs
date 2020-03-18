@@ -41,6 +41,7 @@ namespace TimetablingWPF
             ParentWindow.InputBindings.Add(new InputBinding(ApplicationCommands.SaveAs, new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift)));
 
             ParentWindow.CommandBindings.Add(new CommandBinding(MenuCommands.FindFilterCommand, ExecuteFindFilter, CanExecuteFindFilter));
+            
         }
 
         public void NewFile(object sender, ExecutedRoutedEventArgs e)
@@ -169,6 +170,10 @@ namespace TimetablingWPF
                 }, owner: ParentWindow, save: false);
             }
         }
+        public void YearView(object sender, RoutedEventArgs e)
+        {
+            new YearWindow().Show();
+        }
         public void ExecuteFindFilter(object sender, ExecutedRoutedEventArgs e)
         {
             ParentWindow.ExecuteFindFilter();
@@ -188,6 +193,21 @@ namespace TimetablingWPF
                 }
             }
             new BlockingWindow().Show();
+        }
+        public void ChangeTimetable(object sender, RoutedEventArgs e)
+        {
+            int oldmax = TimetableStructure.TotalSchedulable;
+            if (new TimetableStructureDialog(Window.GetWindow(this), true).ShowDialog() ?? false)
+            {
+                foreach (Teacher teacher in GetDataContainer().Teachers)
+                {
+                    teacher.UnavailablePeriods.Clear();
+                    if (teacher.MaxPeriodsPerCycle == oldmax || teacher.MaxPeriodsPerCycle > TimetableStructure.TotalSchedulable)
+                    {
+                        teacher.MaxPeriodsPerCycle = TimetableStructure.TotalSchedulable;
+                    }
+                }
+            }
         }
         public WindowBase ParentWindow { get; private set; }
     }

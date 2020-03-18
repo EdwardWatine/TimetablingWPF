@@ -1,0 +1,29 @@
+﻿<Window x:Class="TimetablingWPF.YearWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TimetablingWPF"
+        mc:Ignorable="d"
+        Title="YearWindow" Height="400" Width="800">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
+            <ListBox Name="lbMain" SelectionMode="Single">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <local:EditableText x:Name="etYear" Text="{Binding Year, Mode=TwoWay}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </ScrollViewer>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" Grid.Column="1">
+            <Button Content="Add" Click="AddYear" Margin="10, 10, 10, 5" VerticalAlignment="Center"/>
+            <Button Content="Remove" Click="RemoveYear" Margin="10, 5, 10, 10" VerticalAlignment="Center"/>
+            <Button Content="Close" Click="CloseClick" Margin="10" VerticalAlignment="Bottom"/>
+        </StackPanel>
+    </Grid>
+</Window>

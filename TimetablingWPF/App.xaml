@@ -17,6 +17,8 @@
         <BitmapImage x:Key="DuplicateIcon" UriSource="Media/DuplicateIcon.png"/>
         <BitmapImage x:Key="DeleteBinIcon" UriSource="Media/DeleteBinIcon.png"/>
         <BitmapImage x:Key="WhiteBinIcon" UriSource="Media/WhiteBinIcon.png"/>
+        <BitmapImage x:Key="DownArrowIcon" UriSource="Media/DownArrowIcon.png"/>
+        <BitmapImage x:Key="UpArrowIcon" UriSource="Media/UpArrowIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
         <Color x:Key="WarningColor">#fc9803</Color>
