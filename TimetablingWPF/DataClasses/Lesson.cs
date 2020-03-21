@@ -103,7 +103,7 @@ namespace TimetablingWPF
                 }
             }
         }
-        public new void Unfreeze()
+        public override void Unfreeze()
         {
             base.Unfreeze();
             foreach (Assignment assignment in frozenAssignmentsAdd)
