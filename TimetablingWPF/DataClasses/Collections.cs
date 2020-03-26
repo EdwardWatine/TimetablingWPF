@@ -52,7 +52,7 @@ namespace TimetablingWPF
     /// Implementing item property changes taken from https://stackoverflow.com/a/5256827
     /// </remarks>
     /// <typeparam name="T"></typeparam>
-    public class InternalObservableCollection<T> : ObservableCollection<T> where T : INotifyPropertyChanged
+    public class InternalObservableCollection<T> : ObservableCollection<T>
     {
         public InternalObservableCollection()
         {
@@ -61,6 +61,8 @@ namespace TimetablingWPF
         public InternalObservableCollection(IEnumerable<T> collection) : base(collection)
         {
             CollectionChanged += ObservableCollectionCollectionChanged;
+            ObservableCollectionCollectionChanged(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)collection));
+
         }
         private void ObservableCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
@@ -68,14 +70,14 @@ namespace TimetablingWPF
             {
                 foreach (object item in e.NewItems)
                 {
-                    ((INotifyPropertyChanged)item).PropertyChanged += ItemPropertyChanged; // link event handler
+                    if (item is INotifyPropertyChanged ipropChanges) ipropChanges.PropertyChanged += ItemPropertyChanged; // link event handler
                 }
             }
             if (e.OldItems != null)
             {
                 foreach (object item in e.OldItems)
                 {
-                    ((INotifyPropertyChanged)item).PropertyChanged -= ItemPropertyChanged; // unlink event handler
+                    if (item is INotifyPropertyChanged ipropChanges) ipropChanges.PropertyChanged += ItemPropertyChanged; // unlink event handler
                 }
             }
         }

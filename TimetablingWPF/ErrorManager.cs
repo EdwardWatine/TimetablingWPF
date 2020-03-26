@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 
 namespace TimetablingWPF
@@ -52,6 +54,15 @@ namespace TimetablingWPF
         {
             collection.CollectionChanged += delegate (object o, NotifyCollectionChangedEventArgs e) { UpdateError(); };
         }
+        public void BindProperty(INotifyPropertyChanged item, string property)
+        {
+            if (item.GetType().GetProperty(property) == null)
+            {
+                throw new InvalidOperationException($"Property '{property}' not found on item of type '{item.GetType().Name}'");
+            }
+
+            item.PropertyChanged += delegate (object o, PropertyChangedEventArgs e) { if (property == e.PropertyName) { UpdateError(); } };
+        }
 
         public ErrorType ErrorType { get; }
         private readonly Func<ErrorData, string> MessageFunc;
@@ -72,12 +83,15 @@ namespace TimetablingWPF
                 return;
             }
             ErrorType errorType = error.ErrorType;
-            StackPanel sp = new StackPanel()
+            Grid gd = new Grid()
             {
-                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Top,
                 Height = 50,
                 Visibility = state ? Visibility.Visible : Visibility.Collapsed
             };
+            gd.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+            gd.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
+            gd.SetBinding(FrameworkElement.WidthProperty, new Binding("ActualWidth") { Source = Parent });
             ImageSource source;
             SolidColorBrush colour;
             switch (errorType)
@@ -91,11 +105,12 @@ namespace TimetablingWPF
                     colour = (SolidColorBrush)Application.Current.Resources["ErrorBrush"];
                     break;
             }
-            sp.Children.Add(new Image()
+            Image im = new Image()
             {
                 VerticalAlignment = VerticalAlignment.Stretch,
                 Source = source
-            });
+            };
+            gd.Children.Add(im);
             TextBlock tb = new TextBlock()
             {
                 Text = state ? error.GetMessage() : string.Empty,
@@ -103,26 +118,27 @@ namespace TimetablingWPF
                 VerticalAlignment = VerticalAlignment.Center,
                 TextWrapping = TextWrapping.Wrap
             };
-            sp.Tag = tb;
-            sp.Children.Add(new ScrollViewer()
+            Grid.SetColumn(tb, 1);
+            gd.Tag = tb;
+            gd.Children.Add(tb/*new ScrollViewer()
             {
                 Content = tb,
                 HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
                 VerticalScrollBarVisibility = ScrollBarVisibility.Auto
-            });
-            Errors[error] = sp;
-            Parent.Children.Add(sp);
+            }*/);
+            Errors[error] = gd;
+            Parent.Children.Add(gd);
         }
         public void UpdateError(ErrorContainer error, bool state)
         {
-            StackPanel sp = Errors[error];
+            Grid sp = Errors[error];
             sp.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
             if (state)
             {
                 ((TextBlock)sp.Tag).Text = state ? error.GetMessage() : string.Empty;
             }
         }
-        private readonly Dictionary<ErrorContainer, StackPanel> Errors = new Dictionary<ErrorContainer, StackPanel>();
+        private readonly Dictionary<ErrorContainer, Grid> Errors = new Dictionary<ErrorContainer, Grid>();
         public int GetNumErrors()
         {
             return Errors.Sum(kvpair => kvpair.Key.IsTriggered() && kvpair.Key.ErrorType == ErrorType.Error ? 1 : 0);

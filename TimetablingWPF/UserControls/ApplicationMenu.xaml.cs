@@ -184,15 +184,7 @@ namespace TimetablingWPF
         }
         public void BlockingViewClick(object sender, RoutedEventArgs e)
         {
-            foreach (Window window in Application.Current.Windows)
-            {
-                if (window is BlockingWindow)
-                {
-                    window.Activate();
-                    return;
-                }
-            }
-            new BlockingWindow().Show();
+            
         }
         public void ChangeTimetable(object sender, RoutedEventArgs e)
         {

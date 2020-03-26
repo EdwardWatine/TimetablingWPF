@@ -23,6 +23,7 @@ namespace TimetablingWPF
         public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>("Teachers");
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
         private int maxppc = TimetableStructure.TotalSchedulable;
+        public int AvailablePeriods => TimetableStructure.TotalSchedulable - UnavailablePeriods.Count;
         public int MaxPeriodsPerCycle
         {
             get => maxppc;
@@ -31,7 +32,7 @@ namespace TimetablingWPF
                 if (value != maxppc)
                 {
                     maxppc = value;
-                    NotifyPropertyChanged("maxppc");
+                    NotifyPropertyChanged("MaxPeriodsPerCycle");
                 }
             }
         }

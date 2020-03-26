@@ -39,7 +39,7 @@
             <TextBlock HorizontalAlignment="Right" Grid.Row="2" Style="{StaticResource DialogText}" Text="Max periods per cycle:"/>
             <tlkt:IntegerUpDown x:Name="iupdownMax" Minimum="1" Width="50" Margin="0,5" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left"/>
             <ScrollViewer Grid.Row="3" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                <StackPanel Name="spErrors" Orientation="Vertical" Grid.Row="3" Grid.Column="1"/>
+                <StackPanel Name="spErrors" Grid.Row="3" Grid.Column="1" Orientation="Horizontal"/>
             </ScrollViewer>
         </Grid>
         <Grid Grid.Column="1" Grid.Row="1">

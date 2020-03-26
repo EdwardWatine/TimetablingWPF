@@ -148,14 +148,14 @@
       <DependentUpon>InformationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BDCComparer.cs" />
+    <Compile Include="UserControls\CheckComboBox.xaml.cs">
+      <DependentUpon>CheckComboBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="WindowBase.cs" />
     <Compile Include="YearWindow.xaml.cs">
       <DependentUpon>YearWindow.xaml</DependentUpon>
     </Compile>
     <Content Include="DefunctCode.txt" />
-    <Compile Include="BlockingContent\BlockingWindow.xaml.cs">
-      <DependentUpon>BlockingWindow.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DataClasses\DataContainer.cs" />
     <Compile Include="Helpers\Interfaces.cs" />
     <Compile Include="DataClasses\Lesson.cs" />
@@ -218,6 +218,10 @@
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="UserControls\CheckComboBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="YearWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -240,10 +244,6 @@
     <Resource Include="Media\PlusIcon.png" />
     <Resource Include="Media\CrossIcon.png" />
     <Resource Include="Media\LeftArrowIcon.png" />
-    <Page Include="BlockingContent\BlockingWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Dialogs\ImportDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

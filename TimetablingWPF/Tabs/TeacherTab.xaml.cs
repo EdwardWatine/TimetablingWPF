@@ -42,18 +42,24 @@ namespace TimetablingWPF
             txName.SelectionStart = txName.Text.Length;
             cmbxSubjects.ItemsSource = GetDataContainer().Subjects;
             cmbxAssignmentLesson.ItemsSource = GetDataContainer().Lessons;
-            iupdownMax.Value = Teacher.MaxPeriodsPerCycle;
+            iupdownMax.BindValue(Teacher, "MaxPeriodsPerCycle");
+            iupdownMax.Maximum = TimetableStructure.TotalSchedulable;
 
             HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
 
-            HAS_NO_PERIODS = new ErrorContainer(ErrManager, (e) => Teacher.UnavailablePeriods.Count == TimetableStructure.TotalSchedulable,
+            HAS_NO_PERIODS = new ErrorContainer(ErrManager, (e) => Teacher.MaxPeriodsPerCycle == 0,
                 (e) => "Teacher has no free periods.", ErrorType.Warning);
-            HAS_NO_PERIODS.BindCollection(Teacher.UnavailablePeriods);
+            HAS_NO_PERIODS.BindProperty(Teacher, "MaxPeriodsPerCycle");
 
             NOT_ENOUGH_PERIODS = new ErrorContainer(ErrManager,
-                (e) => TimetableStructure.TotalSchedulable - Teacher.UnavailablePeriods.Count < Teacher.Assignments.Sum(x => x.LessonCount),
-                (e) => $"Teacher has fewer free periods ({TimetableStructure.TotalSchedulable - Teacher.UnavailablePeriods.Count}) than assigned periods " +
-                $"({Teacher.Assignments.Sum(x => x.LessonCount)}).", ErrorType.Error);
+                (e) => 
+                {
+                    int assigned = Teacher.Assignments.Sum(x => x.LessonCount);
+                    e.Data = assigned;
+                    return Teacher.MaxPeriodsPerCycle < assigned;
+                },
+                (e) => $"Teacher has fewer free periods ({Teacher.MaxPeriodsPerCycle}) than assigned periods " +
+                $"({e.Data}).", ErrorType.Error);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.UnavailablePeriods);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.Assignments);
 
@@ -144,7 +150,9 @@ namespace TimetablingWPF
 
         private void AddAssignment(Assignment assignment)
         {
-            spAssignments.Children.Add(VerticalMenuItem(assignment, RemoveAssignmentClick, assignment.TeacherString));
+            StackPanel sp = VerticalMenuItem(assignment, RemoveAssignmentClick, assignment.TeacherString);
+            sp.Tag = assignment;
+            spAssignments.Children.Add(sp);
         }
 
         private void RemoveAssignmentClick(object sender, RoutedEventArgs e)
@@ -196,6 +204,7 @@ namespace TimetablingWPF
 
         private void ToggleSlot(object sender, MouseButtonEventArgs e)
         {
+            bool max = Teacher.AvailablePeriods == Teacher.MaxPeriodsPerCycle;
             Rectangle rect = (Rectangle)sender;
             Tuple<TimetableSlot, bool> tag = (Tuple<TimetableSlot, bool>)rect.Tag;
             rect.Tag = Tuple.Create(tag.Item1, !tag.Item2);
@@ -203,11 +212,14 @@ namespace TimetablingWPF
             if (tag.Item2)
             {
                 Teacher.UnavailablePeriods.Add(tag.Item1);
+                Teacher.MaxPeriodsPerCycle = Math.Min(Teacher.MaxPeriodsPerCycle, Teacher.AvailablePeriods);
             }
             else
             {
                 Teacher.UnavailablePeriods.Remove(tag.Item1);
+                if (max) Teacher.MaxPeriodsPerCycle++;
             }
+            iupdownMax.Maximum = Teacher.AvailablePeriods;
         }
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
