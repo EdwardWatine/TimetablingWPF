@@ -106,7 +106,6 @@ namespace TimetablingWPF
         /// </summary>
         public string LessonString { get; }
         /// <summary>
-        /// A constructor for when the lesson is not known
         /// </summary>
         /// <param name="teacher"></param>
         /// <param name="periods"></param>

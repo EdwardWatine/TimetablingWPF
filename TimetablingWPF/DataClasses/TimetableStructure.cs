@@ -82,12 +82,12 @@ namespace TimetablingWPF
         }
         public static bool operator ==(YearGroup left, YearGroup right)
         {
-            return left.Equals(right);
+            return ReferenceEquals(left, right);
         }
 
         public static bool operator !=(YearGroup left, YearGroup right)
         {
-            return !left.Equals(right);
+            return !(left == right);
         }
     }
 }

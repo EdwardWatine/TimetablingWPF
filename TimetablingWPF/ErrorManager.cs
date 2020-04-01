@@ -86,12 +86,11 @@ namespace TimetablingWPF
             Grid gd = new Grid()
             {
                 VerticalAlignment = VerticalAlignment.Top,
-                Height = 50,
                 Visibility = state ? Visibility.Visible : Visibility.Collapsed
             };
             gd.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
+            gd.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
             gd.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
-            gd.SetBinding(FrameworkElement.WidthProperty, new Binding("ActualWidth") { Source = Parent });
             ImageSource source;
             SolidColorBrush colour;
             switch (errorType)
@@ -108,7 +107,8 @@ namespace TimetablingWPF
             Image im = new Image()
             {
                 VerticalAlignment = VerticalAlignment.Stretch,
-                Source = source
+                Source = source,
+                Height = 50
             };
             gd.Children.Add(im);
             TextBlock tb = new TextBlock()
@@ -128,14 +128,15 @@ namespace TimetablingWPF
             }*/);
             Errors[error] = gd;
             Parent.Children.Add(gd);
+            gd.SetBinding(FrameworkElement.WidthProperty, new Binding("ActualWidth") { Source = Parent, Mode = BindingMode.OneWay });
         }
         public void UpdateError(ErrorContainer error, bool state)
         {
-            Grid sp = Errors[error];
-            sp.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
+            Grid gd = Errors[error];
+            gd.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
             if (state)
             {
-                ((TextBlock)sp.Tag).Text = state ? error.GetMessage() : string.Empty;
+                ((TextBlock)gd.Tag).Text = state ? error.GetMessage() : string.Empty;
             }
         }
         private readonly Dictionary<ErrorContainer, Grid> Errors = new Dictionary<ErrorContainer, Grid>();

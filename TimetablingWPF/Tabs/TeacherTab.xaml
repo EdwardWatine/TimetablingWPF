@@ -37,9 +37,9 @@
             <TextBlock HorizontalAlignment="Right" Grid.Row="1" Style="{StaticResource DialogText}" Text="Unavailable periods:"/>
             <ScrollViewer Grid.Row="1" Grid.Column="1" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Hidden" Margin="0,5" Name="svPeriods"/>
             <TextBlock HorizontalAlignment="Right" Grid.Row="2" Style="{StaticResource DialogText}" Text="Max periods per cycle:"/>
-            <tlkt:IntegerUpDown x:Name="iupdownMax" Minimum="1" Width="50" Margin="0,5" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left"/>
-            <ScrollViewer Grid.Row="3" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                <StackPanel Name="spErrors" Grid.Row="3" Grid.Column="1" Orientation="Horizontal"/>
+            <tlkt:IntegerUpDown x:Name="iupdownMax" Minimum="0" Width="50" Margin="0,5" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Left"/>
+            <ScrollViewer Name="svErrors" Grid.Row="3" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                <StackPanel Name="spErrors" Grid.Row="3" Grid.Column="1" Orientation="Vertical" Width="{Binding ActualWidth, ElementName=svErrors}"/>
             </ScrollViewer>
         </Grid>
         <Grid Grid.Column="1" Grid.Row="1">

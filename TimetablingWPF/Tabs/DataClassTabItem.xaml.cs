@@ -102,10 +102,7 @@ namespace TimetablingWPF
                 }
                 else
                 {
-                    binding.Converter = new PropertyConverter()
-                    {
-                        CustomConverter = o => prop.Display(o)
-                    };
+                    binding.Converter = new PropertyConverter(o => prop.Display(o));
                 }
                 tbFactory.SetBinding(TextBlock.TextProperty, binding);
                 cellTemplate.VisualTree = tbFactory;

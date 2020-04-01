@@ -12,6 +12,11 @@ namespace TimetablingWPF
 {
     public class PropertyConverter : IValueConverter
     {
+        public PropertyConverter() { }
+        public PropertyConverter(Func<object, string> customConverter)
+        {
+            CustomConverter = customConverter;
+        }
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             return CustomConverter(value);

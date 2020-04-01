@@ -88,7 +88,7 @@ namespace TimetablingWPF
                 (e) =>
                 {
                     IEnumerable<Assignment> data = (IEnumerable<Assignment>)e.Data;
-                    return $"The following Assignments have a subject that the teacher does not have: {FormatEnumerable(data)}.";
+                    return $"The following Assignments have a subject that the teacher does not have: {string.Join(", ", data.Select(a => a.TeacherString))}.";
                 }, ErrorType.Warning);
             ASSIGNMENT_NO_SUBJECT.BindCollection(Teacher.Assignments);
             ASSIGNMENT_NO_SUBJECT.BindCollection(Teacher.Subjects);
@@ -96,7 +96,9 @@ namespace TimetablingWPF
             NOT_ENOUGH_FORM_SLOTS = new ErrorContainer(ErrManager,
                 (e) =>
                 {
-                    IEnumerable<Lesson> errors = Teacher.Assignments.Where(a => a.Lesson.LessonsPerCycle < a.Lesson.Assignments.Sum(a2 => a.LessonCount)).Select(a => a.Lesson);
+                    IEnumerable<Lesson> errors = Teacher.Assignments.Where(a => a.Lesson.LessonsPerCycle <
+                    a.Lesson.Assignments.Where(a2 => (a2.Teacher ?? Teacher) != Teacher).Sum(a2 => a2.LessonCount) + a.LessonCount
+                    ).Select(a => a.Lesson);
                     e.Data = errors;
                     return errors.Any();
                 },
