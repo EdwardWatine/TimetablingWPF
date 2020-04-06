@@ -50,5 +50,17 @@ namespace TimetablingWPF
             });
 
         }
+        public static void Insert(this Grid grid, UIElement element, int row, int col)
+        {
+            Grid.SetColumn(element, (grid.ColumnDefinitions.Count + col) % grid.ColumnDefinitions.Count);
+            Grid.SetRow(element, (grid.RowDefinitions.Count + row) % grid.RowDefinitions.Count);
+            grid.Children.Add(element);
+        }
+        public static void SmartInsert(this IList list, int index, object element)
+        {
+            int nindex = (list.Count + index) % list.Count;
+            if (index < 0) nindex += 1;
+            list.Insert(nindex, element);
+        }
     }
 }

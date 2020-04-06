@@ -148,6 +148,9 @@
       <DependentUpon>InformationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BDCComparer.cs" />
+    <Compile Include="Tabs\ItemTab.xaml.cs">
+      <DependentUpon>ItemTab.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\CheckComboBox.xaml.cs">
       <DependentUpon>CheckComboBox.xaml</DependentUpon>
     </Compile>
@@ -155,7 +158,6 @@
     <Compile Include="YearWindow.xaml.cs">
       <DependentUpon>YearWindow.xaml</DependentUpon>
     </Compile>
-    <Content Include="DefunctCode.txt" />
     <Compile Include="DataClasses\DataContainer.cs" />
     <Compile Include="Helpers\Interfaces.cs" />
     <Compile Include="DataClasses\Lesson.cs" />
@@ -218,6 +220,10 @@
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="Tabs\ItemTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="UserControls\CheckComboBox.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

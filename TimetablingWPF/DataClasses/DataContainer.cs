@@ -13,7 +13,7 @@ namespace TimetablingWPF
         public IList<StructureClasses.TimetableStructureWeek> TimetableStructure { get; private set; }
         public InternalObservableCollection<Teacher> Teachers { get; } = new InternalObservableCollection<Teacher>();
         public InternalObservableCollection<Form> Forms { get; } = new InternalObservableCollection<Form>();
-        public InternalObservableCollection<YearGroup> YearGroups { get; } = new InternalObservableCollection<YearGroup>();
+        public InternalObservableCollection<Year> YearGroups { get; } = new InternalObservableCollection<Year>();
         public InternalObservableCollection<Lesson> Lessons { get; } = new InternalObservableCollection<Lesson>();
         public InternalObservableCollection<Room> Rooms { get; } = new InternalObservableCollection<Room>();
         public InternalObservableCollection<Subject> Subjects { get; } = new InternalObservableCollection<Subject>();
@@ -70,6 +70,7 @@ namespace TimetablingWPF
             if (type == typeof(Lesson)) return Lessons;
             if (type == typeof(Group)) return Groups;
             if (type == typeof(Room)) return Rooms;
+            if (type == typeof(Year)) return YearGroups;
             throw new ArgumentException("Type must be a legal type");
         }
         public void SetTimetableStructure(IList<StructureClasses.TimetableStructureWeek> weeks)

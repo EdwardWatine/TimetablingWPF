@@ -79,16 +79,16 @@ namespace TimetablingWPF
                 CellTemplate = (DataTemplate)Resources["NameTemplate"]
             });
             System.Runtime.CompilerServices.RuntimeHelpers.RunClassConstructor(type.TypeHandle);
-            int width = BaseDataClass.ExposedProperties[type].Count(prop => prop.PropertyInfo.PropertyType.IsInterface<IList>());
+            int width = BaseDataClass.ExposedProperties[type].Count(prop => prop.Type.IsInterface<IList>());
             width = width == 1 ? 4 : width;
             foreach (CustomPropertyInfo prop in BaseDataClass.ExposedProperties[type])
             {
-                bool islist = prop.PropertyInfo.PropertyType.IsInterface<IList>();
+                bool islist = prop.Type.IsInterface<IList>();
                 DataTemplate cellTemplate = new DataTemplate(type);
                 FrameworkElementFactory tbFactory = new FrameworkElementFactory(typeof(TextBlock));
                 tbFactory.SetValue(StyleProperty, Resources["tbStyle"]);
                 Binding binding = new Binding(prop.PropertyInfo.Name);
-                if (prop.PropertyInfo.PropertyType == typeof(ObservableCollection<TimetableSlot>))
+                if (prop.Type == typeof(ObservableCollection<TimetableSlot>))
                 {
                     binding.Converter = new ListReportLength();
                     tbFactory.SetBinding(ToolTipProperty, new Binding(prop.PropertyInfo.Name)
@@ -102,7 +102,7 @@ namespace TimetablingWPF
                 }
                 else
                 {
-                    binding.Converter = new PropertyConverter(o => prop.Display(o));
+                    binding.Converter = new PropertyConverter(prop);
                 }
                 tbFactory.SetBinding(TextBlock.TextProperty, binding);
                 cellTemplate.VisualTree = tbFactory;

@@ -118,14 +118,8 @@ namespace TimetablingWPF
                 VerticalAlignment = VerticalAlignment.Center,
                 TextWrapping = TextWrapping.Wrap
             };
-            Grid.SetColumn(tb, 1);
             gd.Tag = tb;
-            gd.Children.Add(tb/*new ScrollViewer()
-            {
-                Content = tb,
-                HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
-                VerticalScrollBarVisibility = ScrollBarVisibility.Auto
-            }*/);
+            gd.Insert(tb, 0, 1);
             Errors[error] = gd;
             Parent.Children.Add(gd);
             gd.SetBinding(FrameworkElement.WidthProperty, new Binding("ActualWidth") { Source = Parent, Mode = BindingMode.OneWay });

@@ -29,11 +29,11 @@ namespace TimetablingWPF
         public static IList<TimetableStructureWeek> Weeks { get; private set; }
         public static int TotalSchedulable { get; private set; }
     }
-    public class YearGroup : INotifyPropertyChanged
+    public class Year : INotifyPropertyChanged
     {
-        public YearGroup(string year)
+        public Year(string name)
         {
-            Year = year;
+            Name = name;
         }
         private bool Committed;
 
@@ -45,7 +45,7 @@ namespace TimetablingWPF
 
         public InternalObservableCollection<Form> Forms { get; private set; } = new InternalObservableCollection<Form>();
         private string _year;
-        public string Year
+        public string Name
         {
             get => _year; set
             {
@@ -68,24 +68,24 @@ namespace TimetablingWPF
         }
         public override string ToString()
         {
-            return $"Year {Year}";
+            return $"Year {Name}";
         }
 
         public override bool Equals(object obj)
         {
-            return obj is YearGroup yg && yg.Year == Year;
+            return obj is Year yg && yg.Name == Name;
         }
 
         public override int GetHashCode()
         {
-            return Year.GetHashCode();
+            return Name.GetHashCode();
         }
-        public static bool operator ==(YearGroup left, YearGroup right)
+        public static bool operator ==(Year left, Year right)
         {
             return ReferenceEquals(left, right);
         }
 
-        public static bool operator !=(YearGroup left, YearGroup right)
+        public static bool operator !=(Year left, Year right)
         {
             return !(left == right);
         }

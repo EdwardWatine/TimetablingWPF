@@ -90,7 +90,7 @@ namespace TimetablingWPF
                 }
             }
             Form.Name = txName.Text.Trim();
-            Form.YearGroup = (YearGroup)cmbxYear.SelectedItem;
+            Form.YearGroup = (Year)cmbxYear.SelectedItem;
             Form.Unfreeze();
             if (CommandType == CommandType.edit) {
                 OriginalForm.UpdateWithClone(Form);

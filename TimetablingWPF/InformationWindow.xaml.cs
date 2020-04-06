@@ -58,6 +58,7 @@ namespace TimetablingWPF
                         VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
                         Content = new ItemsControl()
                         {
+                            ItemsPanel = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(WrapPanel))),
                             ItemsSource = data,
                             BorderThickness = new Thickness(0)
                         }
@@ -67,9 +68,9 @@ namespace TimetablingWPF
             wpTop.Children.Add(GenerateTextPanel("Name:", new TextBlock() { Text = item.Name }));
             foreach (CustomPropertyInfo prop in BaseDataClass.ExposedProperties[item.GetType()])
             {
-                if (prop.PropertyInfo.PropertyType.IsInterface<IList>())
+                if (prop.Type.IsInterface<IList>())
                 {
-                    if (!(prop.PropertyInfo.PropertyType == typeof(ObservableCollection<TimetableSlot>)))
+                    if (!(prop.Type == typeof(ObservableCollection<TimetableSlot>)))
                     {
                         IList data = (IList)prop.PropertyInfo.GetValue(item);
                         StackPanel sp;

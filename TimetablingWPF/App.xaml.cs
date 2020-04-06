@@ -34,7 +34,7 @@ namespace TimetablingWPF
             Properties["USER_TYPES"] = new Type[] { typeof(Teacher), typeof(Subject), typeof(Lesson), typeof(Form), typeof(Group), typeof(Room) };
             DataContainer data = new DataContainer();
             Properties["CURRENT_DATA"] = data;
-            data.YearGroups.Add(new YearGroup("8"));
+            data.YearGroups.Add(new Year("8"));
             TimetableStructure.SetData(new List<TimetableStructureWeek>()
             {
                 new TimetableStructureWeek("A", DataHelpers.ShortenedDaysOfTheWeek,

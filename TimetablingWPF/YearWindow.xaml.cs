@@ -26,7 +26,7 @@ namespace TimetablingWPF
         }
         private void AddYear(object sender, RoutedEventArgs e)
         {
-            DataHelpers.GetDataContainer().YearGroups.Add(new YearGroup("<New Year Group>"));
+            DataHelpers.GetDataContainer().YearGroups.Add(new Year("<New Year Group>"));
             lbMain.SelectedIndex = lbMain.Items.Count - 1;
 
         }
@@ -34,7 +34,7 @@ namespace TimetablingWPF
         {
             if (lbMain.SelectedItem != null)
             {
-                DataHelpers.GetDataContainer().YearGroups.Remove((YearGroup)lbMain.SelectedItem);
+                DataHelpers.GetDataContainer().YearGroups.Remove((Year)lbMain.SelectedItem);
             }
         }
         private void CloseClick(object sender, RoutedEventArgs e)

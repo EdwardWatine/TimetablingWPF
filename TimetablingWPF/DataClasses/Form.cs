@@ -24,8 +24,8 @@ namespace TimetablingWPF
             RegisterProperty(type, "YearGroup");
         }
         public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");
-        private YearGroup _year;
-        public YearGroup YearGroup
+        private Year _year;
+        public Year YearGroup
         {
             get => _year;
             set

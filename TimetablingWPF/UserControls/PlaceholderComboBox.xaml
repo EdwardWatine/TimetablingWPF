@@ -10,7 +10,7 @@
     <UserControl.Resources>
         <local:BoxToVisibilityConverter x:Key="InvNullVisibleConverter" />
     </UserControl.Resources>
-    <Grid>
+    <Grid Height="24">
         <ComboBox x:Name="comboBox"
                   ItemsSource="{Binding ElementName=placeholderComboBox, Path=ItemsSource}"
                   SelectedItem="{Binding ElementName=placeholderComboBox, Path=SelectedItem}"

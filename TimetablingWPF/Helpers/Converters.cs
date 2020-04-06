@@ -12,21 +12,32 @@ namespace TimetablingWPF
 {
     public class PropertyConverter : IValueConverter
     {
-        public PropertyConverter() { }
-        public PropertyConverter(Func<object, string> customConverter)
+        public PropertyConverter(CustomPropertyInfo prop)
         {
-            CustomConverter = customConverter;
+            cpi = prop;
         }
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return CustomConverter(value);
+            return cpi.Display(value);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
-        public Func<object, string> CustomConverter { get; set; }
+        private readonly CustomPropertyInfo cpi;
+    }
+    public class XAMLPropertyConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return ((CustomPropertyInfo)values[1]).Display(values[0]);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
     public class ListFormatter : IValueConverter
     {

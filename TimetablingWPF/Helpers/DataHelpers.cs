@@ -40,9 +40,9 @@ namespace TimetablingWPF
         }
         public static TabItem GenerateItemTab(object item, CommandType commandType)
         {
-            return (TabItem)Activator.CreateInstance(TabMappings[item.GetType()], new object[] { item, commandType });
+            return new ItemTab((BaseDataClass)item, commandType);
         }
-        public static readonly Dictionary<Type, Type> TabMappings = new Dictionary<Type, Type>()
+        public static Dictionary<Type, Type> TabMappings { get; } = new Dictionary<Type, Type>()
         {
             {typeof(Subject), typeof(SubjectTab) },
             {typeof(Teacher), typeof(TeacherTab) },

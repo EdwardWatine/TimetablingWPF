@@ -75,8 +75,7 @@ namespace TimetablingWPF
                         Padding = new Thickness(2)
                     };
                     Border periodBorder = SetInternalBorder(periodHeading);
-                    Grid.SetRow(periodBorder, period + 1);
-                    gridWeek.Children.Add(periodBorder);
+                    gridWeek.Insert(periodBorder, period + 1, 0);
                     skipped = 0;
                     for (int day = 0; day < structureWeek.DayNames.Count; day++)
                     {
@@ -96,9 +95,7 @@ namespace TimetablingWPF
                             rect.MouseLeftButtonDown += leftClickHandler;
                         }
                         Border rectBorder = SetInternalBorder(rect);
-                        Grid.SetColumn(rectBorder, day + 1 - skipped);
-                        Grid.SetRow(rectBorder, period + 1);
-                        gridWeek.Children.Add(rectBorder);
+                        gridWeek.Insert(rectBorder, period + 1, day + 1 - skipped);
                     }
                 }
                 if (rightClickHandler != null)

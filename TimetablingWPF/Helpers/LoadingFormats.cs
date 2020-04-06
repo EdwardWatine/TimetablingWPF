@@ -57,7 +57,7 @@ namespace TimetablingWPF
             LoadEnum(() =>
             {
                 string name = reader.ReadString();
-                YearGroup year = new YearGroup(name);
+                Year year = new Year(name);
                 year.Commit();
             }, reader);
             UpdateWorker("Teachers");

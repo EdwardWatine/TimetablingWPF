@@ -65,8 +65,7 @@ namespace TimetablingWPF
                 Padding = new Thickness(2),
                 TextAlignment = TextAlignment.Center
             });
-            Grid.SetColumn(weekHeader, 1);
-            gridWeek.Children.Add(weekHeader);
+            gridWeek.Insert(weekHeader, 0, 1);
 
 
             for (int day = 0; day < structureWeek.DayNames.Count; day++)
@@ -85,8 +84,7 @@ namespace TimetablingWPF
                     Tag = gridWeek
                 };
                 Border dayBorder = SetInternalBorder(dayHeading);
-                Grid.SetColumn(dayBorder, day + 2);
-                gridWeek.Children.Add(dayBorder);
+                gridWeek.Insert(dayBorder, 0, day + 2);
             }
 
             for (int period = 0; period < structureWeek.PeriodNames.Count; period++)
@@ -104,9 +102,7 @@ namespace TimetablingWPF
                     Tag = gridWeek
                 };
                 Border periodBorder = SetInternalBorder(periodHeading);
-                Grid.SetRow(periodBorder, period + 1);
-                Grid.SetColumn(periodBorder, 1);
-                gridWeek.Children.Add(periodBorder);
+                gridWeek.Insert(periodBorder, period + 1, 1);
                 gridWeek.Children.Add(GenerateCross(period + 1));
                 for (int day = 0; day < structureWeek.DayNames.Count; day++)
                 {
@@ -119,9 +115,7 @@ namespace TimetablingWPF
                     rect.MouseLeftButtonDown += RectLeftClick;
                     rect.MouseEnter += MouseEntered; // add the appropriate mouse bindings
                     Border rectBorder = SetInternalBorder(rect);
-                    Grid.SetColumn(rectBorder, day + 2);
-                    Grid.SetRow(rectBorder, period + 1);
-                    gridWeek.Children.Add(rectBorder);
+                    gridWeek.Insert(rectBorder, period + 1, day + 2);
                 }
             }
             Button newPeriod = new Button() // add the button that adds a new period
@@ -135,8 +129,7 @@ namespace TimetablingWPF
             };
             newPeriod.Click += NewPeriodClick;
             gridWeek.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
-            Grid.SetRow(newPeriod, gridWeek.RowDefinitions.Count - 1);
-            gridWeek.Children.Add(newPeriod);
+            gridWeek.Insert(newPeriod, -1, 0);
             Image removeWeek = new Image() // add the image that removes the week
             {
                 Source = (ImageSource)Application.Current.Resources["WhiteBinIcon"],
@@ -145,10 +138,8 @@ namespace TimetablingWPF
                 Cursor = Cursors.Hand
             };
             Grid.SetColumnSpan(removeWeek, structureWeek.DayNames.Count + 1);
-            Grid.SetColumn(removeWeek, 1);
-            Grid.SetRow(removeWeek, gridWeek.RowDefinitions.Count - 1);
+            gridWeek.Insert(removeWeek, -1, 1);
             removeWeek.MouseDown += RemoveWeekClick;
-            gridWeek.Children.Add(removeWeek);
             return gridWeek;
         }
 
@@ -285,9 +276,7 @@ namespace TimetablingWPF
             };
             periodHeading.MouseLeftButtonDown += PeriodClick;
             Border periodBorder = SetInternalBorder(periodHeading);
-            Grid.SetRow(periodBorder, length-1);
-            Grid.SetColumn(periodBorder, 1);
-            grid.Children.Add(periodBorder);
+            grid.Insert(periodBorder, -1, 1);
             grid.Children.Add(GenerateCross(length-1));
             int days = grid.ColumnDefinitions.Count - 1;
             for (int day = 0; day < days; day++)
@@ -299,9 +288,7 @@ namespace TimetablingWPF
                 };
                 rect.MouseLeftButtonDown += RectLeftClick;
                 Border rectBorder = SetInternalBorder(rect);
-                Grid.SetColumn(rectBorder, day + 2);
-                Grid.SetRow(rectBorder, length - 1);
-                grid.Children.Add(rectBorder);
+                grid.Insert(rectBorder, -1, day + 2);
             }
         }
         private Image GenerateCross(int row)

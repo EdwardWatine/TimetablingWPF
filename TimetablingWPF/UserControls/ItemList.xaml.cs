@@ -22,6 +22,11 @@ namespace TimetablingWPF
     /// </summary>
     public partial class ItemList : ItemsControl
     {
+        public ItemList(CustomPropertyInfo prop)
+        {
+            InitializeComponent();
+            CustomPropertyInfo = prop;
+        }
         public ItemList()
         {
             InitializeComponent();
@@ -85,12 +90,12 @@ namespace TimetablingWPF
             }
         }
 
-        public static readonly DependencyProperty RepresentationPathProperty =
-            DependencyProperty.Register("RepresentationPath", typeof(string), typeof(ItemList));
-        public string RepresentationPath
+        public static readonly DependencyProperty CustomPropertyInfoProperty =
+            DependencyProperty.Register("CustomPropertyInfo", typeof(CustomPropertyInfo), typeof(ItemList));
+        public CustomPropertyInfo CustomPropertyInfo
         {
-            get => (string)GetValue(RepresentationPathProperty);
-            set => SetValue(RepresentationPathProperty, value);
+            get => (CustomPropertyInfo)GetValue(CustomPropertyInfoProperty);
+            set => SetValue(CustomPropertyInfoProperty, value);
         }
     }
 }

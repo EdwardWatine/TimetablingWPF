@@ -154,7 +154,7 @@ namespace TimetablingWPF
             MemoryStream all_data = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(all_data);
             DataContainer data = GetDataContainer();
-            IList<YearGroup> year_list = data.YearGroups;
+            IList<Year> year_list = data.YearGroups;
             IList<Teacher> teacher_list = data.Teachers;
             IList<Form> form_list = data.Forms;
             IList<Lesson> lesson_list = data.Lessons;
@@ -178,7 +178,7 @@ namespace TimetablingWPF
             WriteList(year_list, (y, i) =>
             {
                 y.StorageIndex = i;
-                writer.Write(y.Year);
+                writer.Write(y.Name);
             }, writer);
             WriteBDCEnum(teacher_list, writer, t =>
             {
