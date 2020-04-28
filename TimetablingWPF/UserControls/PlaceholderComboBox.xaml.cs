@@ -84,5 +84,18 @@ namespace TimetablingWPF
             }
             return (T)SelectedItem;
         }
+        public BaseDataClass GetObject(Type type)
+        {
+            if (SelectedItem == null)
+            {
+                if (string.IsNullOrWhiteSpace(Text) || !IsEditable || IsReadOnly)
+                {
+                    return null;
+                }
+                BaseDataClass bdc = (BaseDataClass)Activator.CreateInstance(type);
+                bdc.Name = Text;
+            }
+            return (BaseDataClass)SelectedItem;
+        }
     }
 }

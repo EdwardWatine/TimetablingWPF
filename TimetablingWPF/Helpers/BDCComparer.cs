@@ -8,14 +8,15 @@ using static TimetablingWPF.GenericHelpers;
 
 namespace TimetablingWPF
 {
-    public class BDCSortingComparer : IComparer
+    public class SortingComparer : IComparer
     {
         public string Filter { get; set; }
+        public Func<object, string> StringFunction { get; set; } = o => o.ToString();
 
         public int Compare(object x, object y)
         {
-            string xname = ((BaseDataClass)x).Name.RemoveWhitespace().ToUpperInvariant();
-            string yname = ((BaseDataClass)y).Name.RemoveWhitespace().ToUpperInvariant();
+            string xname = StringFunction(x).RemoveWhitespace().ToUpperInvariant();
+            string yname = StringFunction(y).RemoveWhitespace().ToUpperInvariant();
             int ymod = 0, xmod = 0;
             if (Filter.Length >= 3)
             {

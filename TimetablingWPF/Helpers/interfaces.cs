@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace TimetablingWPF
 {
     public interface IAddRange
     {
-        void AddRange(IEnumerable<object> enumerable);
+        void AddRange(IEnumerable enumerable);
     }
     public interface IRelationalCollection
     {

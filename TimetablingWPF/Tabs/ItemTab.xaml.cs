@@ -16,6 +16,8 @@ using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.VisualHelpers;
 using static TimetablingWPF.DataHelpers;
+using System.Globalization;
+using System.Collections.Specialized;
 
 namespace TimetablingWPF
 {
@@ -28,6 +30,7 @@ namespace TimetablingWPF
         {
             InitializeComponent();
             ErrManager = new ErrorManager(spErrors);
+            CommandType = commandType;
             Item = commandType == CommandType.@new ? originalItem : (BaseDataClass)originalItem.Clone();
             OriginalItem = originalItem;
             Item.Freeze();
@@ -70,15 +73,20 @@ namespace TimetablingWPF
                     }
                     gdilContainer.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Star) });
                     gdilContainer.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
+                    ItemList itemlist = new ItemList(prop)
+                    {
+                        ItemsSource = (IList)prop.PropertyInfo.GetValue(Item)
+                    };
+                    if (prop.Type.IsInterface<INotifyCollectionChanged>())
+                    {
+                        itemlist.ListenToCollection((INotifyCollectionChanged)prop.PropertyInfo.GetValue(Item));
+                    }
                     gdilContainer.Children.Add(
                         new ScrollViewer()
                         {
                             HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
                             VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                            Content = new ItemList(prop)
-                            {
-                                ItemsSource = (IList)prop.PropertyInfo.GetValue(Item)
-                            }
+                            Content = itemlist
                         });
                     StackPanel sphorizontalMenu = new StackPanel()
                     {
@@ -86,44 +94,96 @@ namespace TimetablingWPF
                     };
                     Grid.SetRow(sphorizontalMenu, 1);
                     Style hzmenu = (Style)Application.Current.Resources["HorizontalMenu"];
-                    PlaceholderComboBox comboBox = new PlaceholderComboBox()
+                    MultiComboBox comboBox = new MultiComboBox()
                     {
                         Style = hzmenu,
-                        IsEditable = true
                     };
                     Type generic_argument = prop.Type.GetGenericArguments()[0];
+                    RoutedEventHandler handler = null;
                     if (generic_argument == typeof(Assignment))
                     {
                         Type box_type = item_type == typeof(Teacher) ? typeof(Lesson) : typeof(Teacher);
-                        comboBox.ItemsSource = GetDataContainer().FromType(box_type);
-                        comboBox.Placeholder = $"-- {box_type.Name} --";
+                        comboBox.ItemsSource = ((INotifyCollectionChanged)GetDataContainer().FromType(box_type)).GenerateOneWayCopy();
+                        comboBox.ItemString = box_type.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
-                        sphorizontalMenu.Children.Add(new IntegerUpDown()
+                        IntegerUpDown iupdown = new IntegerUpDown()
                         {
                             Minimum = 1,
                             Value = 1,
                             Style = hzmenu,
                             Width = 50
+                        };
+                        sphorizontalMenu.Children.Add(iupdown);
+                        int? lessonCount = iupdown.Value;
+                        if (lessonCount == null)
+                        {
+                            return;
+                        }
+                        if (Item is Teacher teacher)
+                        {
+                            handler = new RoutedEventHandler(
+                                (sender, e) =>
+                                {
+                                    foreach (Lesson lesson in comboBox.SelectedItems)
+                                    {
+                                        Assignment old = teacher.Assignments.Where(a => a.Lesson == lesson).SingleOrDefault();
+                                        if (old != null)
+                                        {
+                                            if (old.LessonCount == lessonCount)
+                                            {
+                                                return;
+                                            }
+                                            teacher.Assignments.Remove(old);
+                                        }
+                                        Assignment assignment = new Assignment(teacher, lesson, (int)lessonCount);
+                                        teacher.Assignments.Add(assignment);
+                                    }
+                                });
+                        }
+                        else if (Item is Lesson lesson)
+                        {
+                            handler = new RoutedEventHandler(
+                                (sender, e) =>
+                                {
+                                    foreach (Teacher teacher_l in comboBox.SelectedItems)
+                                    {
+                                        Assignment old = lesson.Assignments.Where(a => a.Teacher == teacher_l).SingleOrDefault();
+                                        if (old != null)
+                                        {
+                                            if (old.LessonCount == lessonCount) { return; }
+                                            lesson.Assignments.Remove(old);
+                                        }
+                                        Assignment assignment = new Assignment(teacher_l, lesson, (int)lessonCount);
+                                        lesson.Assignments.Add(assignment);
+                                    }
+                                });
+                        }
+                        Button button = new Button()
+                        {
+                            Content = new Image()
+                            {
+                                Source = (ImageSource)Application.Current.Resources["PlusIcon"]
+                            }
+                        };
+
+                        button.Click += handler;
+                        button.SetBinding(HeightProperty, new Binding("ActualHeight")
+                        {
+                            Source = comboBox
                         });
+                        sphorizontalMenu.Children.Add(button);
                     }
                     else
                     {
-                        comboBox.ItemsSource = GetDataContainer().FromType(generic_argument);
-                        comboBox.Placeholder = $"-- {generic_argument.Name} --";
+                        comboBox.ItemsSource = ((INotifyCollectionChanged)GetDataContainer().FromType(generic_argument)).GenerateOneWayCopy();
+                        comboBox.ItemString = generic_argument.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
+
+                        object value = prop.PropertyInfo.GetValue(Item);
+                        comboBox.SetSelected((IEnumerable)value);
+                        ((INotifyCollectionChanged)comboBox.SelectedItems).CollectionChanged += GenericHelpers.GenerateLinkHandler((IList)value);
+                        itemlist.DeleteAction = o => comboBox.SelectedItems.Remove(o);
                     }
-                    Button button = new Button()
-                    {
-                        Content = new Image()
-                        {
-                            Source = (ImageSource)Application.Current.Resources["PlusIcon"]
-                        }
-                    };
-                    button.SetBinding(HeightProperty, new Binding("ActualHeight")
-                    {
-                        Source = comboBox
-                    });
-                    sphorizontalMenu.Children.Add(button);
                     gdilContainer.Children.Add(sphorizontalMenu);
                     continue;
                 }
@@ -155,6 +215,7 @@ namespace TimetablingWPF
                         Mode = BindingMode.TwoWay
                     });
                     gdLeft.Insert(iupdown, -2, 1);
+                    iupdown.ValueChanged += delegate (object o, RoutedPropertyChangedEventArgs<object> e) { prop.PropertyInfo.SetValue(Item, e.NewValue); };
                     continue;
                 }
                 if (prop.Type == typeof(bool))
@@ -169,6 +230,8 @@ namespace TimetablingWPF
                         Mode = BindingMode.TwoWay
                     });
                     gdLeft.Insert(cbox, -2, 1);
+                    cbox.Checked += delegate (object sender, RoutedEventArgs e) { prop.PropertyInfo.SetValue(Item, true); };
+                    cbox.Unchecked += delegate (object sender, RoutedEventArgs e) { prop.PropertyInfo.SetValue(Item, true); };
                     continue;
                 }
                 if (prop.Type.IsSubclassOf(typeof(BaseDataClass)) || prop.Type == typeof(Year))
@@ -194,7 +257,7 @@ namespace TimetablingWPF
         private readonly ErrorManager ErrManager;
         private readonly BaseDataClass OriginalItem;
         private readonly BaseDataClass Item;
-
+        private readonly CommandType CommandType;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -238,6 +301,31 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
+            if (ErrManager.GetNumErrors() > 0)
+            {
+                ShowErrorBox("Please fix all errors!");
+                return;
+            }
+            if (ErrManager.GetNumWarnings() > 0)
+            {
+                if (System.Windows.MessageBox.Show("There are warnings. Do you want to continue?", "Warning",
+                    MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+                {
+                    return;
+                }
+            }
+            Item.Name = txName.Text.Trim();
+            if (CommandType == CommandType.edit)
+            {
+                OriginalItem.UpdateWithClone(Item);
+                OriginalItem.Unfreeze();
+            }
+            else
+            {
+                Item.Commit();
+                Item.Unfreeze();
+            }
+
             
             MainPage.CloseTab(this);
         }

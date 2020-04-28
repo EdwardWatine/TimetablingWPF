@@ -33,6 +33,17 @@ namespace TimetablingWPF
             SuppressEvent = flag || false; // ensures that SuppressEvent is not accidently overwritten
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, enumerable.ToList()));
         }
+        public void RemoveRange(IEnumerable<T> enumerable)
+        {
+            bool flag = SuppressEvent;
+            SuppressEvent = true;
+            foreach (T item in enumerable)
+            {
+                Remove(item);
+            }
+            SuppressEvent = flag || false; // ensures that SuppressEvent is not accidently overwritten
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, enumerable.ToList()));
+        }
         public void SetData(IEnumerable<T> enumerable)
         {
             Clear();
@@ -43,9 +54,24 @@ namespace TimetablingWPF
             return new ObservableCollection<T>(this);
         }
 
-        public void AddRange(IEnumerable<object> enumerable)
+        public void AddRange(IEnumerable enumerable)
         {
             AddRange(enumerable.Cast<T>());
+        }
+        public void RemoveRange(IEnumerable enumerable)
+        {
+            RemoveRange(enumerable.Cast<T>());
+        }
+
+        public ObservableCollection<T> GenerateOneWayCopy()
+        {
+            ObservableCollection<T> collection = new ObservableCollection<T>(this);
+            CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+            {
+                if (e.NewItems != null) { collection.AddRange(e.NewItems); }
+                if (e.OldItems != null) { collection.RemoveRange(e.OldItems); }
+            };
+            return collection;
         }
     }
     /// <remarks>
@@ -66,18 +92,18 @@ namespace TimetablingWPF
         }
         private void ObservableCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
+            if (e.OldItems != null)
+            {
+                foreach (object item in e.OldItems)
+                {
+                    if (item is INotifyPropertyChanged ipropChanges) ipropChanges.PropertyChanged -= ItemPropertyChanged; // unlink event handler
+                }
+            }
             if (e.NewItems != null)
             {
                 foreach (object item in e.NewItems)
                 {
                     if (item is INotifyPropertyChanged ipropChanges) ipropChanges.PropertyChanged += ItemPropertyChanged; // link event handler
-                }
-            }
-            if (e.OldItems != null)
-            {
-                foreach (object item in e.OldItems)
-                {
-                    if (item is INotifyPropertyChanged ipropChanges) ipropChanges.PropertyChanged += ItemPropertyChanged; // unlink event handler
                 }
             }
         }
@@ -165,8 +191,8 @@ namespace TimetablingWPF
             {
                 throw new InvalidOperationException("Parent is not set");
             }
-            base.RemoveItem(index);
             TContent item = this[index];
+            base.RemoveItem(index);
             if (Frozen)
             {
                 frozenRemoveElements.Enqueue(item);

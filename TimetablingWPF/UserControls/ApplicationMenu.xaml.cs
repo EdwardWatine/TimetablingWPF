@@ -123,7 +123,7 @@ namespace TimetablingWPF
                     {
                         if (mapping.Value == ImportOption.Import)
                         {
-                            ((IAddRange)currentContainer.FromType(mapping.Key)).AddRange(dataContainer.FromType(mapping.Key).Cast<object>());
+                            ((IAddRange)currentContainer.FromType(mapping.Key)).AddRange(dataContainer.FromType(mapping.Key));
                             continue;
                         }
                         if (mapping.Value == ImportOption.Replace || mapping.Value == ImportOption.Merge)

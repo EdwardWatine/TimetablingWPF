@@ -30,10 +30,11 @@ namespace TimetablingWPF
             {
                 void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
                 {
-                    if ((e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || e.NewItems[0] != e.OldItems[0]) && !Frozen) //Ensures that the change is propagated if it wasn't propagated by another object
+                    if (e.IsNotPropertyChanged() && !Frozen) //Ensures that the change is propagated if it wasn't propagated by another object
                     {
                         NotifyPropertyChanged(prop.Name);
                     }
+                    ///Debug.WriteLine($"{Name} (a {GetType().Name}) registered a change in property {prop.Name} caused by {e.Action}");
                 }
                 val.CollectionChanged += Val_CollectionChanged;
             }
@@ -100,6 +101,8 @@ namespace TimetablingWPF
                     NotifyPropertyChanged(prop.Name);
                 }
             }
+            Name = clone.Name;
+            Frozen = clone.Frozen;
         }
         public void MergeWith(BaseDataClass merger)
         {
@@ -108,7 +111,7 @@ namespace TimetablingWPF
             {
                 throw new ArgumentException("The merger class must be the same as the calling class.");
             }
-            ApplyOnType<IAddRange>((prop, val) => val.AddRange((IEnumerable<object>)prop.GetValue(merger)));
+            ApplyOnType<IAddRange>((prop, val) => val.AddRange((IEnumerable)prop.GetValue(merger)));
         }
         /// <summary>
         /// Event when property is changed
@@ -131,7 +134,7 @@ namespace TimetablingWPF
         /// <summary>
         /// Will remove all instances of self from <see cref="RelationalCollection{T}"/>. Will then remove self from the properties list
         /// </summary>
-        public void Delete(DataContainer container = null)
+        public virtual void Delete(DataContainer container = null)
         {
             void delete(PropertyInfo prop, IRelationalCollection val)
             {

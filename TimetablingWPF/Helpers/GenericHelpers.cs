@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -14,6 +15,26 @@ namespace TimetablingWPF
 {
     public static class GenericHelpers
     {
+        public static NotifyCollectionChangedEventHandler GenerateLinkHandler(IList list)
+        {
+            return new NotifyCollectionChangedEventHandler((sender, e) =>
+            {
+                if (e.NewItems != null)
+                {
+                    foreach (object obj in e.NewItems)
+                    {
+                        list.Add(obj);
+                    }
+                }
+                if (e.OldItems != null)
+                {
+                    foreach (object obj in e.OldItems)
+                    {
+                        list.Remove(obj);
+                    }
+                }
+            });
+        }
         public static void MoveElementProperties(DependencyObject @in, DependencyObject @out, DependencyProperty[] props)
         {
             foreach (DependencyProperty prop in props)

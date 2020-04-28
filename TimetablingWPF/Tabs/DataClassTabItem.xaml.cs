@@ -125,7 +125,7 @@ namespace TimetablingWPF
         }
         
         public Type DataType { get; }
-        private readonly BDCSortingComparer FilterComparer = new BDCSortingComparer();
+        private readonly SortingComparer FilterComparer = new SortingComparer();
         private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
             MainPage.NewTab(DataHelpers.GenerateItemTab(Activator.CreateInstance(DataType), CommandType.@new), $"New {DataType.Name}");
@@ -195,15 +195,7 @@ namespace TimetablingWPF
                 return;
             }
 
-            data.Filter = new Predicate<object>(o => {
-                string name = ((BaseDataClass)o).Name.RemoveWhitespace().ToUpperInvariant();
-                bool contains = name.Contains(nameFilter);
-                if (nameFilter.Length < name.Length)
-                {
-                    name = name.Substring(0, nameFilter.Length);
-                }
-                return contains || DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
-            });
+            data.Filter = DataHelpers.GenerateNameFilter(nameFilter);
             FilterComparer.Filter = nameFilter;
             data.CustomSort = FilterComparer;
         }

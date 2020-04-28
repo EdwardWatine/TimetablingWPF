@@ -36,7 +36,11 @@ namespace TimetablingWPF
                 }
             }
         }
-
+        public override void Delete(DataContainer dataContainer = null)
+        {
+            Assignments.Clear();
+            base.Delete();
+        }
         private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
         private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();
         private void AssignmentsChanged(object sender, NotifyCollectionChangedEventArgs e) // intercept changes to assignment to deal with the frozen case

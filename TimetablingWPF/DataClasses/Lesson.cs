@@ -69,6 +69,11 @@ namespace TimetablingWPF
                 }
             }
         }
+        public override void Delete(DataContainer dataContainer = null)
+        {
+            Assignments.Clear();
+            base.Delete();
+        }
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
         private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
         private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();

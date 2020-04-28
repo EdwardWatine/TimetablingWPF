@@ -42,15 +42,31 @@ namespace TimetablingWPF
         {
             return new ItemTab((BaseDataClass)item, commandType);
         }
-        public static Dictionary<Type, Type> TabMappings { get; } = new Dictionary<Type, Type>()
+        public static Predicate<object> GenerateNameFilter(string nameFilter)
         {
-            {typeof(Subject), typeof(SubjectTab) },
-            {typeof(Teacher), typeof(TeacherTab) },
-            {typeof(Lesson), typeof(LessonTab) },
-            {typeof(Group), typeof(GroupTab) },
-            {typeof(Form), typeof(FormTab) },
-            {typeof(Room), typeof(RoomTab) }
-
-        };
+            return new Predicate<object>(o =>
+            {
+                string name = ((BaseDataClass)o).Name.RemoveWhitespace().ToUpperInvariant();
+                bool contains = name.Contains(nameFilter);
+                if (nameFilter.Length < name.Length)
+                {
+                    name = name.Substring(0, nameFilter.Length);
+                }
+                return contains || GenericHelpers.DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
+            });
+        }
+        public static Predicate<object> GenerateNameFilter(string nameFilter, Func<object, string> strfunc)
+        {
+            return new Predicate<object>(o =>
+            {
+                string name = strfunc(o).RemoveWhitespace().ToUpperInvariant();
+                bool contains = name.Contains(nameFilter);
+                if (nameFilter.Length < name.Length)
+                {
+                    name = name.Substring(0, nameFilter.Length);
+                }
+                return contains || GenericHelpers.DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
+            });
+        }
     }
 }

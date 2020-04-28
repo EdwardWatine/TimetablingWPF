@@ -70,7 +70,7 @@ namespace TimetablingWPF
             {
                 if (prop.Type.IsInterface<IList>())
                 {
-                    if (!(prop.Type == typeof(ObservableCollection<TimetableSlot>)))
+                    if (prop.Type != typeof(ObservableCollection<TimetableSlot>))
                     {
                         IList data = (IList)prop.PropertyInfo.GetValue(item);
                         StackPanel sp;

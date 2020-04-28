@@ -20,6 +20,9 @@
         <BitmapImage x:Key="WhiteBinIcon" UriSource="Media/WhiteBinIcon.png"/>
         <BitmapImage x:Key="DownArrowIcon" UriSource="Media/DownArrowIcon.png"/>
         <BitmapImage x:Key="UpArrowIcon" UriSource="Media/UpArrowIcon.png"/>
+        <BitmapImage x:Key="ExpandIcon" UriSource="Media/ExpandIcon.png"/>
+        <BitmapImage x:Key="CollapseIcon" UriSource="Media/Collapse.png"/>
+        <BitmapImage x:Key="CheckIcon" UriSource="Media/CheckIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
         <Color x:Key="WarningColor">#fc9803</Color>

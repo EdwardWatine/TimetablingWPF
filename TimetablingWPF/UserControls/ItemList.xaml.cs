@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static TimetablingWPF.GenericHelpers;
 
 namespace TimetablingWPF
 {
@@ -22,7 +23,7 @@ namespace TimetablingWPF
     /// </summary>
     public partial class ItemList : ItemsControl
     {
-        public ItemList(CustomPropertyInfo prop)
+        public ItemList(CustomPropertyInfo prop) : this()
         {
             InitializeComponent();
             CustomPropertyInfo = prop;
@@ -30,6 +31,16 @@ namespace TimetablingWPF
         public ItemList()
         {
             InitializeComponent();
+            DeleteAction = o => ((IList)ItemsSource).Remove(o);
+        }
+        private new IEnumerable ItemsSource
+        {
+            get => base.ItemsSource;
+            set
+            {
+                base.ItemsSource = value;
+                handler = GenerateLinkHandler((IList)base.ItemsSource);
+            }
         }
         private void MouseMoveLink(object sender, MouseEventArgs e)
         {
@@ -46,48 +57,32 @@ namespace TimetablingWPF
             object obj = ((Hyperlink)sender).Tag;
             if (Window.GetWindow(this) is MainWindow main)
             {
-                main.GetMainPage().NewTab(DataHelpers.GenerateItemTab(obj, CommandType.edit), $"Edit {obj.ToString()}");
+                main.GetMainPage().NewTab(DataHelpers.GenerateItemTab(obj, CommandType.edit), $"Edit {obj}");
                 return;
             }
             foreach (Window window in Application.Current.Windows)
             {
                 if (window is MainWindow mainWindow)
                 {
-                    mainWindow.GetMainPage().NewTab(DataHelpers.GenerateItemTab(obj, CommandType.edit), $"Edit {obj.ToString()}");
+                    mainWindow.GetMainPage().NewTab(DataHelpers.GenerateItemTab(obj, CommandType.edit), $"Edit {obj}");
                     mainWindow.Activate();
                     return;
                 }
             }
         }
+        private NotifyCollectionChangedEventHandler handler;
+        public Action<object> DeleteAction { get; set; }
         private void RemoveItemClick(object sender, MouseButtonEventArgs e)
         {
-            ((IList)ItemsSource).Remove(((FrameworkElement)sender).Tag);
+            DeleteAction(((FrameworkElement)sender).Tag);
         }
         public void ListenToCollection(INotifyCollectionChanged collection)
         {
-            collection.CollectionChanged += CollectionChanged;
+            collection.CollectionChanged += handler;
         }
         public void UnlistenToCollection(INotifyCollectionChanged collection)
         {
-            collection.CollectionChanged -= CollectionChanged;
-        }
-
-        private void CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            if (e.NewItems != null)
-            {
-                foreach (object obj in e.NewItems)
-                {
-                    ((IList)ItemsSource).Add(obj);
-                }
-            }
-            if (e.OldItems != null)
-            {
-                foreach (object obj in e.NewItems)
-                {
-                    ((IList)ItemsSource).Remove(obj);
-                }
-            }
+            collection.CollectionChanged -= handler;
         }
 
         public static readonly DependencyProperty CustomPropertyInfoProperty =

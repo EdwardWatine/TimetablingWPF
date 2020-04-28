@@ -9,6 +9,7 @@ using System.Reflection;
 using System.Collections;
 using Xceed.Wpf.Toolkit;
 using System.Windows.Data;
+using System.Collections.Specialized;
 
 namespace TimetablingWPF
 {
@@ -61,6 +62,38 @@ namespace TimetablingWPF
             int nindex = (list.Count + index) % list.Count;
             if (index < 0) nindex += 1;
             list.Insert(nindex, element);
+        }
+        public static string InsertArticle(this string str)
+        {
+            return AvsAnLib.AvsAn.Query(str).Article + " " + str;
+        }
+        public static IList GenerateOneWayCopy(this INotifyCollectionChanged collection)
+        {
+            IList copy = new ObservableCollection<object>(((IEnumerable)collection).Cast<object>());
+            collection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+            {
+                if (!e.IsNotPropertyChanged())
+                {
+                    return;
+                }
+                if (e.NewItems != null) { 
+                    foreach (object item in e.NewItems)
+                    {
+                        copy.Add(item);
+                    }
+                }
+                if (e.OldItems != null) {
+                    foreach (object item in e.OldItems)
+                    {
+                        copy.Remove(item);
+                    }
+                }
+            };
+            return copy;
+        }
+        public static bool IsNotPropertyChanged(this NotifyCollectionChangedEventArgs e)
+        {
+            return (e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || !ReferenceEquals(e.NewItems[0], e.OldItems[0]));
         }
     }
 }
