@@ -51,7 +51,7 @@ namespace TimetablingWPF
                 if (value != _name)
                 {
                     _name = value;
-                    NotifyPropertyChanged("Name");
+                    NotifyPropertyChanged(nameof(Name));
                 }
             }
         }
@@ -118,7 +118,7 @@ namespace TimetablingWPF
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public void NotifyPropertyChanged(string property)
+        protected void NotifyPropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
@@ -196,5 +196,6 @@ namespace TimetablingWPF
         {
             return !(left == right);
         }
+        public abstract IList<ErrorContainer> ErrorValidations { get; }
     }
 }

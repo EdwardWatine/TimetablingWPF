@@ -18,17 +18,60 @@ namespace TimetablingWPF
         static Lesson()
         {
             Type type = typeof(Lesson);
-            RegisterProperty(type, "Forms");
-            RegisterProperty(type, "LessonsPerCycle");
-            RegisterProperty(type, "LessonLength");
-            RegisterProperty(type, "Subject");
-            RegisterProperty(type, "Assignments");
+            RegisterProperty(type, nameof(Forms));
+            RegisterProperty(type, nameof(LessonsPerCycle));
+            RegisterProperty(type, nameof(LessonLength));
+            RegisterProperty(type, nameof(Subject));
+            RegisterProperty(type, nameof(Assignments));
         }
         public Lesson()
         {
             Assignments.CollectionChanged += AssignmentsChanged;
+            ErrorContainer no_subject = new ErrorContainer((e) => Subject == null, (e) => "No subject has been selected.", ErrorType.Error);
+            no_subject.BindProperty(this, nameof(Subject));
+
+            ErrorContainer too_many_lessons = new ErrorContainer(e => LessonLength * LessonsPerCycle > TimetableStructure.TotalSchedulable, e => $"This lesson has a minimum of {LessonsPerCycle * LessonLength} periods per cycle, but there is a maximum of {TimetableStructure.TotalSchedulable} periods per cycle.",
+                ErrorType.Error);
+            too_many_lessons.BindProperty(this, nameof(LessonLength));
+            too_many_lessons.BindProperty(this, nameof(LessonsPerCycle));
+
+            ErrorContainer too_many_assigned = new ErrorContainer(e =>
+            {
+                int total = Assignments.Sum(a => a.LessonCount);
+                e.Data = total;
+                return total > LessonsPerCycle;
+            },
+                e =>
+                {
+                    int total = (int)e.Data;
+                    return $"This lesson has {total} lessons assigned, but there is supposed to be {LessonsPerCycle}";
+                },
+                ErrorType.Warning);
+            too_many_assigned.BindProperty(this, nameof(LessonsPerCycle));
+            too_many_assigned.BindCollection(Assignments);
+
+            ErrorContainer insuf_teacher_slots = new ErrorContainer((e) =>
+            {
+                IEnumerable<Teacher> errors = Assignments.Where(a => a.Teacher.MaxPeriodsPerCycle <
+                a.Teacher.Assignments.Where(a2 => (a2.Lesson ?? this) != this).Sum(a2 => a2.TotalPeriods) + a.TotalPeriods).Select(a => a.Teacher);
+                e.Data = errors;
+                return errors.Any();
+            },
+                (e) =>
+                {
+                    IEnumerable<Lesson> errors = (IEnumerable<Lesson>)e.Data;
+                    return $"The following teachers have more periods assigned to them than they have available: {GenericHelpers.FormatEnumerable(errors)}.";
+                },
+                ErrorType.Warning);
+            insuf_teacher_slots.BindCollection(Assignments);
+            insuf_teacher_slots.BindProperty(this, nameof(LessonLength));
+
+            errorValidations = new List<ErrorContainer>()
+            {
+                no_subject, too_many_lessons, too_many_assigned, insuf_teacher_slots
+            };
         }
-        public RelationalCollection<Form, Lesson> Forms { get; private set; } = new RelationalCollection<Form, Lesson>("Lessons");
+        public RelationalCollection<Form, Lesson> Forms { get; private set; } = new RelationalCollection<Form, Lesson>(nameof(Form.Lessons));
         private int _lpc;
         public int LessonsPerCycle
         {
@@ -38,7 +81,7 @@ namespace TimetablingWPF
                 if (value != _lpc)
                 {
                     _lpc = value;
-                    NotifyPropertyChanged("LessonsPerCycle");
+                    NotifyPropertyChanged(nameof(LessonsPerCycle));
                 }
             }
         }
@@ -51,7 +94,7 @@ namespace TimetablingWPF
                 if (value != _length)
                 {
                     _length = value;
-                    NotifyPropertyChanged("LessonsPerCycle");
+                    NotifyPropertyChanged(nameof(LessonsPerCycle));
                 }
             }
         }
@@ -120,5 +163,7 @@ namespace TimetablingWPF
                 assignment.Teacher.Assignments.Remove(assignment);
             }
         }
+        private readonly IList<ErrorContainer> errorValidations;
+        public override IList<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

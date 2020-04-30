@@ -25,30 +25,22 @@ namespace TimetablingWPF
 
     public class ErrorContainer
     {
-        public ErrorContainer(ErrorManager em, Func<ErrorData, bool> errorFunc, Func<ErrorData, string> messageFunc, ErrorType errorType, bool? state = null)
+        public event RoutedEventHandler StateChanged;
+        public ErrorContainer(Func<ErrorData, bool> errorFunc, Func<ErrorData, string> messageFunc, ErrorType errorType)
         {
             ErrorType = errorType;
             MessageFunc = messageFunc;
             ErrorFunc = errorFunc;
-            ErrManager = em;
-            em.AddError(this, state ?? IsTriggered());
         }
         public string GetMessage()
         {
             return MessageFunc(errorData);
         }
-        public bool IsTriggered()
+        public bool UpdateError()
         {
             errorData = new ErrorData();
-            return ErrorFunc(errorData);
-        }
-        public void UpdateError()
-        {
-            ErrManager.UpdateError(this, IsTriggered());
-        }
-        public void SetErrorState(bool state)
-        {
-            ErrManager.UpdateError(this, state);
+            ErrorState = ErrorFunc(errorData);
+            return ErrorState;
         }
         public void BindCollection(INotifyCollectionChanged collection)
         {
@@ -60,15 +52,30 @@ namespace TimetablingWPF
             {
                 throw new InvalidOperationException($"Property '{property}' not found on item of type '{item.GetType().Name}'");
             }
-
             item.PropertyChanged += delegate (object o, PropertyChangedEventArgs e) { if (property == e.PropertyName) { UpdateError(); } };
+        }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1030:Use events where appropriate")]
+        protected virtual void RaiseStateChanged()
+        {
+            StateChanged?.Invoke(this, new RoutedEventArgs());
         }
 
         public ErrorType ErrorType { get; }
         private readonly Func<ErrorData, string> MessageFunc;
         private readonly Func<ErrorData, bool> ErrorFunc;
-        private readonly ErrorManager ErrManager;
         private ErrorData errorData;
+        private bool state;
+        public bool ErrorState { get => state;
+            private set
+            {
+                if (state ^ value)
+                {
+                    RaiseStateChanged();
+                }
+                state = value;
+            }
+        }
     }
     public class ErrorManager
     {
@@ -76,7 +83,7 @@ namespace TimetablingWPF
         {
             Parent = parent;
         }
-        public void AddError(ErrorContainer error, bool state)
+        public void AddError(ErrorContainer error)
         {
             if (Errors.ContainsKey(error))
             {
@@ -86,7 +93,7 @@ namespace TimetablingWPF
             Grid gd = new Grid()
             {
                 VerticalAlignment = VerticalAlignment.Top,
-                Visibility = state ? Visibility.Visible : Visibility.Collapsed
+                Visibility = Visibility.Collapsed
             };
             gd.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
             gd.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
@@ -113,7 +120,6 @@ namespace TimetablingWPF
             gd.Children.Add(im);
             TextBlock tb = new TextBlock()
             {
-                Text = state ? error.GetMessage() : string.Empty,
                 Foreground = colour,
                 VerticalAlignment = VerticalAlignment.Center,
                 TextWrapping = TextWrapping.Wrap
@@ -123,24 +129,49 @@ namespace TimetablingWPF
             Errors[error] = gd;
             Parent.Children.Add(gd);
             gd.SetBinding(FrameworkElement.WidthProperty, new Binding("ActualWidth") { Source = Parent, Mode = BindingMode.OneWay });
+            error.StateChanged += delegate (object sender, RoutedEventArgs e) { UpdateError(error); };
         }
-        public void UpdateError(ErrorContainer error, bool state)
+        public void UpdateError(ErrorContainer error)
         {
             Grid gd = Errors[error];
+            bool state = error.ErrorState;
             gd.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
             if (state)
             {
                 ((TextBlock)gd.Tag).Text = state ? error.GetMessage() : string.Empty;
             }
         }
+        public void UpdateAll()
+        {
+            foreach (ErrorContainer error in Errors.Keys)
+            {
+                UpdateError(error);
+            }
+        }
         private readonly Dictionary<ErrorContainer, Grid> Errors = new Dictionary<ErrorContainer, Grid>();
         public int GetNumErrors()
         {
-            return Errors.Sum(kvpair => kvpair.Key.IsTriggered() && kvpair.Key.ErrorType == ErrorType.Error ? 1 : 0);
+            int count = 0;
+            foreach (ErrorContainer error in Errors.Keys)
+            {
+                if (error.ErrorType == ErrorType.Error)
+                {
+                    count += error.UpdateError() ? 1 : 0;
+                }
+            }
+            return count;
         }
         public int GetNumWarnings()
         {
-            return Errors.Sum(kvpair => kvpair.Key.IsTriggered() && kvpair.Key.ErrorType == ErrorType.Warning ? 1 : 0);
+            int count = 0;
+            foreach (ErrorContainer error in Errors.Keys)
+            {
+                if (error.ErrorType == ErrorType.Warning)
+                {
+                    count += error.UpdateError() ? 1 : 0;
+                }
+            }
+            return count;
         }
         private readonly Panel Parent;
     }

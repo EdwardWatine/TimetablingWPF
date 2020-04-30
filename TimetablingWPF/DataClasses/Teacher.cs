@@ -10,17 +10,67 @@ namespace TimetablingWPF
         static Teacher() // static constructor to expose properties
         {
             Type type = typeof(Teacher);
-            RegisterProperty(type, "UnavailablePeriods", "Unavailable Periods");
-            RegisterProperty(type, "MaxPeriodsPerCycle", "Maximum periods per cycle", o => $"{o}/{TimetableStructure.TotalSchedulable}");
-            RegisterProperty(type, "Subjects");
-            RegisterProperty(type, "Assignments");
+            RegisterProperty(type, nameof(UnavailablePeriods), "Unavailable Periods");
+            RegisterProperty(type, nameof(MaxPeriodsPerCycle), "Maximum periods per cycle", o => $"{o}/{TimetableStructure.TotalSchedulable}");
+            RegisterProperty(type, nameof(Subjects));
+            RegisterProperty(type, nameof(Assignments));
         }
         public Teacher()
         {
             Assignments.CollectionChanged += AssignmentsChanged;
+            ErrorContainer no_periods = new ErrorContainer((e) => MaxPeriodsPerCycle <= 0, (e) => "Teacher has no free periods.",
+                ErrorType.Warning);
+            no_periods.BindProperty(this, "MaxPeriodsPerCycle");
+
+            ErrorContainer insuf_periods = new ErrorContainer((e) =>
+            {
+                int assigned = Assignments.Sum(a => a.TotalPeriods);
+                e.Data = assigned;
+                return MaxPeriodsPerCycle < assigned;
+            },
+                (e) => $"Teacher has fewer free periods ({MaxPeriodsPerCycle}) than assigned periods ({e.Data}).",
+                ErrorType.Warning);
+            insuf_periods.BindCollection(UnavailablePeriods);
+            insuf_periods.BindCollection(Assignments);
+
+            ErrorContainer lesson_missing = new ErrorContainer((e) =>
+            {
+                IEnumerable<Assignment> assignmentMismatches = Assignments.Where(a => !Subjects.Contains(a.Lesson.Subject));
+                e.Data = assignmentMismatches;
+                return assignmentMismatches.Any();
+            },
+                (e) =>
+                {
+                    IEnumerable<Assignment> data = (IEnumerable<Assignment>)e.Data;
+                    return $"The following Assignments have a subject that the teacher does not have: {string.Join(", ", data.Select(a => a.TeacherString))}.";
+                },
+                ErrorType.Warning);
+            lesson_missing.BindCollection(Assignments);
+            lesson_missing.BindCollection(Subjects);
+
+            ErrorContainer insuf_lesson_slots = new ErrorContainer((e) =>
+            {
+                IEnumerable<Lesson> errors = Assignments.Where(a => a.Lesson.LessonsPerCycle <
+                a.Lesson.Assignments.Where(a2 => (a2.Teacher ?? this) != this).Sum(a2 => a2.LessonCount) + a.LessonCount
+                ).Select(a => a.Lesson);
+                e.Data = errors;
+                return errors.Any();
+            },
+                (e) =>
+                {
+                    IEnumerable<Lesson> errors = (IEnumerable<Lesson>)e.Data;
+                    return $"The following lessons happen more frequently per cycle than has been assigned: {GenericHelpers.FormatEnumerable(errors)}.";
+                },
+                ErrorType.Warning);
+            insuf_lesson_slots.BindCollection(Assignments);
+
+            errorValidations = new List<ErrorContainer>()
+            {
+                no_periods, insuf_lesson_slots, insuf_periods, lesson_missing
+            };
         }
         public ObservableCollection<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollection<TimetableSlot>();
-        public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>("Teachers");
+        public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>(nameof(Subject.Teachers));
         public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
         private int maxppc = TimetableStructure.TotalSchedulable;
         public int AvailablePeriods => TimetableStructure.TotalSchedulable - UnavailablePeriods.Count;
@@ -32,7 +82,7 @@ namespace TimetablingWPF
                 if (value != maxppc)
                 {
                     maxppc = value;
-                    NotifyPropertyChanged("MaxPeriodsPerCycle");
+                    NotifyPropertyChanged(nameof(MaxPeriodsPerCycle));
                 }
             }
         }
@@ -86,5 +136,7 @@ namespace TimetablingWPF
                 assignment.Lesson.Assignments.Remove(assignment);
             }
         }
+        private readonly IList<ErrorContainer> errorValidations;
+        public override IList<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

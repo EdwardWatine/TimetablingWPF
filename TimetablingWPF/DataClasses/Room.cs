@@ -18,9 +18,9 @@ namespace TimetablingWPF
         static Room()
         {
             Type type = typeof(Room);
-            RegisterProperty(type, "Quantity");
-            RegisterProperty(type, "Critical");
-            RegisterProperty(type, "Groups");
+            RegisterProperty(type, nameof(Quantity));
+            RegisterProperty(type, nameof(Critical));
+            RegisterProperty(type, nameof(Groups));
         }
         private int _quantity;
         public int Quantity
@@ -31,7 +31,7 @@ namespace TimetablingWPF
                 if (value != _quantity)
                 {
                     _quantity = value;
-                    NotifyPropertyChanged("Quantity");
+                    NotifyPropertyChanged(nameof(Quantity));
                 }
             }
         }
@@ -44,10 +44,12 @@ namespace TimetablingWPF
                 if (value != _critical)
                 {
                     _critical = value;
-                    NotifyPropertyChanged("Critical");
+                    NotifyPropertyChanged(nameof(Critical));
                 }
             }
         }
-        public RelationalCollection<Group, Room> Groups { get; private set; } = new RelationalCollection<Group, Room>("Rooms");
+        public RelationalCollection<Group, Room> Groups { get; private set; } = new RelationalCollection<Group, Room>(nameof(Group.Rooms));
+        private readonly IList<ErrorContainer> errorValidations = new List<ErrorContainer>();
+        public override IList<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

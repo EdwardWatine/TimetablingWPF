@@ -52,7 +52,7 @@ namespace TimetablingWPF
                 ilAssignments.ListenToCollection(OriginalLesson.Assignments);
             }
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Lesson");
-            HAS_NO_SUBJECT = new ErrorContainer(ErrManager, (e) => cmbxSubject.SelectedItem == null, (e) => "No subject has been selected.", ErrorType.Error, false);
+            HAS_NO_SUBJECT = new ErrorContainer((e) => cmbxSubject.SelectedItem == null, (e) => "No subject has been selected.", ErrorType.Error);
         }
         private readonly Lesson Lesson;
         private readonly Lesson OriginalLesson;

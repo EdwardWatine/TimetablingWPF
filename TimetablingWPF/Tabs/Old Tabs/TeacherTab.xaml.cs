@@ -47,24 +47,23 @@ namespace TimetablingWPF
 
             HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
 
-            HAS_NO_PERIODS = new ErrorContainer(ErrManager, (e) => Teacher.MaxPeriodsPerCycle == 0,
-                (e) => "Teacher has no free periods.", ErrorType.Warning);
+            HAS_NO_PERIODS = new ErrorContainer((e) => Teacher.MaxPeriodsPerCycle == 0, (e) => "Teacher has no free periods.",
+                ErrorType.Warning);
             HAS_NO_PERIODS.BindProperty(Teacher, "MaxPeriodsPerCycle");
 
-            NOT_ENOUGH_PERIODS = new ErrorContainer(ErrManager,
-                (e) => 
+            NOT_ENOUGH_PERIODS = new ErrorContainer((e) =>
                 {
                     int assigned = Teacher.Assignments.Sum(x => x.LessonCount);
                     e.Data = assigned;
                     return Teacher.MaxPeriodsPerCycle < assigned;
                 },
                 (e) => $"Teacher has fewer free periods ({Teacher.MaxPeriodsPerCycle}) than assigned periods " +
-                $"({e.Data}).", ErrorType.Error);
+                $"({e.Data}).",
+                ErrorType.Error);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.UnavailablePeriods);
             NOT_ENOUGH_PERIODS.BindCollection(Teacher.Assignments);
 
-            SUBJECT_NO_ASSIGNMENT = new ErrorContainer(ErrManager,
-                (e) =>
+            SUBJECT_NO_ASSIGNMENT = new ErrorContainer((e) =>
                 {
                     IEnumerable<Subject> subjectMismatches = Teacher.Subjects.Except(Teacher.Assignments.Select(a => a.Lesson.Subject));
                     e.Data = subjectMismatches;
@@ -74,12 +73,12 @@ namespace TimetablingWPF
                 {
                     IEnumerable<Subject> data = (IEnumerable<Subject>)e.Data;
                     return $"The following Subjects have no assignments: {FormatEnumerable(data)}.";
-                }, ErrorType.Warning);
+                },
+                ErrorType.Warning);
             SUBJECT_NO_ASSIGNMENT.BindCollection(Teacher.Assignments);
             SUBJECT_NO_ASSIGNMENT.BindCollection(Teacher.Subjects);
 
-            ASSIGNMENT_NO_SUBJECT = new ErrorContainer(ErrManager,
-                (e) =>
+            ASSIGNMENT_NO_SUBJECT = new ErrorContainer((e) =>
                 {
                     IEnumerable<Assignment> assignmentMismatches = Teacher.Assignments.Where(a => !Teacher.Subjects.Contains(a.Lesson.Subject));
                     e.Data = assignmentMismatches;
@@ -89,12 +88,12 @@ namespace TimetablingWPF
                 {
                     IEnumerable<Assignment> data = (IEnumerable<Assignment>)e.Data;
                     return $"The following Assignments have a subject that the teacher does not have: {string.Join(", ", data.Select(a => a.TeacherString))}.";
-                }, ErrorType.Warning);
+                },
+                ErrorType.Warning);
             ASSIGNMENT_NO_SUBJECT.BindCollection(Teacher.Assignments);
             ASSIGNMENT_NO_SUBJECT.BindCollection(Teacher.Subjects);
 
-            NOT_ENOUGH_FORM_SLOTS = new ErrorContainer(ErrManager,
-                (e) =>
+            NOT_ENOUGH_FORM_SLOTS = new ErrorContainer((e) =>
                 {
                     IEnumerable<Lesson> errors = Teacher.Assignments.Where(a => a.Lesson.LessonsPerCycle <
                     a.Lesson.Assignments.Where(a2 => (a2.Teacher ?? Teacher) != Teacher).Sum(a2 => a2.LessonCount) + a.LessonCount
@@ -106,7 +105,8 @@ namespace TimetablingWPF
                 {
                     IEnumerable<Lesson> errors = (IEnumerable<Lesson>)e.Data;
                     return $"The following lessons have more assignments than have been allocated to it: {FormatEnumerable(errors)}.";
-                }, ErrorType.Error);
+                },
+                ErrorType.Error);
             NOT_ENOUGH_FORM_SLOTS.BindCollection(Teacher.Assignments);
 
             foreach (Assignment assignment in Teacher.Assignments)

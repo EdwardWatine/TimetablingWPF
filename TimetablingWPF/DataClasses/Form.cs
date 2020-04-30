@@ -23,6 +23,14 @@ namespace TimetablingWPF
             RegisterProperty(type, "Lessons");
             RegisterProperty(type, "YearGroup");
         }
+        public Form()
+        {
+            ErrorContainer no_year = new ErrorContainer(e => YearGroup == null, e => "No year group has been assigned", ErrorType.Warning);
+            errorValidations = new List<ErrorContainer>()
+            {
+                no_year
+            };
+        }
         public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");
         private Year _year;
         public Year YearGroup
@@ -35,9 +43,12 @@ namespace TimetablingWPF
                     _year?.Forms.Remove(this);
                     value.Forms.Add(this);
                     _year = value;
-                    NotifyPropertyChanged("YearGroup");
+                    NotifyPropertyChanged(nameof(YearGroup));
                 }
             }
         }
+
+        private readonly IList<ErrorContainer> errorValidations;
+        public override IList<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

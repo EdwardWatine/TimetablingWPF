@@ -51,7 +51,7 @@ namespace TimetablingWPF
             {
                 if (value != _year)
                 {
-                    NotifyPropertyChanged("Year");
+                    NotifyPropertyChanged(nameof(Year));
                     _year = value;
                 }
             }

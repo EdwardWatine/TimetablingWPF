@@ -64,8 +64,8 @@ namespace TimetablingWPF
 
         public static ErrorContainer GenerateNameError(ErrorManager em, TextBox box, string type)
         {
-            ErrorContainer ec = new ErrorContainer(em, (e) => string.IsNullOrWhiteSpace(box.Text),
-                (e) => $"{type} has no name.", ErrorType.Error, false);
+            ErrorContainer ec = new ErrorContainer((e) => string.IsNullOrWhiteSpace(box.Text), (e) => $"{type} has no name.",
+                ErrorType.Error);
             box.TextChanged += delegate (object sender, TextChangedEventArgs e) { ec.UpdateError(); };
             return ec;
         }

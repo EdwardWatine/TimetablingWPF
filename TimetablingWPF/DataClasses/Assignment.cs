@@ -124,5 +124,6 @@ namespace TimetablingWPF
         {
             return $"{Teacher} - {Lesson} ({LessonCount})";
         }
+        public int TotalPeriods => LessonCount * Lesson.LessonLength;
     }
 }

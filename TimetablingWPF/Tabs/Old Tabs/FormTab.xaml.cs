@@ -42,7 +42,7 @@ namespace TimetablingWPF
             ilLessons.ItemsSource = Form.Lessons;
             if (commandType != CommandType.@new) ilLessons.ListenToCollection(OriginalForm.Lessons);
             HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Form");
-            HAS_NO_YEAR = new ErrorContainer(ErrManager, (e) => cmbxYear.SelectedItem == null, (e) => "No year group has been selected.", ErrorType.Warning, false);
+            HAS_NO_YEAR = new ErrorContainer((e) => cmbxYear.SelectedItem == null, (e) => "No year group has been selected.", ErrorType.Warning);
             cmbxYear.comboBox.SelectionChanged += delegate (object o, SelectionChangedEventArgs e) { HAS_NO_YEAR.UpdateError(); };
             //Errors
         }
