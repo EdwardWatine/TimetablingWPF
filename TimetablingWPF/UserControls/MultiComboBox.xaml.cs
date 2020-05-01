@@ -120,7 +120,7 @@ namespace TimetablingWPF
                 view.CustomSort = null;
                 return;
             }
-            view.Filter = DataHelpers.GenerateNameFilter(target, o => o.ToString());
+            view.Filter = DataHelpers.GenerateDefaultNameFilter(target);
             SortingComparer.Filter = target;
             view.CustomSort = SortingComparer;
             UpdateStatusBox();

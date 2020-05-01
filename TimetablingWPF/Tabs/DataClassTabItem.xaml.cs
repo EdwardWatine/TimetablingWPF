@@ -195,7 +195,7 @@ namespace TimetablingWPF
                 return;
             }
 
-            data.Filter = DataHelpers.GenerateNameFilter(nameFilter);
+            data.Filter = DataHelpers.GenerateDefaultNameFilter(nameFilter);
             FilterComparer.Filter = nameFilter;
             data.CustomSort = FilterComparer;
         }

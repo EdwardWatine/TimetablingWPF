@@ -42,11 +42,11 @@ namespace TimetablingWPF
         {
             return new ItemTab((BaseDataClass)item, commandType);
         }
-        public static Predicate<object> GenerateNameFilter(string nameFilter)
+        public static Predicate<object> GenerateDefaultNameFilter(string nameFilter)
         {
             return new Predicate<object>(o =>
             {
-                string name = ((BaseDataClass)o).Name.RemoveWhitespace().ToUpperInvariant();
+                string name = o.ToString().RemoveWhitespace().ToUpperInvariant();
                 bool contains = name.Contains(nameFilter);
                 if (nameFilter.Length < name.Length)
                 {

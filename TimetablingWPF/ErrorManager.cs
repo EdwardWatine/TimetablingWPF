@@ -65,15 +65,15 @@ namespace TimetablingWPF
         private readonly Func<ErrorData, string> MessageFunc;
         private readonly Func<ErrorData, bool> ErrorFunc;
         private ErrorData errorData;
-        private bool state;
+        private bool state = false;
         public bool ErrorState { get => state;
             private set
             {
                 if (state ^ value)
                 {
+                    state = value;
                     RaiseStateChanged();
                 }
-                state = value;
             }
         }
     }

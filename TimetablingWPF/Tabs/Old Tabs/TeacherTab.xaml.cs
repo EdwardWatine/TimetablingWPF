@@ -45,7 +45,7 @@ namespace TimetablingWPF
             iupdownMax.BindValue(Teacher, "MaxPeriodsPerCycle");
             iupdownMax.Maximum = TimetableStructure.TotalSchedulable;
 
-            HAS_NO_NAME = GenerateNameError(ErrManager, txName, "Teacher");
+            HAS_NO_NAME = GenerateNameError(txName, "Teacher");
 
             HAS_NO_PERIODS = new ErrorContainer((e) => Teacher.MaxPeriodsPerCycle == 0, (e) => "Teacher has no free periods.",
                 ErrorType.Warning);

@@ -42,7 +42,7 @@ namespace TimetablingWPF
             cmbxTeachers.ItemsSource = GetDataContainer().Teachers;
             //Errors
 
-            HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Subject");
+            HAS_NO_NAME = GenericHelpers.GenerateNameError(txName, "Subject");
             ilGroups.ItemsSource = Subject.Groups;
             ilTeachers.ItemsSource = Subject.Teachers;
             if (commandType != CommandType.@new)

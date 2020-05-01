@@ -49,7 +49,7 @@ namespace TimetablingWPF
             }
             
 
-            HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Group");
+            HAS_NO_NAME = GenericHelpers.GenerateNameError(txName, "Group");
         }
 
         private void SubjectButtonClick(object sender, RoutedEventArgs e)

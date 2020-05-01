@@ -62,7 +62,7 @@ namespace TimetablingWPF
             return string.Join(", ", enumerable);
         }
 
-        public static ErrorContainer GenerateNameError(ErrorManager em, TextBox box, string type)
+        public static ErrorContainer GenerateNameError(TextBox box, string type)
         {
             ErrorContainer ec = new ErrorContainer((e) => string.IsNullOrWhiteSpace(box.Text), (e) => $"{type} has no name.",
                 ErrorType.Error);

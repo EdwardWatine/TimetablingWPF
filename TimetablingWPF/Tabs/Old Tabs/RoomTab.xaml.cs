@@ -42,7 +42,7 @@ namespace TimetablingWPF
             ilGroups.ItemsSource = Room.Groups;
             if (commandType != CommandType.@new) ilGroups.ListenToCollection(OriginalRoom.Groups);
 
-            HAS_NO_NAME = GenericHelpers.GenerateNameError(ErrManager, txName, "Room");
+            HAS_NO_NAME = GenericHelpers.GenerateNameError(txName, "Room");
         }
 
         private void GroupButtonClick(object sender, RoutedEventArgs e)

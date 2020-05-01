@@ -251,7 +251,11 @@ namespace TimetablingWPF
                 }
                 throw new InvalidOperationException($"Property {prop.Alias} has a type {prop.Type} which is not supported by the UI");
             }
-
+            ErrManager.AddError(GenericHelpers.GenerateNameError(txName, item_type.Name));
+            foreach (ErrorContainer error in Item.ErrorValidations)
+            {
+                ErrManager.AddError(error);
+            }
         }
 
         private readonly ErrorManager ErrManager;
