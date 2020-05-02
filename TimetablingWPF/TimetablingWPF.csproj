@@ -147,7 +147,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataClasses\CustomPropertyInfo.cs" />
-    <Compile Include="InformationWindow.xaml.cs">
+    <Compile Include="GeneralWindows\InformationWindow.xaml.cs">
       <DependentUpon>InformationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BDCComparer.cs" />
@@ -157,8 +157,8 @@
     <Compile Include="UserControls\MultiComboBox.xaml.cs">
       <DependentUpon>MultiComboBox.xaml</DependentUpon>
     </Compile>
-    <Compile Include="WindowBase.cs" />
-    <Compile Include="YearWindow.xaml.cs">
+    <Compile Include="GeneralWindows\WindowBase.cs" />
+    <Compile Include="GeneralWindows\YearWindow.xaml.cs">
       <DependentUpon>YearWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataClasses\DataContainer.cs" />
@@ -182,12 +182,12 @@
     <Compile Include="DataClasses\Room.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />
-    <Compile Include="ErrorManager.cs" />
+    <Compile Include="DataClasses\ErrorManager.cs" />
     <Compile Include="Tabs\DataClassTabItem.xaml.cs">
       <DependentUpon>DataClassTabItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\VisualHelpers.cs" />
-    <Compile Include="Settings.cs" />
+    <Compile Include="DataClasses\Settings.cs" />
     <Compile Include="StartWindow.xaml.cs">
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
@@ -231,7 +231,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="YearWindow.xaml">
+    <Page Include="GeneralWindows\YearWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -263,7 +263,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="InformationWindow.xaml">
+    <Page Include="GeneralWindows\InformationWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

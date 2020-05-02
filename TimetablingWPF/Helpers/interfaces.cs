@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace TimetablingWPF
 {
@@ -16,12 +17,17 @@ namespace TimetablingWPF
     {
         object Parent { get; set; }
         string OtherSetProperty { get; set; }
-    };
+    }
 
     public interface IFreezable
     {
         bool Frozen { get; }
         void Freeze();
         void Unfreeze();
+    }
+    public interface ISearchParameter
+    {
+        UIElement GenerateUI();
+        bool Search();
     }
 }
