@@ -51,6 +51,7 @@ namespace TimetablingWPF
             }
             private bool del;
             public Year Year { get; set; }
+            public EditableText Parent { get; set; }
         }
         public YearWindow()
         {
@@ -90,10 +91,14 @@ namespace TimetablingWPF
                 SelectedChanged(null, null);
             }
         }
+        private void EditClick(object sender, RoutedEventArgs e)
+        {
+            ((YearData)lbMain.SelectedItem).Parent.Focus();
+        }
         private void CloseClick(object sender, RoutedEventArgs e)
         {
             if (!YearList.Any(yd => !yd.Year.Committed || yd.Deleted) ||
-                VisualHelpers.ShowWarningBox("Any changes you have made will not be saved. Continue?") == MessageBoxResult.Yes)
+                VisualHelpers.ShowWarningBox("Any changes you have made will not be saved. Continue?") == MessageBoxResult.OK)
             {
                 Close();
             }
@@ -108,7 +113,7 @@ namespace TimetablingWPF
                     if (!flag && data.Year.Forms.Count > 0)
                     {
                         if (VisualHelpers.ShowWarningBox("Some year groups have forms associated with them. "+
-                            "Removing the year group will mean these form will no longer have a year group associated with them. Continue?") != MessageBoxResult.Yes)
+                            "Removing the year group will mean these form will no longer have a year group associated with them. Continue?") != MessageBoxResult.OK)
                         {
                             return;
                         }
@@ -123,6 +128,8 @@ namespace TimetablingWPF
         }
         private void YearLoaded(object sender, RoutedEventArgs e)
         {
+            EditableText parent = (EditableText)sender;
+            ((YearData)parent.DataContext).Parent = parent;
             if (focusFlag)
             {
                 ((EditableText)sender).Focus();

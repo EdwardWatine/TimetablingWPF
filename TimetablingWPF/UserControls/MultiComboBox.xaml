@@ -17,9 +17,9 @@
             </Setter>
         </Style>
     </UserControl.Resources>
-    <StackPanel Orientation="Vertical" Focusable="False">
-        <Border BorderThickness="1" BorderBrush="#000">
-            <Grid Width="{Binding Width, ElementName=parent}" Height="{Binding Height, ElementName=parent}" Name="gdMain" Background="#FFF">
+    <StackPanel Orientation="Vertical">
+        <Border BorderThickness="1" BorderBrush="#000" Margin="0,0,0,-5">
+            <Grid Width="{Binding Width, ElementName=parent}" Height="{Binding Height, ElementName=parent}" Background="#FFF">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="auto"/>
@@ -28,11 +28,13 @@
                     <TextBox Name="tbMain" BorderThickness="0" Width="{Binding ElementName=bdparent, Path=ActualWidth}"  VerticalContentAlignment="Center"/>
                 </Border>
                 <Border BorderThickness="1, 0, 0, 0" BorderBrush="#000"  Grid.Column="1">
-                    <Image Source="{StaticResource ExpandIcon}" Height="{Binding Height, ElementName=gdMain}" Margin="1, 0, 3, 0"/>
+                    <Button BorderThickness="0" Margin="0, 0, 2, 0" Name="btFilter" Click="FilterClick">
+                        <Image Source="{StaticResource FilterIcon}"/>
+                    </Button>
                 </Border>
             </Grid>
         </Border>
-        <Popup AllowsTransparency="True" PopupAnimation="Scroll" PlacementTarget="{Binding ElementName=gdMain}" Name="popup" StaysOpen="True" Focusable="True">
+        <Popup AllowsTransparency="True" PopupAnimation="Scroll" Name="popup" StaysOpen="True" Focusable="True">
             <Border BorderThickness="1" BorderBrush="#000" Background="#FFF" Padding="5, 0">
                 <StackPanel Orientation="Vertical">
                     <ListBox x:Name="lbSelected" BorderThickness="0">

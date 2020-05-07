@@ -146,13 +146,25 @@ namespace TimetablingWPF
             throw new NotImplementedException();
         }
     }
-    public class InverseBool : IMultiValueConverter
+    public class InverseBoolMulti : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            return values.Cast<bool>().All(x => !x);
+            return !values.Cast<bool>().Any(x => x);
         }
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class InverseBool : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return !(bool)value;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

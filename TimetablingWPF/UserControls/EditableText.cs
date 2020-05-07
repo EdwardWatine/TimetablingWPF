@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using Xceed.Wpf.Toolkit.Core.Converters;
 
 namespace TimetablingWPF
 {
@@ -48,13 +51,12 @@ namespace TimetablingWPF
             };
             PreviewMouseLeftButtonDown += delegate (object sender, MouseButtonEventArgs e)
             {
-                if (!IsFocused)
-                {
-                    Focus();
-                    e.Handled = true;
-                }
+                Focus();
+                e.Handled = true;
             };
             BorderThickness = new Thickness(0);
+            Background = GenericResources.TRANSPARENT;
+            CaretBrush = GenericResources.BLACK;
             //HorizontalAlignment = HorizontalAlignment.Center;
         }
     }

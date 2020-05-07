@@ -10,6 +10,7 @@
     <Window.Resources>
         <local:BoolToVisibility x:Key="boolToVis"/>
         <local:NullToBool x:Key="nullToBool"/>
+        <local:InverseBool x:Key="invBool"/>
         <local:MultiplyConverter x:Key="multiC"/>
     </Window.Resources>
     <Grid>
@@ -28,7 +29,7 @@
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="auto"/>
                             </Grid.ColumnDefinitions>
-                            <local:EditableText x:Name="etMain" Text="{Binding Name}" Loaded="YearLoaded"/>
+                            <local:EditableText x:Name="etMain" Text="{Binding Name}" Loaded="YearLoaded" IsHitTestVisible="{Binding Deleted, Converter={StaticResource invBool}}"/>
                             <Rectangle Height="3" Fill="Red" Opacity="0.5" VerticalAlignment="Center" Name="RectStrikethrough" HorizontalAlignment="Left">
                                 <Rectangle.Tag>
                                     <sys:Double>0.0</sys:Double>
@@ -68,8 +69,9 @@
         <DockPanel LastChildFill="False" VerticalAlignment="Stretch" Grid.Column="1">
             <Button DockPanel.Dock="Top" Content="Add" Click="AddYear" Margin="10" VerticalAlignment="Center"/>
             <Button DockPanel.Dock="Top" Name="btDelete" Content="Remove" Click="ToggleDelete" Margin="10" VerticalAlignment="Center" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullToBool}}"/>
+            <Button DockPanel.Dock="Top" Content="Edit" Click="EditClick" Margin="10" VerticalAlignment="Center" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullToBool}}"/>
             <Button DockPanel.Dock="Bottom" Content="Close" Click="CloseClick" Margin="10" VerticalAlignment="Bottom"/>
-            <Button DockPanel.Dock="Bottom" Content="Save &amp; Close" Click="SaveClick" Margin="10" VerticalAlignment="Bottom"/>
+            <Button DockPanel.Dock="Bottom" Content="Save &amp; Close" Click="SaveClick" Margin="10" VerticalAlignment="Bottom" Padding="2,0"/>
         </DockPanel>
     </Grid>
 </Window>

@@ -9,7 +9,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
-using static TimetablingWPF.DataHelpers;
+using static TimetablingWPF.GenericResources;
 
 namespace TimetablingWPF
 {
@@ -32,7 +32,7 @@ namespace TimetablingWPF
                 gridWeek.Children.Add(SetInternalBorder(new TextBlock()
                 {
                     Text = structureWeek.Name,
-                    Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
+                    Background = GenericResources.WHITE,
                     Padding = new Thickness(2),
                     TextAlignment = TextAlignment.Center
                 })
@@ -51,7 +51,7 @@ namespace TimetablingWPF
                     TextBlock dayHeading = new TextBlock()
                     {
                         Text = structureWeek.DayNames[day],
-                        Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
+                        Background = GenericResources.WHITE,
                         Padding = new Thickness(2),
                         TextAlignment = TextAlignment.Center
                     };
@@ -71,7 +71,7 @@ namespace TimetablingWPF
                     TextBlock periodHeading = new TextBlock()
                     {
                         Text = structureWeek.PeriodNames[period],
-                        Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
+                        Background = GenericResources.WHITE,
                         Padding = new Thickness(2)
                     };
                     Border periodBorder = SetInternalBorder(periodHeading);
@@ -85,9 +85,7 @@ namespace TimetablingWPF
                         bool isUnavailable = slots.Contains(slot);
                         Rectangle rect = new Rectangle()
                         {
-                            Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(schedulable ?
-                            (isUnavailable ? "#FF0000" : "#00FF00") :
-                            "#A8A8A8"),
+                            Fill = schedulable ? (isUnavailable ? RED : GREEN) : A8GRAY,
                             Tag = schedulable ? Tuple.Create(slot, !isUnavailable) : null
                         };
                         if (schedulable && leftClickHandler != null)
@@ -146,14 +144,29 @@ namespace TimetablingWPF
             }
             return sp;
         }
+        /// <summary>
+        /// Displays an OK error box with the specified message [and title]
+        /// </summary>
+        /// <param name="msg">The message to show</param>
+        /// <param name="title">Optional title to show</param>
         public static void ShowErrorBox(string msg, string title = "Error")
         {
             MessageBox.Show(msg, title, MessageBoxButton.OK, MessageBoxImage.Error);
         }
+        /// <summary>
+        /// Shows an OK/Cancel warning box with the specified message [and title]
+        /// </summary>
+        /// <param name="msg">The message to show</param>
+        /// <param name="title">Optional title to show</param>
+        /// <returns></returns>
         public static MessageBoxResult ShowWarningBox(string msg, string title = "Warning")
         {
             return MessageBox.Show(msg, title, MessageBoxButton.OKCancel, MessageBoxImage.Warning, MessageBoxResult.Cancel);
         }
+        /// <summary>
+        /// Shows a Yes/No/Cancel saving file warning box
+        /// </summary>
+        /// <returns></returns>
         public static MessageBoxResult ShowUnsavedBox()
         {
             return MessageBox.Show("Your data has not been saved. Save the file?", "Unsaved Data", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation);

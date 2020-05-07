@@ -246,7 +246,7 @@ namespace TimetablingWPF
             SetClosedText();
             tbMain.TextChanged += BoxTextChanged;
             tbMain.IsKeyboardFocusedChanged += BoxFocusChanged;
-            gdMain.PreviewMouseDown += delegate (object sender, MouseButtonEventArgs e)
+            tbMain.PreviewMouseDown += delegate (object sender, MouseButtonEventArgs e)
             {
                 Keyboard.Focus(tbMain);
                 e.Handled = true;
@@ -261,5 +261,8 @@ namespace TimetablingWPF
             ItemString = itemString;
         }
 
+        private void FilterClick(object sender, RoutedEventArgs e)
+        {
+        }
     }
 }

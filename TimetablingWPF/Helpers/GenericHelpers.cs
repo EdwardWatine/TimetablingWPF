@@ -10,11 +10,16 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace TimetablingWPF
 {
     public static class GenericHelpers
     {
+        public static SolidColorBrush FromRGBA(byte R, byte G, byte B, byte A = 255)
+        {
+            return new SolidColorBrush(Color.FromArgb(A, R, G, B));
+        }
         public static NotifyCollectionChangedEventHandler GenerateLinkHandler(IList list)
         {
             return new NotifyCollectionChangedEventHandler((sender, e) =>

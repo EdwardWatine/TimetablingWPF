@@ -283,7 +283,7 @@ namespace TimetablingWPF
             Rectangle rect = (Rectangle)sender;
             Tuple<TimetableSlot, bool> tag = (Tuple<TimetableSlot, bool>)rect.Tag;
             rect.Tag = Tuple.Create(tag.Item1, !tag.Item2);
-            rect.Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(tag.Item2 ? "#FF0000" : "#00FF00");
+            rect.Fill = tag.Item2 ? GenericResources.RED : GenericResources.GREEN;
             if (tag.Item2)
             {
                 teacher.UnavailablePeriods.Add(tag.Item1);

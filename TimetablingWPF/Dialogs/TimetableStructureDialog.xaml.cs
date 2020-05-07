@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static TimetablingWPF.VisualHelpers;
 using TimetablingWPF.StructureClasses;
+using static TimetablingWPF.GenericResources;
 
 namespace TimetablingWPF
 {
@@ -61,7 +62,7 @@ namespace TimetablingWPF
             Border weekHeader = SetInternalBorder(new EditableText() // create the week name
             {
                 Text = structureWeek.Name,
-                Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
+                Background = GenericResources.WHITE,
                 Padding = new Thickness(2),
                 TextAlignment = TextAlignment.Center
             });
@@ -79,7 +80,7 @@ namespace TimetablingWPF
                 EditableText dayHeading = new EditableText() // add the day name
                 {
                     Text = structureWeek.DayNames[day],
-                    Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
+                    Background = GenericResources.WHITE,
                     Padding = new Thickness(2),
                     Tag = gridWeek
                 };
@@ -97,7 +98,7 @@ namespace TimetablingWPF
                 EditableText periodHeading = new EditableText() // add the period names
                 {
                     Text = structureWeek.PeriodNames[period],
-                    Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
+                    Background = WHITE,
                     Padding = new Thickness(2),
                     Tag = gridWeek
                 };
@@ -109,7 +110,7 @@ namespace TimetablingWPF
                     bool schedulable = structureWeek.PeriodIsSchedulable(day, period);
                     Rectangle rect = new Rectangle() // add the individual period
                     {
-                        Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(schedulable ? "#00FF00" : "#A8A8A8"),
+                        Fill = schedulable ? GREEN : A8GRAY,
                         Tag = schedulable
                     };
                     rect.MouseLeftButtonDown += RectLeftClick;
@@ -192,7 +193,7 @@ namespace TimetablingWPF
         {
             Rectangle rect = (Rectangle)sender;
             bool current_availability = !(bool)rect.Tag;
-            rect.Fill = (SolidColorBrush)new BrushConverter().ConvertFromString(current_availability ? "#00FF00" : "#A8A8A8");
+            rect.Fill = current_availability ? GREEN : A8GRAY;
             rect.Tag = current_availability;
         }
         private void DayClick(object sender, MouseButtonEventArgs e)
@@ -270,7 +271,7 @@ namespace TimetablingWPF
             EditableText periodHeading = new EditableText()
             {
                 Text = "<New Period>",
-                Background = (SolidColorBrush)new BrushConverter().ConvertFromString("#FFFFFF"),
+                Background = WHITE,
                 Padding = new Thickness(2),
                 Tag = grid
             };
@@ -283,7 +284,7 @@ namespace TimetablingWPF
             {
                 Rectangle rect = new Rectangle()
                 {
-                    Fill = (SolidColorBrush)new BrushConverter().ConvertFromString("#00FF00"),
+                    Fill = GREEN,
                     Tag = true
                 };
                 rect.MouseLeftButtonDown += RectLeftClick;
