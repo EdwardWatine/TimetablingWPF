@@ -50,6 +50,6 @@ namespace TimetablingWPF
         }
         public RelationalCollection<Group, Room> Groups { get; private set; } = new RelationalCollection<Group, Room>(nameof(Group.Rooms));
         private readonly IList<ErrorContainer> errorValidations = new List<ErrorContainer>();
-        public override IList<ErrorContainer> ErrorValidations => errorValidations;
+        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

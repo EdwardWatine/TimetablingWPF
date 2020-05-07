@@ -35,7 +35,7 @@ namespace TimetablingWPF
         {
             Name = name;
         }
-        private bool Committed;
+        public bool Committed { get; private set; } = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public void NotifyPropertyChanged(string property)
@@ -61,10 +61,17 @@ namespace TimetablingWPF
         {
             if (!Committed)
             {
-                container = container ?? DataHelpers.GetDataContainer();
-                container.YearGroups.Add(this);
+                (container ?? DataHelpers.GetDataContainer()).YearGroups.Add(this);
                 Committed = true;
             }
+        }
+        public void Delete(DataContainer container = null)
+        {
+            foreach (Form form in Forms)
+            {
+                form.YearGroup = null;
+            }
+            (container ?? DataHelpers.GetDataContainer()).YearGroups.Remove(this);
         }
         public override string ToString()
         {

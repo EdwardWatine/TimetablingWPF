@@ -58,7 +58,7 @@ namespace TimetablingWPF
             {
                 string name = reader.ReadString();
                 Year year = new Year(name);
-                year.Commit();
+                year.Commit(data);
             }, reader);
             UpdateWorker("Teachers");
             LoadBDCEnum<Teacher>(t =>

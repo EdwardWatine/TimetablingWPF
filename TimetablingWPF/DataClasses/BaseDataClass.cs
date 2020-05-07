@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.IO;
+using TimetablingWPF.Searching;
 
 namespace TimetablingWPF
 {
@@ -59,20 +60,21 @@ namespace TimetablingWPF
         /// Holder for Name
         /// </summary>
         private string _name;
-        private bool Commited = false;
-        public const string Wildcard = "Any";
+        public bool Commited { get; private set; } = false;
         public bool Frozen { get; private set; } = false;
         public int StorageIndex { get; set; }
         public static Dictionary<Type, IList<CustomPropertyInfo>> ExposedProperties { get; } = new Dictionary<Type, IList<CustomPropertyInfo>>();
         protected static void RegisterProperty(Type declaringType, string property, string alias = null, Func<object, string> display = null)
         {
             if (property == null) throw new ArgumentNullException(nameof(property));
-            if (!ExposedProperties.TryGetValue(declaringType, out IList<CustomPropertyInfo> list))
-            {
-                list = new List<CustomPropertyInfo>();
-                ExposedProperties[declaringType] = list;
-            }
+            ExposedProperties.DefaultDictGet<Type, IList<CustomPropertyInfo>, List<CustomPropertyInfo>>(declaringType, out IList<CustomPropertyInfo> list);
             list.Add(new CustomPropertyInfo(declaringType, property, alias, display));
+        }
+        public static Dictionary<Type, IList<SearchBase>> SearchParameters { get; } = new Dictionary<Type, IList<SearchBase>>();
+        protected static void AddSearchParameter(Type declaringType, SearchBase searchParameter)
+        {
+            SearchParameters.DefaultDictGet<Type, IList<SearchBase>, List<SearchBase>>(declaringType, out IList<SearchBase> list);
+            list.Add(searchParameter);
         }
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.
@@ -196,6 +198,6 @@ namespace TimetablingWPF
         {
             return !(left == right);
         }
-        public abstract IList<ErrorContainer> ErrorValidations { get; }
+        public abstract IEnumerable<ErrorContainer> ErrorValidations { get; }
     }
 }

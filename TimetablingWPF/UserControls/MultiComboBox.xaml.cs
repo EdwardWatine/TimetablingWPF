@@ -24,10 +24,10 @@ namespace TimetablingWPF
     public partial class MultiComboBox : UserControl
     {
         public static readonly DependencyProperty ItemStringProperty =
-            DependencyProperty.Register("ItemString", typeof(string), typeof(PlaceholderComboBox));
+            DependencyProperty.Register("ItemString", typeof(string), typeof(MultiComboBox));
 
         public static readonly DependencyProperty ItemsSourceProperty =
-            DependencyProperty.Register("ItemsSource", typeof(IEnumerable), typeof(PlaceholderComboBox));
+            DependencyProperty.Register("ItemsSource", typeof(IList), typeof(MultiComboBox));
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only")]
         public IList ItemsSource
@@ -85,7 +85,7 @@ namespace TimetablingWPF
         {
             if (selectedItems.Count == 0)
             {
-                SetText($"Search for {ItemString.InsertArticle()}...");
+                SetText($"No {ItemString.Pluralize()} selected");
                 return;
             }
             if (selectedItems.Count == 1)
@@ -260,5 +260,6 @@ namespace TimetablingWPF
         {
             ItemString = itemString;
         }
+
     }
 }

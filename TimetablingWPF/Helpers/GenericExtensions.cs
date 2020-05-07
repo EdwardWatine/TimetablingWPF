@@ -95,5 +95,17 @@ namespace TimetablingWPF
         {
             return (e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || !ReferenceEquals(e.NewItems[0], e.OldItems[0]));
         }
+        public static void DefaultDictGet<TKey, TValue, TDefault>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value) where TDefault : TValue, new()
+        {
+            if (!dict.TryGetValue(key, out value))
+            {
+                value = new TDefault();
+                dict[key] = value;
+            }
+        }
+        public static void DefaultDictGet<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value) where TValue : new()
+        {
+            dict.DefaultDictGet<TKey, TValue, TValue>(key, out value);
+        }
     }
 }

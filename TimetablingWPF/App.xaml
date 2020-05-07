@@ -8,7 +8,6 @@
         <BitmapImage x:Key="FileIcon" UriSource="Media/FileIcon.png"/>
         <BitmapImage x:Key="FolderIcon" UriSource="Media/FolderIcon.png"/>
         <BitmapImage x:Key="NewFileImportIcon" UriSource="Media/NewFileImportIcon.png"/>
-        <BitmapImage x:Key="LeftArrowIcon" UriSource="Media/LeftArrowIcon.png"/>
         <BitmapImage x:Key="CrossIcon" UriSource="Media/CrossIcon.png"/>
         <BitmapImage x:Key="PlusIcon" UriSource="Media/PlusIcon.png"/>
         <BitmapImage x:Key="WarningIcon" UriSource="Media/WarningIcon.png"/>
@@ -21,7 +20,6 @@
         <BitmapImage x:Key="DownArrowIcon" UriSource="Media/DownArrowIcon.png"/>
         <BitmapImage x:Key="UpArrowIcon" UriSource="Media/UpArrowIcon.png"/>
         <BitmapImage x:Key="ExpandIcon" UriSource="Media/ExpandIcon.png"/>
-        <BitmapImage x:Key="CollapseIcon" UriSource="Media/Collapse.png"/>
         <BitmapImage x:Key="CheckIcon" UriSource="Media/CheckIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>

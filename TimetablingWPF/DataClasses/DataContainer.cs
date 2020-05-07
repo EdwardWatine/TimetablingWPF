@@ -18,6 +18,10 @@ namespace TimetablingWPF
         public InternalObservableCollection<Room> Rooms { get; } = new InternalObservableCollection<Room>();
         public InternalObservableCollection<Subject> Subjects { get; } = new InternalObservableCollection<Subject>();
         public InternalObservableCollection<Group> Groups { get; } = new InternalObservableCollection<Group>();
+        public static DataContainer GetCurrentContainer()
+        {
+            return DataHelpers.GetDataContainer();
+        }
         public bool Unsaved { get; private set; } = false;
         public DataContainer()
         {

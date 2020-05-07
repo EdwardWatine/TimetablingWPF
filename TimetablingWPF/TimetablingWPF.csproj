@@ -147,6 +147,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataClasses\CustomPropertyInfo.cs" />
+    <Compile Include="DataClasses\Searching\ListLogicModifier.cs" />
+    <Compile Include="DataClasses\Searching\ListSearch.cs" />
+    <Compile Include="DataClasses\Searching\SearchBase.cs" />
     <Compile Include="GeneralWindows\InformationWindow.xaml.cs">
       <DependentUpon>InformationWindow.xaml</DependentUpon>
     </Compile>
@@ -191,21 +194,6 @@
     <Compile Include="StartWindow.xaml.cs">
       <DependentUpon>StartWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Tabs\Old Tabs\LessonTab.xaml.cs">
-      <DependentUpon>LessonTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Old Tabs\FormTab.xaml.cs">
-      <DependentUpon>FormTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Old Tabs\RoomTab.xaml.cs">
-      <DependentUpon>RoomTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Old Tabs\SubjectTab.xaml.cs">
-      <DependentUpon>SubjectTab.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Tabs\Old Tabs\GroupTab.xaml.cs">
-      <DependentUpon>GroupTab.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Tabs\TabBase.cs" />
     <Compile Include="UserControls\ApplicationMenu.xaml.cs">
       <DependentUpon>ApplicationMenu.xaml</DependentUpon>
@@ -244,17 +232,10 @@
     <Resource Include="Media\UpArrowIcon.png" />
     <Resource Include="Media\ExpandIcon.png" />
     <Resource Include="Media\CheckIcon.png" />
-    <Content Include="UserControls\DoubleMenu.xaml.cs">
-      <DependentUpon>DoubleMenu.xaml</DependentUpon>
-    </Content>
-    <Compile Include="Tabs\Old Tabs\TeacherTab.xaml.cs">
-      <DependentUpon>TeacherTab.xaml</DependentUpon>
-    </Compile>
     <Resource Include="Media\ErrorIcon.png" />
     <Resource Include="Media\WarningIcon.png" />
     <Resource Include="Media\PlusIcon.png" />
     <Resource Include="Media\CrossIcon.png" />
-    <Resource Include="Media\LeftArrowIcon.png" />
     <Page Include="Dialogs\ImportDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -275,26 +256,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Tabs\Old Tabs\LessonTab.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Old Tabs\FormTab.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Old Tabs\RoomTab.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Old Tabs\SubjectTab.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Tabs\Old Tabs\GroupTab.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
     <Page Include="UserControls\ApplicationMenu.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -311,10 +272,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Content Include="UserControls\DoubleMenu.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Content>
     <Page Include="MainContent\MainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -335,10 +292,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Tabs\Old Tabs\TeacherTab.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

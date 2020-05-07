@@ -25,16 +25,12 @@ namespace TimetablingWPF
     {
         public App()
         {
-            ResourceKey rk = SystemParameters.FocusVisualStyleKey;
-            
             InitializeComponent();
             EventManager.RegisterClassHandler(typeof(FrameworkElement), UIElement.GotFocusEvent, new RoutedEventHandler((s, e) => ((FrameworkElement)s).FocusVisualStyle = null), true);
             Properties["APPLICATION_NAME"] = "Timetabler";
             Properties["CURRENT_FILE_PATH"] = null;
             Properties["USER_TYPES"] = new Type[] { typeof(Teacher), typeof(Subject), typeof(Lesson), typeof(Form), typeof(Group), typeof(Room) };
-            DataContainer data = new DataContainer();
-            Properties["CURRENT_DATA"] = data;
-            data.YearGroups.Add(new Year("8"));
+            Properties["CURRENT_DATA"] = new DataContainer();
             TimetableStructure.SetData(new List<TimetableStructureWeek>()
             {
                 new TimetableStructureWeek("A", DataHelpers.ShortenedDaysOfTheWeek,

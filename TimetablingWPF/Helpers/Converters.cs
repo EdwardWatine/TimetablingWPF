@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
+using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
 
 namespace TimetablingWPF
 {
@@ -35,6 +37,35 @@ namespace TimetablingWPF
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class MultiplyConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            double total = 1;
+            for (int i = 0; i < values.Length; i++)
+            {
+                total *= (double)values[i];
+            }
+            return total;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class NullToBool : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
@@ -154,6 +185,18 @@ namespace TimetablingWPF
         {
             Uri URI = (Uri)value;
             return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.LocalPath) : URI.LocalPath;
+        }
+        public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+    public class DebugConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Debugger.Break();
+            return value;
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

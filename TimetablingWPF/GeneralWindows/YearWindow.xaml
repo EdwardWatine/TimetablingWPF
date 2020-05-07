@@ -4,26 +4,72 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimetablingWPF"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d"
         Title="YearWindow" Height="400" Width="800">
+    <Window.Resources>
+        <local:BoolToVisibility x:Key="boolToVis"/>
+        <local:NullToBool x:Key="nullToBool"/>
+        <local:MultiplyConverter x:Key="multiC"/>
+    </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-            <ListBox Name="lbMain" SelectionMode="Single">
+            <ListBox Name="lbMain" SelectionMode="Single" HorizontalContentAlignment="Stretch">
                 <ListBox.ItemTemplate>
                     <DataTemplate>
-                        <local:EditableText x:Name="etYear" Text="{Binding Year, Mode=TwoWay}"/>
+                        <Grid HorizontalAlignment="Stretch">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                            </Grid.ColumnDefinitions>
+                            <local:EditableText x:Name="etMain" Text="{Binding Name}" Loaded="YearLoaded"/>
+                            <Rectangle Height="3" Fill="Red" Opacity="0.5" VerticalAlignment="Center" Name="RectStrikethrough" HorizontalAlignment="Left">
+                                <Rectangle.Tag>
+                                    <sys:Double>0.0</sys:Double>
+                                </Rectangle.Tag>
+                                <Rectangle.Width>
+                                    <MultiBinding Converter="{StaticResource multiC}">
+                                        <Binding ElementName="RectStrikethrough" Path="Tag"/>
+                                        <Binding ElementName="etMain" Path="ActualWidth"/>
+                                    </MultiBinding>
+                                </Rectangle.Width>
+                                <Rectangle.Style>
+                                    <Style>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Deleted}" Value="True">
+                                                <DataTrigger.EnterActions>
+                                                    <BeginStoryboard Name="strike">
+                                                        <Storyboard>
+                                                            <DoubleAnimation Storyboard.TargetProperty="Tag"
+                                                                From="0" To="1" 
+                                                                Duration="0:0:0.2" AccelerationRatio="0.3" DecelerationRatio="0.2"/>
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </DataTrigger.EnterActions>
+                                                <DataTrigger.ExitActions>
+                                                    <StopStoryboard BeginStoryboardName="strike"/>
+                                                </DataTrigger.ExitActions>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Rectangle.Style>
+                            </Rectangle>
+                        </Grid>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
         </ScrollViewer>
-        <StackPanel Orientation="Vertical" VerticalAlignment="Stretch" Grid.Column="1">
-            <Button Content="Add" Click="AddYear" Margin="10, 10, 10, 5" VerticalAlignment="Center"/>
-            <Button Content="Remove" Click="RemoveYear" Margin="10, 5, 10, 10" VerticalAlignment="Center"/>
-            <Button Content="Close" Click="CloseClick" Margin="10" VerticalAlignment="Bottom"/>
-        </StackPanel>
+        <DockPanel LastChildFill="False" VerticalAlignment="Stretch" Grid.Column="1">
+            <Button DockPanel.Dock="Top" Content="Add" Click="AddYear" Margin="10" VerticalAlignment="Center"/>
+            <Button DockPanel.Dock="Top" Name="btDelete" Content="Remove" Click="ToggleDelete" Margin="10" VerticalAlignment="Center" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullToBool}}"/>
+            <Button DockPanel.Dock="Bottom" Content="Close" Click="CloseClick" Margin="10" VerticalAlignment="Bottom"/>
+            <Button DockPanel.Dock="Bottom" Content="Save &amp; Close" Click="SaveClick" Margin="10" VerticalAlignment="Bottom"/>
+        </DockPanel>
     </Grid>
 </Window>

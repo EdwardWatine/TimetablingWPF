@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using TimetablingWPF.Searching;
 
 namespace TimetablingWPF
 {
@@ -14,6 +17,9 @@ namespace TimetablingWPF
             RegisterProperty(type, nameof(MaxPeriodsPerCycle), "Maximum periods per cycle", o => $"{o}/{TimetableStructure.TotalSchedulable}");
             RegisterProperty(type, nameof(Subjects));
             RegisterProperty(type, nameof(Assignments));
+            DataContainer current = DataContainer.GetCurrentContainer();
+            AddSearchParameter(type, new ListSearch<Teacher, Group>(t => t.Subjects.SelectMany(s => s.Groups), current.Groups, "group", "Teaches"));
+            AddSearchParameter(type, new ListSearch<Teacher, Year>(t => t.Assignments.SelectMany(a => a.Lesson.Forms.Select(f => f.YearGroup)), current.YearGroups, "year", "Teaches"));
         }
         public Teacher()
         {
@@ -136,7 +142,7 @@ namespace TimetablingWPF
                 assignment.Lesson.Assignments.Remove(assignment);
             }
         }
-        private readonly IList<ErrorContainer> errorValidations;
-        public override IList<ErrorContainer> ErrorValidations => errorValidations;
+        private readonly IEnumerable<ErrorContainer> errorValidations;
+        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

@@ -25,9 +25,4 @@ namespace TimetablingWPF
         void Freeze();
         void Unfreeze();
     }
-    public interface ISearchParameter
-    {
-        UIElement GenerateUI();
-        bool Search();
-    }
 }

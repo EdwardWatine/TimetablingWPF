@@ -244,7 +244,7 @@ namespace TimetablingWPF
                         Width = 150,
                         HorizontalAlignment = HorizontalAlignment.Left
                     };
-                    pcbox.comboBox.SetBinding(System.Windows.Controls.Primitives.Selector.SelectedItemProperty,
+                    pcbox.comboBox.SetBinding(PlaceholderComboBox.SelectedItemProperty,
                         new Binding(prop.PropertyInfo.Name) { Source = Item, Mode = BindingMode.TwoWay });
                     gdLeft.Insert(pcbox, -2, 1);
                     continue;

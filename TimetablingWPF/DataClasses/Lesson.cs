@@ -164,6 +164,6 @@ namespace TimetablingWPF
             }
         }
         private readonly IList<ErrorContainer> errorValidations;
-        public override IList<ErrorContainer> ErrorValidations => errorValidations;
+        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

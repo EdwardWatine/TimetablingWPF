@@ -19,7 +19,7 @@ namespace TimetablingWPF
         {
 
         };
-        public override IList<ErrorContainer> ErrorValidations => errorValidations;
+        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
 
     public class Group : BaseDataClass
@@ -36,6 +36,6 @@ namespace TimetablingWPF
         {
 
         };
-        public override IList<ErrorContainer> ErrorValidations => errorValidations;
+        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
 }
