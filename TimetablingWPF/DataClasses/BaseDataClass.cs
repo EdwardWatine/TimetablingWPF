@@ -13,7 +13,7 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.IO;
 using TimetablingWPF.Searching;
-using TimetablingWPF.Errors;
+using TimetablingWPF;
 
 namespace TimetablingWPF
 {

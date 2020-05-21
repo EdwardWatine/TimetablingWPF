@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace TimetablingWPF.Errors
+namespace TimetablingWPF
 {
     public enum ErrorType
     {

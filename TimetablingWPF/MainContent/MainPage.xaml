@@ -1,4 +1,4 @@
-﻿<Page x:Class="TimetablingWPF.TimetablingWPF.Errors.MainPage"
+﻿<Page x:Class="TimetablingWPF.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -11,7 +11,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="pack://application:,,,/Dragablz;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
-            <local:TimetablingWPF.Errors.InterTabClient x:Key="tabClient"/>
+            <local:InterTabClient x:Key="tabClient"/>
             <Style x:Key="TabItemStyle" TargetType="{x:Type dgbz:DragablzItem}">
                 <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
                 <Setter Property="Foreground" Value="Black"/>
@@ -230,7 +230,7 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <local:TimetablingWPF.Errors.ApplicationMenu/>
+        <local:ApplicationMenu/>
         <dgbz:TabablzControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch" ShowDefaultCloseButton="True" ItemContainerStyle="{StaticResource TabItemStyle}">
             <dgbz:TabablzControl.InterTabController>
                 <dgbz:InterTabController InterTabClient="{StaticResource tabClient}"/>

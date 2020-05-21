@@ -190,7 +190,7 @@
     <Compile Include="DataClasses\Room.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />
-    <Compile Include="DataClasses\ErrorManager.cs" />
+    <Compile Include="Helpers\ErrorManager.cs" />
     <Compile Include="Tabs\DataClassTabItem.xaml.cs">
       <DependentUpon>DataClassTabItem.xaml</DependentUpon>
     </Compile>

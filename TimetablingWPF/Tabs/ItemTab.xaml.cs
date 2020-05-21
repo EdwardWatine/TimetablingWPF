@@ -18,7 +18,7 @@ using static TimetablingWPF.VisualHelpers;
 using static TimetablingWPF.DataHelpers;
 using System.Globalization;
 using System.Collections.Specialized;
-using TimetablingWPF.Errors;
+using TimetablingWPF;
 
 namespace TimetablingWPF
 {

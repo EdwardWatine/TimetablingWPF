@@ -11,7 +11,7 @@ using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
 using System.IO;
-using TimetablingWPF.Errors;
+using TimetablingWPF;
 
 namespace TimetablingWPF
 {

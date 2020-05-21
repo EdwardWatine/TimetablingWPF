@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using TimetablingWPF.Errors;
+using TimetablingWPF;
+using System.Linq;
 
 namespace TimetablingWPF
 {
