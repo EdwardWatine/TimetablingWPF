@@ -1,4 +1,4 @@
-﻿<local:TabBase x:Class="TimetablingWPF.DataClassTabItem"
+﻿<local:TimetablingWPF.Errors.TabBase x:Class="TimetablingWPF.TimetablingWPF.Errors.DataClassTabItem"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -60,4 +60,4 @@
             </DataGrid.ContextMenu>
         </DataGrid>
     </StackPanel>
-</local:TabBase>
+</local:TimetablingWPF.Errors.TabBase>

@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.IO;
 using System.Reflection;
+using TimetablingWPF.Errors;
 
 namespace TimetablingWPF
 {
@@ -50,5 +51,17 @@ namespace TimetablingWPF
 
         private readonly IList<ErrorContainer> errorValidations;
         public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
+
+        public override void Save(BinaryWriter writer)
+        {
+            SaveParent(writer);
+            writer.Write(YearGroup.StorageIndex);
+        }
+
+        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        {
+            LoadParent(reader, version, container);
+            YearGroup = container.YearGroups[reader.ReadInt32()];
+        }
     }
 }

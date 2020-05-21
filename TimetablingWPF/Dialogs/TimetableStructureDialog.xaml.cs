@@ -347,7 +347,7 @@ namespace TimetablingWPF
                 weeks.Add(new TimetableStructureWeek(weekName, new List<string>(days), new List<string>(periods), // adds the correct weeks to the list
                     Enumerable.Range(0, uv_periods.Count / 2).Select(i => TimetableStructureWeek.IndexesToPeriodNum(uv_periods[2*i], uv_periods[2*i + 1], num_periods)).ToList())); // generates the days and the periods
             }
-            TimetableStructure.SetData(weeks); // set the current structure data
+            DataHelpers.GetDataContainer().SetTimetableStructure(weeks); // set the current structure data
         }
         public void Confirm(object sender, RoutedEventArgs e)
         {

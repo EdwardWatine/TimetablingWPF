@@ -30,8 +30,8 @@ namespace TimetablingWPF
         public StartWindow()
         {
             InitializeComponent();
-            IList<string> lines = Properties.Settings.Default.RECENT_FILES.Cast<string>().ToList(); // access the recent files
-            if (lines.Count == 0)
+            IEnumerable<string> lines = Properties.Settings.Default.RECENT_FILES.Cast<string>(); // access the recent files
+            if (!lines.Any())
             {
                 tbNoRecentFiles.Visibility = Visibility.Visible; // show a message to the user
                 icRecentFiles.Visibility = Visibility.Collapsed;

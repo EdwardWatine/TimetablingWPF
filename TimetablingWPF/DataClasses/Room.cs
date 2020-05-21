@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using System.IO;
+using TimetablingWPF.Errors;
 
 namespace TimetablingWPF
 {
@@ -51,5 +53,19 @@ namespace TimetablingWPF
         public RelationalCollection<Group, Room> Groups { get; private set; } = new RelationalCollection<Group, Room>(nameof(Group.Rooms));
         private readonly IList<ErrorContainer> errorValidations = new List<ErrorContainer>();
         public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
+
+        public override void Save(BinaryWriter writer)
+        {
+            SaveParent(writer);
+            writer.Write(Quantity);
+            writer.Write(Critical);
+        }
+
+        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        {
+            LoadParent(reader, version, container);
+            Quantity = reader.ReadInt32();
+            Critical = reader.ReadBoolean();
+        }
     }
 }

@@ -15,12 +15,14 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Globalization;
 using TimetablingWPF.StructureClasses;
+using System.Reflection;
 
 namespace TimetablingWPF
 {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
+    /// 
     public partial class App : Application
     {
         public App()
@@ -29,7 +31,6 @@ namespace TimetablingWPF
             EventManager.RegisterClassHandler(typeof(FrameworkElement), UIElement.GotFocusEvent, new RoutedEventHandler((s, e) => ((FrameworkElement)s).FocusVisualStyle = null), true);
             Properties["APPLICATION_NAME"] = "Timetabler";
             Properties["CURRENT_FILE_PATH"] = null;
-            Properties["USER_TYPES"] = new Type[] { typeof(Teacher), typeof(Subject), typeof(Lesson), typeof(Form), typeof(Group), typeof(Room) };
             Properties["CURRENT_DATA"] = new DataContainer();
             TimetableStructure.SetData(new List<TimetableStructureWeek>()
             {

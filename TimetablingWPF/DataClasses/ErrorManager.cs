@@ -10,7 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 
-namespace TimetablingWPF
+namespace TimetablingWPF.Errors
 {
     public enum ErrorType
     {
@@ -66,7 +66,9 @@ namespace TimetablingWPF
         private readonly Func<ErrorData, bool> ErrorFunc;
         private ErrorData errorData;
         private bool state = false;
-        public bool ErrorState { get => state;
+        public bool ErrorState
+        {
+            get => state;
             private set
             {
                 if (state ^ value)

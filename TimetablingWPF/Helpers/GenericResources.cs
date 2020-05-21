@@ -16,6 +16,6 @@ namespace TimetablingWPF
         public static SolidColorBrush WHITE { get; } = FromRGBA(255, 255, 255);
         public static SolidColorBrush BLACK { get; } = FromRGBA(0, 0, 0);
         public static SolidColorBrush TRANSPARENT { get; } = FromRGBA(0, 0, 0, 0);
-        public static SolidColorBrush A8GRAY { get; } = FromRGBA(168, 168, 168, 0);
+        public static SolidColorBrush A8GRAY { get; } = FromRGBA(168, 168, 168);
     }
 }

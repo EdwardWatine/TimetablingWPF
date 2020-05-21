@@ -36,7 +36,7 @@ namespace TimetablingWPF
             MainPage mp = new MainPage();
             if (loadDataTabs)
             {
-                foreach (Type type in (Type[])Application.Current.Properties["USER_TYPES"])
+                foreach (Type type in DataHelpers.UserTypes)
                 {
                     mp.NewDataSetTab(type);
                 }

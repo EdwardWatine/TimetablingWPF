@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace TimetablingWPF
 {
-    public class DataContainer
+    public class DataContainer : ICloneable
     {
         public IList<StructureClasses.TimetableStructureWeek> TimetableStructure { get; private set; }
         public InternalObservableCollection<Teacher> Teachers { get; } = new InternalObservableCollection<Teacher>();
@@ -80,6 +80,8 @@ namespace TimetablingWPF
         public void SetTimetableStructure(IList<StructureClasses.TimetableStructureWeek> weeks)
         {
             TimetableStructure = weeks;
+            TimetablingWPF.TimetableStructure.SetData(weeks);
+            SetUnsaved(null, null);
         }
         public void SetFromContainer(DataContainer container)
         {
@@ -101,6 +103,16 @@ namespace TimetablingWPF
             Rooms.Clear();
             Subjects.Clear();
             YearGroups.Clear();
+        }
+
+        public object Clone()
+        {
+            DataContainer dc = new DataContainer()
+            {
+                TimetableStructure = new List<StructureClasses.TimetableStructureWeek>(TimetableStructure)
+            };
+            dc.SetFromContainer(this);
+            return dc;
         }
     }
 }

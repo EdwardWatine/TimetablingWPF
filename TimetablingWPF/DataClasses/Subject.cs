@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using TimetablingWPF.Errors;
 
 namespace TimetablingWPF
 {
@@ -20,22 +23,15 @@ namespace TimetablingWPF
 
         };
         public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
-    }
 
-    public class Group : BaseDataClass
-    {
-        static Group()
+        public override void Save(BinaryWriter writer)
         {
-            Type type = typeof(Group);
-            RegisterProperty(type, nameof(Subjects));
-            RegisterProperty(type, nameof(Rooms));
+            Saving.WriteIntEnum(Teachers.Select(t => t.StorageIndex), writer);
         }
-        public RelationalCollection<Subject, Group> Subjects { get; private set; } = new RelationalCollection<Subject, Group>(nameof(Subject.Groups));
-        public RelationalCollection<Room, Group> Rooms { get; private set; } = new RelationalCollection<Room, Group>(nameof(Room.Groups));
-        private readonly IList<ErrorContainer> errorValidations = new List<ErrorContainer>()
-        {
 
-        };
-        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
+        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        {
+            Loading.LoadEnum(() => Teachers.Add(container.Teachers[reader.ReadInt32()]), reader);
+        }
     }
 }

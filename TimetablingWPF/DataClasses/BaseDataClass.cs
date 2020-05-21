@@ -13,6 +13,7 @@ using System.Collections.Specialized;
 using System.Reflection;
 using System.IO;
 using TimetablingWPF.Searching;
+using TimetablingWPF.Errors;
 
 namespace TimetablingWPF
 {
@@ -21,7 +22,7 @@ namespace TimetablingWPF
     /// </summary>
     /// 
 
-    public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable, IFreezable
+    public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable, IFreezable, ISaveable
     {
 
         public BaseDataClass()
@@ -60,6 +61,20 @@ namespace TimetablingWPF
         /// Holder for Name
         /// </summary>
         private string _name;
+
+        public string Shorthand
+        {
+            get => _sh;
+            set
+            {
+                if (value != _sh)
+                {
+                    _sh = value;
+                    NotifyPropertyChanged(nameof(Shorthand));
+                }
+            }
+        }
+        private string _sh;
         public bool Commited { get; private set; } = false;
         public bool Frozen { get; private set; } = false;
         public int StorageIndex { get; set; }
@@ -95,13 +110,10 @@ namespace TimetablingWPF
             {
                 throw new ArgumentException("The clone class must be of the same type as the calling class.");
             }
-            foreach (PropertyInfo prop in type.GetProperties())
+            foreach (CustomPropertyInfo prop in ExposedProperties[type])
             {
-                if (prop.DeclaringType == type)
-                {
-                    prop.SetValue(this, prop.GetValue(clone));
-                    NotifyPropertyChanged(prop.Name);
-                }
+                prop.PropertyInfo.SetValue(this, prop.PropertyInfo.GetValue(clone));
+                NotifyPropertyChanged(prop.PropertyInfo.Name);
             }
             Name = clone.Name;
             Frozen = clone.Frozen;
@@ -185,7 +197,16 @@ namespace TimetablingWPF
                 }
             };
         }
-
+        public abstract void Save(BinaryWriter writer);
+        public abstract void Load(BinaryReader reader, Version version, DataContainer container);
+        protected void LoadParent(BinaryReader reader, Version version, DataContainer container)
+        {
+            Name = reader.ReadString();
+        }
+        protected void SaveParent(BinaryWriter writer)
+        {
+            writer.Write(Name);
+        }
         public static bool operator ==(BaseDataClass left, object right)
         {
             if (left is null)

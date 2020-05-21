@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Windows;
 using System.Linq;
 using System.Text;
@@ -12,6 +11,7 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.IO;
 using TimetablingWPF.StructureClasses;
+using static TimetablingWPF.FileHelpers;
 
 namespace TimetablingWPF
 {
@@ -26,79 +26,51 @@ namespace TimetablingWPF
                 TotalSchedulable += week.TotalSchedulable;
             }
         }
+
+        public static void Save(BinaryWriter writer)
+        {
+            Saving.WriteList(Weeks, (w, i) =>
+            {
+                writer.Write(w.Name);
+                Saving.WriteList(w.DayNames, (d, i2) =>
+                {
+                    writer.Write(d);
+                }, writer);
+                Saving.WriteList(w.PeriodNames, (p, i2) =>
+                {
+                    writer.Write(p);
+                }, writer);
+                Saving.WriteIntEnum(w.UnavailablePeriods, writer);
+            }, writer);
+        }
+
+        public static void Load(BinaryReader reader, Version version, DataContainer container)
+        {
+            
+            container.SetTimetableStructure(
+                Loading.LoadAndReturnList(() =>
+                {
+                    return new TimetableStructureWeek(reader.ReadString(),
+                        Loading.LoadAndReturnList(() =>
+                        {
+                            return reader.ReadString();
+                        }, reader),
+                        Loading.LoadAndReturnList(() =>
+                        {
+                            return reader.ReadString();
+                        }, reader),
+                        Loading.LoadAndReturnIntList(reader)
+                        );
+                }, reader)
+            );
+        }
+
         public static IList<TimetableStructureWeek> Weeks { get; private set; }
         public static int TotalSchedulable { get; private set; }
     }
-    public class Year : INotifyPropertyChanged
-    {
-        public Year(string name)
-        {
-            Name = name;
-        }
-        public bool Committed { get; private set; } = false;
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void NotifyPropertyChanged(string property)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
-        }
-
-        public InternalObservableCollection<Form> Forms { get; private set; } = new InternalObservableCollection<Form>();
-        private string _year;
-        public string Name
-        {
-            get => _year; set
-            {
-                if (value != _year)
-                {
-                    NotifyPropertyChanged(nameof(Year));
-                    _year = value;
-                }
-            }
-        }
-        public int StorageIndex { get; set; }
-        public void Commit(DataContainer container = null)
-        {
-            if (!Committed)
-            {
-                (container ?? DataHelpers.GetDataContainer()).YearGroups.Add(this);
-                Committed = true;
-            }
-        }
-        public void Delete(DataContainer container = null)
-        {
-            foreach (Form form in Forms)
-            {
-                form.YearGroup = null;
-            }
-            (container ?? DataHelpers.GetDataContainer()).YearGroups.Remove(this);
-        }
-        public override string ToString()
-        {
-            return $"Year {Name}";
-        }
-
-        public override bool Equals(object obj)
-        {
-            return obj is Year yg && yg.Name == Name;
-        }
-
-        public override int GetHashCode()
-        {
-            return Name.GetHashCode();
-        }
-        public static bool operator ==(Year left, Year right)
-        {
-            return ReferenceEquals(left, right);
-        }
-
-        public static bool operator !=(Year left, Year right)
-        {
-            return !(left == right);
-        }
-    }
 }
-namespace TimetablingWPF.StructureClasses{
+namespace TimetablingWPF.StructureClasses
+{
     public class TimetableStructureWeek
     {
         public TimetableStructureWeek(string name, IList<string> days, IList<string> periods, IList<int> unschedulable)

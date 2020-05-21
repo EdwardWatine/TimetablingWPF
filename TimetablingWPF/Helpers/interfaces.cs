@@ -25,4 +25,9 @@ namespace TimetablingWPF
         void Freeze();
         void Unfreeze();
     }
+    public interface ISaveable
+    {
+        void Save(BinaryWriter writer);
+        void Load(BinaryReader reader, Version version, DataContainer container);
+    }
 }

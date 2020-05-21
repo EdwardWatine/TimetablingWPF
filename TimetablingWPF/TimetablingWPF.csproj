@@ -147,14 +147,18 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataClasses\CustomPropertyInfo.cs" />
+    <Compile Include="DataClasses\Group.cs" />
     <Compile Include="DataClasses\Searching\ListLogicModifier.cs" />
     <Compile Include="DataClasses\Searching\ListSearch.cs" />
     <Compile Include="DataClasses\Searching\SearchBase.cs" />
+    <Compile Include="DataClasses\TimetableSlot.cs" />
+    <Compile Include="DataClasses\Year.cs" />
     <Compile Include="GeneralWindows\InformationWindow.xaml.cs">
       <DependentUpon>InformationWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Helpers\BDCComparer.cs" />
     <Compile Include="Helpers\GenericResources.cs" />
+    <Compile Include="Helpers\Saving.cs" />
     <Compile Include="Tabs\ItemTab.xaml.cs">
       <DependentUpon>ItemTab.xaml</DependentUpon>
     </Compile>
@@ -178,11 +182,11 @@
     <Compile Include="Helpers\FileHelpers.cs" />
     <Compile Include="Helpers\GenericHelpers.cs" />
     <Compile Include="Helpers\GenericExtensions.cs" />
-    <Compile Include="Helpers\LoadingFormats.cs" />
+    <Compile Include="Helpers\Loading.cs" />
     <Compile Include="Helpers\VisualExtensions.cs" />
     <Compile Include="DataClasses\Collections.cs" />
     <Compile Include="DataClasses\Form.cs" />
-    <Compile Include="DataClasses\Subject Group.cs" />
+    <Compile Include="DataClasses\Subject.cs" />
     <Compile Include="DataClasses\Room.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />

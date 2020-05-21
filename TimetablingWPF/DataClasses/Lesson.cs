@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using Humanizer;
 using System.Diagnostics;
 using System.Collections.Specialized;
+using System.IO;
+using TimetablingWPF.Errors;
 
 namespace TimetablingWPF
 {
@@ -163,6 +165,31 @@ namespace TimetablingWPF
                 assignment.Teacher.Assignments.Remove(assignment);
             }
         }
+
+        public override void Save(BinaryWriter writer)
+        {
+            SaveParent(writer);
+            Saving.WriteIntEnum(Forms.Select(f => f.StorageIndex), writer);
+            writer.Write(LessonsPerCycle);
+            writer.Write(LessonLength);
+            writer.Write(Subject.StorageIndex);
+            Saving.WriteList(Assignments, (a, i) =>
+            {
+                writer.Write(a.Teacher.StorageIndex);
+                writer.Write(a.LessonCount);
+            }, writer);
+        }
+
+        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        {
+            LoadParent(reader, version, container);
+            Loading.LoadEnum(() => Forms.Add(container.Forms[reader.ReadInt32()]), reader);
+            LessonsPerCycle = reader.ReadInt32();
+            LessonLength = reader.ReadInt32();
+            Subject = container.Subjects[reader.ReadInt32()];
+            Loading.LoadEnum(() => Assignments.Add(new Assignment(container.Teachers[reader.ReadInt32()], this, reader.ReadInt32())), reader);
+        }
+
         private readonly IList<ErrorContainer> errorValidations;
         public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }

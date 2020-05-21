@@ -18,6 +18,7 @@ using static TimetablingWPF.VisualHelpers;
 using static TimetablingWPF.DataHelpers;
 using System.Globalization;
 using System.Collections.Specialized;
+using TimetablingWPF.Errors;
 
 namespace TimetablingWPF
 {
@@ -211,8 +212,7 @@ namespace TimetablingWPF
                     };
                     iupdown.SetBinding(IntegerUpDown.ValueProperty, new Binding(prop.PropertyInfo.Name)
                     {
-                        Source = Item,
-                        Mode = BindingMode.TwoWay
+                        Source = Item
                     });
                     gdLeft.Insert(iupdown, -2, 1);
                     iupdown.ValueChanged += delegate (object o, RoutedPropertyChangedEventArgs<object> e) { prop.PropertyInfo.SetValue(Item, e.NewValue); };

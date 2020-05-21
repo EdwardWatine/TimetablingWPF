@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using TimetablingWPF.Errors;
 using TimetablingWPF.Searching;
 
 namespace TimetablingWPF
@@ -142,6 +144,21 @@ namespace TimetablingWPF
                 assignment.Lesson.Assignments.Remove(assignment);
             }
         }
+
+        public override void Save(BinaryWriter writer)
+        {
+            SaveParent(writer);
+            writer.Write(MaxPeriodsPerCycle);
+            Saving.WriteIntEnum(UnavailablePeriods.Select(p => p.ToInt()), writer);
+        }
+
+        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        {
+            LoadParent(reader, version, container);
+            MaxPeriodsPerCycle = reader.ReadInt32();
+            Loading.LoadEnum(() => UnavailablePeriods.Add(TimetableSlot.FromInt(reader.ReadInt32())), reader);
+        }
+
         private readonly IEnumerable<ErrorContainer> errorValidations;
         public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
