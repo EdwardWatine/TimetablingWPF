@@ -21,6 +21,7 @@
         <BitmapImage x:Key="UpArrowIcon" UriSource="Media/UpArrowIcon.png"/>
         <BitmapImage x:Key="CheckIcon" UriSource="Media/CheckIcon.png"/>
         <BitmapImage x:Key="FilterIcon" UriSource="Media/FilterIcon.png"/>
+        <BitmapImage x:Key="ExpandIcon" UriSource="Media/ExpandIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
         <Color x:Key="WarningColor">#fc9803</Color>
@@ -133,6 +134,10 @@
             <Style.Setters>
                 <Setter Property="Visibility" Value="Collapsed"/>
             </Style.Setters>
+        </Style>
+        <Style TargetType="local:MultiComboBox">
+            <Setter Property="Height" Value="24"/>
+            <Setter Property="Width" Value="150"/>
         </Style>
         <Style x:Key="HorizontalMenu" TargetType="FrameworkElement">
             <Style.Setters>

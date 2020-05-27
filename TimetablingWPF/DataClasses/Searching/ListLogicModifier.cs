@@ -13,6 +13,8 @@ namespace TimetablingWPF.Searching
         {
             Items.Add(AnyOf);
             Items.Add(AllOf);
+            SelectedIndex = 0;
+            Width = 80;
         }
         public ListLogicModification? GetListLogicModification()
         {

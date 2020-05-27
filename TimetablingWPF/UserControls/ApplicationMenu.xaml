@@ -21,6 +21,9 @@
             <Separator/>
             <MenuItem Header="Change _Timetable" Click="ChangeTimetable"/>
         </MenuItem>
+        <MenuItem Header="Debug">
+            <MenuItem Header="Breakpoint" Click="DebugBreakpoint"/>
+        </MenuItem>
         <MenuItem Header="_View">
             <MenuItem Header="_Year Groups" Click="YearView"/>
             <MenuItem Header="_Data Views">

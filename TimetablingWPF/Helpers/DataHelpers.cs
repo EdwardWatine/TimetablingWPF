@@ -43,17 +43,30 @@ namespace TimetablingWPF
         {
             return new ItemTab((BaseDataClass)item, commandType);
         }
-        public static Predicate<object> GenerateDefaultNameFilter(string nameFilter)
+        public static Predicate<object> GenerateDefaultNameFilter(string nameFilter, string shorthand)
         {
             return new Predicate<object>(o =>
             {
-                string name = o.ToString().RemoveWhitespace().ToUpperInvariant();
+                BaseDataClass obj = (BaseDataClass)o;
+                string name = obj.Name.RemoveWhitespace().ToUpperInvariant();
+                string sh = obj.Shorthand.RemoveWhitespace().ToUpperInvariant();
                 bool contains = name.Contains(nameFilter);
                 if (nameFilter.Length < name.Length)
                 {
                     name = name.Substring(0, nameFilter.Length);
                 }
-                return contains || GenericHelpers.DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
+                if (shorthand.Length < sh.Length)
+                {
+                    sh = sh.Substring(0, shorthand.Length);
+                }
+                if (nameFilter.Length == 0 && shorthand.Length == 0) return true;
+                if (contains && name.Length != 0) return true;
+                bool nameCheck = name.Length == 0 ? false : GenericHelpers.DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
+                if (nameCheck) return true;
+                bool shCheck = sh.Length == 0 ? false : GenericHelpers.DamerauLevenshteinDistance(sh, shorthand, (sh.Length - 1) / 2) != int.MaxValue;
+                if (shCheck) return true;
+                return false;
+               ;
             });
         }
         public static Predicate<object> GenerateNameFilter(string nameFilter, Func<object, string> strfunc)

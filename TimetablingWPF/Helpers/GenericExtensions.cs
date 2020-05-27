@@ -103,6 +103,12 @@ namespace TimetablingWPF
                 dict[key] = value;
             }
         }
+
+        public static TValue DefaultDictGet<TKey, TValue, TDefault>(this Dictionary<TKey, TValue> dict, TKey key) where TDefault : TValue, new()
+        {
+            dict.DefaultDictGet<TKey, TValue, TDefault>(key, out TValue value);
+            return value;
+        }
         public static void DefaultDictGet<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value) where TValue : new()
         {
             dict.DefaultDictGet<TKey, TValue, TValue>(key, out value);

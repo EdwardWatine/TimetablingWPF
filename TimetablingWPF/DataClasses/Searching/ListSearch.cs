@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Humanizer;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,45 +10,69 @@ using System.Windows.Controls;
 
 namespace TimetablingWPF.Searching
 {
-    public class ListSearch<TThis, TCollection> :  SearchBase
+    public class ListSearchFactory<TThis, TCollection> :  SearchFactory
     {
-        public ListSearch(Func<TThis, IEnumerable<TCollection>> valuesGenerator, IList optionlist, string optiontype, string verb)
+        public ListSearchFactory(Func<TThis, IEnumerable<TCollection>> valuesGenerator, IList optionlist, string optiontype, string verb)
         {
-            Verb = verb;
-            Optiontype = optiontype;
-            OptionList = optionlist;
-            ValuesGenerator = valuesGenerator;
+            ListSearch.Verb = verb;
+            ListSearch.Optiontype = optiontype;
+            ListSearch.OptionList = optionlist;
+            ListSearch.ValuesGenerator = valuesGenerator;
         }
-        private ListLogicModifier modifier;
-        private MultiComboBox options;
-        private readonly IList OptionList;
-        private readonly Func<TThis, IEnumerable<TCollection>> ValuesGenerator;
-        public override UIElement GenerateUI()
+        
+        public override SearchBase GenerateSearch()
         {
-            modifier = new ListLogicModifier();
-            options = new MultiComboBox()
-            {
-                ItemString = Optiontype,
-                ItemsSource = OptionList
-            };
-            StackPanel spMain = new StackPanel()
-            {
-                Orientation = Orientation.Horizontal,
-            };
-            spMain.Children.Add(new TextBlock() { Text = Verb });
-            spMain.Children.Add(modifier);
-            spMain.Children.Add(options);
-            return spMain;
+            return new ListSearch();
         }
-
-        public override bool Search(object item)
+        private class ListSearch : SearchBase
         {
-            IEnumerable<TCollection> values = ValuesGenerator((TThis)item);
-            if (modifier.GetListLogicModification() == ListLogicModification.AnyOf)
+            private ListLogicModifier modifier;
+            private MultiComboBox options;
+            public static IList OptionList;
+            public static Func<TThis, IEnumerable<TCollection>> ValuesGenerator;
+            public static string Verb;
+            public static string Optiontype;
+            public override UIElement GenerateUI()
             {
-                return options.SelectedItems.AsParallel().Cast<TCollection>().Any(g => values.Contains(g));
+                Thickness sep = new Thickness(5, 0, 0, 0);
+                modifier = new ListLogicModifier()
+                {
+                    Margin = sep,
+                    VerticalContentAlignment = VerticalAlignment.Center
+                };
+                modifier.SelectionChanged += GenerateSelectionChangedHandler("modifier");
+                options = new MultiComboBox()
+                {
+                    ItemString = Optiontype,
+                    ItemsSource = OptionList,
+                    Margin = sep
+                };
+                options.SelectionChanged += GenerateSelectionChangedHandler("options");
+                StackPanel spMain = new StackPanel()
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(0, 0, 30, 0),
+                };
+                spMain.Children.Add(new TextBlock() { Text = Verb, VerticalAlignment = VerticalAlignment.Center});
+                spMain.Children.Add(modifier);
+                spMain.Children.Add(new TextBlock() { Text = Optiontype.Pluralize() + ":", VerticalAlignment = VerticalAlignment.Center, Margin = sep });
+                spMain.Children.Add(options);
+                return spMain;
             }
-            return !options.SelectedItems.AsParallel().Cast<TCollection>().Any(g => !values.Contains(g));
+
+            public override bool Search(object item)
+            {
+                IEnumerable<TCollection> values = ValuesGenerator((TThis)item);
+                if (options.SelectedItems.Count == 0)
+                {
+                    return true;
+                }
+                if (modifier.GetListLogicModification() == ListLogicModification.AnyOf)
+                {
+                    return options.SelectedItems.AsParallel().Cast<TCollection>().Any(g => values.Contains(g));
+                }
+                return !options.SelectedItems.AsParallel().Cast<TCollection>().Any(g => !values.Contains(g));
+            }
         }
     }
 }

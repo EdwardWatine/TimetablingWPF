@@ -15,8 +15,32 @@
         <DataTemplate x:Key="NameTemplate">
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Name}"/>
         </DataTemplate>
+        <DataTemplate x:Key="ShTemplate">
+            <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Shorthand}"/>
+        </DataTemplate>
     </TabItem.Resources>
     <StackPanel Orientation="Vertical" Name="spMain">
+        <Grid Name="gdFilter" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Filter settings:" FontSize="20" Margin="3,0,0,0"/>
+            <DockPanel LastChildFill="False" Grid.Row="1" Margin="0,20,0,30">
+                <TextBlock Text="Name:" Margin="20,0,5,0"/>
+                <TextBox x:Name="filterName" Width="100" VerticalContentAlignment="Center"/>
+                <TextBlock Text="Shorthand:" Margin="20,0,5,0"/>
+                <TextBox x:Name="filterSh" Width="50" VerticalContentAlignment="Center"/>
+                <TextBlock Text="Remove less relevant results:" Margin="100,0,0,0"/>
+                <CheckBox Name="cbRemove" IsChecked="True"/>
+            </DockPanel>
+            <WrapPanel Name="wpAdvanced" Margin="20, 0, 0, 0" Grid.Row="2">
+                
+            </WrapPanel>
+            <Button Content="Filter" Click="FilterClick" Margin="10,30,0,10" Name="btFilter" Grid.Row="3" Width="60" Height="25" HorizontalAlignment="Left"/>
+        </Grid>
         <ToolBarTray>
             <ToolBar Height="30">
                 <ToolBar.Resources>
@@ -42,10 +66,6 @@
                 </Button>
             </ToolBar>
         </ToolBarTray>
-        <StackPanel Orientation="Horizontal" Name="spFilter" Visibility="Collapsed">
-            <TextBlock Style="{StaticResource BlackDialogText}" Text="Name:"/>
-            <TextBox x:Name="filterName" Width="50" VerticalContentAlignment="Center" VerticalAlignment="Center"/>
-        </StackPanel>
         <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
                           SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
             <DataGrid.ContextMenu>

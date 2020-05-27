@@ -31,8 +31,9 @@ namespace TimetablingWPF
             {
                 Add(item);
             }
-            SuppressEvent = flag || false; // ensures that SuppressEvent is not accidently overwritten
+            SuppressEvent = false;
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, enumerable.ToList()));
+            SuppressEvent = flag;
         }
         public void RemoveRange(IEnumerable<T> enumerable)
         {
@@ -88,8 +89,10 @@ namespace TimetablingWPF
         public InternalObservableCollection(IEnumerable<T> collection) : base(collection)
         {
             CollectionChanged += ObservableCollectionCollectionChanged;
-            ObservableCollectionCollectionChanged(null, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, (IList)collection));
-
+            foreach (object item in collection)
+            {
+                if (item is INotifyPropertyChanged ipropChanges) ipropChanges.PropertyChanged += ItemPropertyChanged; // link event handler
+            }
         }
         private void ObservableCollectionCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {

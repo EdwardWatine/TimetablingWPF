@@ -29,6 +29,8 @@ namespace TimetablingWPF
         public static readonly DependencyProperty ItemsSourceProperty =
             DependencyProperty.Register("ItemsSource", typeof(IList), typeof(MultiComboBox));
 
+        public event SelectionChangedEventHandler SelectionChanged;
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only")]
         public IList ItemsSource
         {
@@ -120,7 +122,7 @@ namespace TimetablingWPF
                 view.CustomSort = null;
                 return;
             }
-            view.Filter = DataHelpers.GenerateDefaultNameFilter(target);
+            view.Filter = DataHelpers.GenerateDefaultNameFilter(target, string.Empty);
             SortingComparer.Filter = target;
             view.CustomSort = SortingComparer;
             UpdateStatusBox();
@@ -173,6 +175,10 @@ namespace TimetablingWPF
             Select(item);
             Keyboard.Focus(tbMain);
         }
+        private void RaiseSelectionChanged(IList removed, IList added)
+        {
+            SelectionChanged?.Invoke(this, new SelectionChangedEventArgs(System.Windows.Controls.Primitives.Selector.SelectionChangedEvent, removed, added)); 
+        }
         private void Select(object item)
         {
             if (item != null && !IgnoreSelection)
@@ -180,6 +186,7 @@ namespace TimetablingWPF
                 IgnoreSelection = true;
                 ItemsSource.Remove(item);
                 selectedItems.Add(item);
+                RaiseSelectionChanged(new List<object>(), new List<object>() { item });
                 ClearSelections();
                 IgnoreSelection = false;
             }
@@ -202,6 +209,7 @@ namespace TimetablingWPF
                 IgnoreSelection = true;
                 ItemsSource.Add(item);
                 selectedItems.Remove(item);
+                RaiseSelectionChanged(new List<object>() { item }, new List<object>());
                 ClearSelections();
                 IgnoreSelection = false;
                 UpdateStatusBox();

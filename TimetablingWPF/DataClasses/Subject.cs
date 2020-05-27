@@ -26,11 +26,13 @@ namespace TimetablingWPF
 
         public override void Save(BinaryWriter writer)
         {
+            SaveParent(writer);
             Saving.WriteIntEnum(Teachers.Select(t => t.StorageIndex), writer);
         }
 
         public override void Load(BinaryReader reader, Version version, DataContainer container)
         {
+            LoadParent(reader, version, container);
             Loading.LoadEnum(() => Teachers.Add(container.Teachers[reader.ReadInt32()]), reader);
         }
     }

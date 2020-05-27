@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -202,6 +203,11 @@ namespace TimetablingWPF
             }
         }
         public WindowBase ParentWindow { get; private set; }
+
+        private void DebugBreakpoint(object sender, RoutedEventArgs e)
+        {
+            Debugger.Break();
+        }
     }
     public static class MenuCommands
     {

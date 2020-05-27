@@ -35,6 +35,9 @@ namespace TimetablingWPF
             Item = commandType == CommandType.@new ? originalItem : (BaseDataClass)originalItem.Clone();
             OriginalItem = originalItem;
             Item.Freeze();
+            txSh.Text = Item.Shorthand;
+            oldstring = string.Concat((Item.Name ?? "").RemoveWhitespace().Take(3));
+            txName.TextChanged += NameChanged;
             txName.Text = originalItem.Name;
             txName.SelectionStart = txName.Text.Length;
             int iters = 0;
@@ -196,7 +199,7 @@ namespace TimetablingWPF
                     {
                         HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                         VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
-                        Margin = new Thickness(0, 5, 0, 5),
+                        Margin = new Thickness(0, 5, 0, 0),
                         Content = GenerateTimetable((ObservableCollection<TimetableSlot>)prop.PropertyInfo.GetValue(Item), ToggleSlot, ToggleAll)
                     };
                     gdLeft.Insert(svPeriods, -2, 1);
@@ -208,6 +211,7 @@ namespace TimetablingWPF
                     {
                         Minimum = 0,
                         Width = 50,
+                        Margin = new Thickness(0, 5, 0, 0),
                         HorizontalAlignment = HorizontalAlignment.Left
                     };
                     iupdown.SetBinding(IntegerUpDown.ValueProperty, new Binding(prop.PropertyInfo.Name)
@@ -222,6 +226,7 @@ namespace TimetablingWPF
                 {
                     CheckBox cbox = new CheckBox()
                     {
+                        Margin = new Thickness(0, 5, 0, 0),
                         HorizontalAlignment = HorizontalAlignment.Left
                     };
                     cbox.SetBinding(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, new Binding(prop.PropertyInfo.Name)
@@ -241,6 +246,7 @@ namespace TimetablingWPF
                         Placeholder = $"-- {prop.Type.Name} --",
                         IsEditable = true,
                         ItemsSource = GetDataContainer().FromType(prop.Type),
+                        Margin = new Thickness(0, 5, 0, 0),
                         Width = 150,
                         HorizontalAlignment = HorizontalAlignment.Left
                     };
@@ -251,6 +257,7 @@ namespace TimetablingWPF
                 }
                 throw new InvalidOperationException($"Property {prop.Alias} has a type {prop.Type} which is not supported by the UI");
             }
+            Grid.SetRow(svErrors, gdLeft.RowDefinitions.Count - 1);
             ErrManager.AddError(GenericHelpers.GenerateNameError(txName, item_type.Name));
             foreach (ErrorContainer error in Item.ErrorValidations)
             {
@@ -258,10 +265,20 @@ namespace TimetablingWPF
             }
         }
 
+        private void NameChanged(object sender, TextChangedEventArgs e)
+        {
+            if (txSh.Text == oldstring)
+            {
+                oldstring = string.Concat(txName.Text.RemoveWhitespace().Take(3));
+                txSh.Text = oldstring;
+            }
+        }
+
         private readonly ErrorManager ErrManager;
         private readonly BaseDataClass OriginalItem;
         private readonly BaseDataClass Item;
         private readonly CommandType CommandType;
+        private string oldstring;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -319,6 +336,11 @@ namespace TimetablingWPF
                 }
             }
             Item.Name = txName.Text.Trim();
+            Item.Shorthand = txSh.Text;
+            if (string.IsNullOrWhiteSpace(Item.Shorthand))
+            {
+                Item.Shorthand = string.Concat(Item.Name.RemoveWhitespace().Take(3));
+            }
             if (CommandType == CommandType.edit)
             {
                 OriginalItem.UpdateWithClone(Item);

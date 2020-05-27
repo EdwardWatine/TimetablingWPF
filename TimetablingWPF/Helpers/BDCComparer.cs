@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TimetablingWPF.Searching;
 using static TimetablingWPF.GenericHelpers;
 
 namespace TimetablingWPF
 {
-    public class SortingComparer : IComparer
+    public class SortingComparer : IComparer, IComparer<object>
     {
         public string Filter { get; set; }
         public Func<object, string> StringFunction { get; set; } = o => o.ToString();

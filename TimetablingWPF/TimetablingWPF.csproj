@@ -147,6 +147,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataClasses\CustomPropertyInfo.cs" />
+    <Compile Include="DataClasses\DataGeneration\DataClasses.cs" />
     <Compile Include="DataClasses\Group.cs" />
     <Compile Include="DataClasses\Searching\ListLogicModifier.cs" />
     <Compile Include="DataClasses\Searching\ListSearch.cs" />
@@ -365,6 +366,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Media\FilterIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\ExpandIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

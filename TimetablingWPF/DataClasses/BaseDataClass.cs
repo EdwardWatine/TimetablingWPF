@@ -36,7 +36,7 @@ namespace TimetablingWPF
                     {
                         NotifyPropertyChanged(prop.Name);
                     }
-                    ///Debug.WriteLine($"{Name} (a {GetType().Name}) registered a change in property {prop.Name} caused by {e.Action}");
+                    //Debug.WriteLine($"{Name} (a {GetType().Name}) registered a change in property {prop.Name} caused by {e.Action}");
                 }
                 val.CollectionChanged += Val_CollectionChanged;
             }
@@ -85,11 +85,11 @@ namespace TimetablingWPF
             ExposedProperties.DefaultDictGet<Type, IList<CustomPropertyInfo>, List<CustomPropertyInfo>>(declaringType, out IList<CustomPropertyInfo> list);
             list.Add(new CustomPropertyInfo(declaringType, property, alias, display));
         }
-        public static Dictionary<Type, IList<SearchBase>> SearchParameters { get; } = new Dictionary<Type, IList<SearchBase>>();
-        protected static void AddSearchParameter(Type declaringType, SearchBase searchParameter)
+        public static Dictionary<Type, IList<SearchFactory>> SearchParameters { get; } = new Dictionary<Type, IList<SearchFactory>>();
+        protected static void AddSearchParameter(Type declaringType, SearchFactory searchFactory)
         {
-            SearchParameters.DefaultDictGet<Type, IList<SearchBase>, List<SearchBase>>(declaringType, out IList<SearchBase> list);
-            list.Add(searchParameter);
+            SearchParameters.DefaultDictGet<Type, IList<SearchFactory>, List<SearchFactory>>(declaringType, out IList<SearchFactory> list);
+            list.Add(searchFactory);
         }
         /// <summary>
         /// Add this to its associated list in properties. Is idempotent.
@@ -116,6 +116,7 @@ namespace TimetablingWPF
                 NotifyPropertyChanged(prop.PropertyInfo.Name);
             }
             Name = clone.Name;
+            Shorthand = clone.Shorthand;
             Frozen = clone.Frozen;
         }
         public void MergeWith(BaseDataClass merger)
@@ -202,10 +203,12 @@ namespace TimetablingWPF
         protected void LoadParent(BinaryReader reader, Version version, DataContainer container)
         {
             Name = reader.ReadString();
+            Shorthand = reader.ReadString();
         }
         protected void SaveParent(BinaryWriter writer)
         {
             writer.Write(Name);
+            writer.Write(Shorthand);
         }
         public static bool operator ==(BaseDataClass left, object right)
         {

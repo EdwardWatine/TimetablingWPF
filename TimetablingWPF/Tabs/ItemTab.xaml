@@ -25,13 +25,17 @@
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Name:"/>
             <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" 
                      Name="txName" MinWidth="200" MinHeight="32"/>
-            <ScrollViewer Name="svErrors" Grid.Row="3" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
-                <StackPanel Name="spErrors" Grid.Row="3" Grid.Column="1" Orientation="Vertical" Width="{Binding ActualWidth, ElementName=svErrors}"/>
+            <TextBlock HorizontalAlignment="Right" Style="{StaticResource DialogText}" Text="Shorthand:" Grid.Row="1"/>
+            <TextBox VerticalContentAlignment="Center" VerticalAlignment="Top" HorizontalAlignment="Left" Grid.Column="1" Grid.Row="1" 
+                     Name="txSh" MinWidth="70" MinHeight="32" Margin="0, 5, 0, 0"/>
+            <ScrollViewer Name="svErrors" Grid.Column="1" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Auto">
+                <StackPanel Name="spErrors" Orientation="Vertical" Width="{Binding ActualWidth, ElementName=svErrors}"/>
             </ScrollViewer>
         </Grid>
         <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,5,0,0">
