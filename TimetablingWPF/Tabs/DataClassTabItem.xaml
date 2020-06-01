@@ -19,8 +19,8 @@
             <TextBlock Style="{StaticResource tbStyle}" Text="{Binding Shorthand}"/>
         </DataTemplate>
     </TabItem.Resources>
-    <StackPanel Orientation="Vertical" Name="spMain">
-        <Grid Name="gdFilter" Visibility="Collapsed">
+    <DockPanel Name="dpMain" LastChildFill="True">
+        <Grid Name="gdFilter" Visibility="Collapsed" DockPanel.Dock="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
@@ -41,7 +41,7 @@
             </WrapPanel>
             <Button Content="Filter" Click="FilterClick" Margin="10,30,0,10" Name="btFilter" Grid.Row="3" Width="60" Height="25" HorizontalAlignment="Left"/>
         </Grid>
-        <ToolBarTray>
+        <ToolBarTray DockPanel.Dock="Top">
             <ToolBar Height="30">
                 <ToolBar.Resources>
                     <Style TargetType="Image">
@@ -67,7 +67,7 @@
             </ToolBar>
         </ToolBarTray>
         <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
-                          SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True">
+                          SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True">
             <DataGrid.ContextMenu>
                 <ContextMenu Name="cmContextMenu">
                     <MenuItem x:Name="miNewItem" Header="New item"/>
@@ -79,5 +79,5 @@
                 </ContextMenu>
             </DataGrid.ContextMenu>
         </DataGrid>
-    </StackPanel>
+    </DockPanel>
 </local:TabBase>

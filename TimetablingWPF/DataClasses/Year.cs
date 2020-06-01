@@ -48,12 +48,12 @@ namespace TimetablingWPF
         }
         public override string ToString()
         {
-            return $"Year {Name}";
+            return Name;
         }
 
         public override bool Equals(object obj)
         {
-            return obj is Year yg && yg.Name == Name;
+            return ReferenceEquals(this, obj);
         }
 
         public override int GetHashCode()
@@ -62,7 +62,7 @@ namespace TimetablingWPF
         }
         public static bool operator ==(Year left, Year right)
         {
-            return ReferenceEquals(left, right);
+            return Equals(left, right);
         }
 
         public static bool operator !=(Year left, Year right)

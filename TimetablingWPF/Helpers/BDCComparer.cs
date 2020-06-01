@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using TimetablingWPF.Searching;
 using static TimetablingWPF.GenericHelpers;
 
@@ -18,19 +19,13 @@ namespace TimetablingWPF
         {
             string xname = StringFunction(x).RemoveWhitespace().ToUpperInvariant();
             string yname = StringFunction(y).RemoveWhitespace().ToUpperInvariant();
-            int ymod = 0, xmod = 0;
-            if (Filter.Length >= 3)
-            {
-                if (yname.Contains(Filter)) ymod = yname.Length;
-                if (xname.Contains(Filter)) xmod = xname.Length;
-            }
             if (xname.Length < yname.Length)
             {
                 int xdist = DamerauLevenshteinDistance(xname, Filter);
-                return xdist - xmod + ymod - DamerauLevenshteinDistance(yname, Filter, xdist - xmod + ymod);
+                return xdist - DamerauLevenshteinDistance(yname, Filter, xdist);
             }
             int ydist = DamerauLevenshteinDistance(yname, Filter);
-            return DamerauLevenshteinDistance(xname, Filter, xmod + ydist - ymod) - xmod - ydist + ymod;
+            return DamerauLevenshteinDistance(xname, Filter) - ydist;
         }
     }
 }

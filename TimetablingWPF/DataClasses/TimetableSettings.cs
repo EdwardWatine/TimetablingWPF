@@ -9,5 +9,6 @@ namespace TimetablingWPF
     static class TimetableSettings
     {
         public static int TeacherMaxPeriods { get; set; } = TimetableStructure.TotalSchedulable;
+        public static int DelayBeforeSearching { get; set; } = 300;
     }
 }

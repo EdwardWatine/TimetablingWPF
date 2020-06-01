@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -21,6 +20,7 @@ using System.Windows.Shapes;
 using Humanizer;
 using TimetablingWPF.Searching;
 using static TimetablingWPF.GenericHelpers;
+using System.Timers;
 
 namespace TimetablingWPF
 {
@@ -62,11 +62,21 @@ namespace TimetablingWPF
 
             attachButtonCommand(btNewToolbar, newBinding);
             attachButtonCommand(btEditToolbar, editBinding);
-            attachButtonCommand(btDuplicateToolbar,dupBinding); // attach commands to the toolbar
+            attachButtonCommand(btDuplicateToolbar, dupBinding); // attach commands to the toolbar
             attachButtonCommand(btDeleteToolbar, delBinding);
-
-            filterName.TextChanged += delegate (object sender, TextChangedEventArgs e) { RefreshFilter(); };
-            filterSh.TextChanged += delegate (object sender, TextChangedEventArgs e) { RefreshFilter(); };
+            timer = new Timer(300) { 
+                AutoReset = false
+            };
+            timer.Elapsed += delegate (object sender, ElapsedEventArgs e)
+            {
+                Dispatcher.Invoke(() => RefreshFilter());
+            };
+            void handler(object sender, TextChangedEventArgs e) {
+                timer.Stop();
+                timer.Start();
+            };
+            filterName.TextChanged += handler;
+            filterSh.TextChanged += handler;
             cbRemove.Click += delegate (object sender, RoutedEventArgs e) { RefreshFilter(); };
             IList data = DataHelpers.GetDataContainer().FromType(type);
             defaultView = new ListCollectionView(data);
@@ -103,10 +113,14 @@ namespace TimetablingWPF
                 if (prop.Type == typeof(ObservableCollection<TimetableSlot>))
                 {
                     binding.Converter = new ListReportLength();
-                    tbFactory.SetBinding(ToolTipProperty, new Binding(prop.PropertyInfo.Name)
+                    TextBlock tb = new TextBlock() { Text = "Loading..." };
+                    ToolTip tt = new ToolTip()
                     {
-                        Converter = new PeriodsToTable()
-                    });
+                        Content = tb
+                    };
+                    tbFactory.SetValue(ToolTipProperty, tt);
+                    tt.Opened += delegate (object sender, RoutedEventArgs e) { tt.Content = VisualHelpers.GenerateTimetable((IEnumerable<TimetableSlot>)prop.PropertyInfo.GetValue(tt.DataContext)); };
+                    tt.Closed += delegate (object sender, RoutedEventArgs e) { tt.Content = tb; };
                 }
                 else if (islist)
                 {
@@ -151,6 +165,7 @@ namespace TimetablingWPF
         public Type DataType { get; }
         private readonly InternalObservableCollection<SearchBase> searches;
         private readonly SortingComparer FilterComparer = new SortingComparer();
+        private readonly Timer timer;
         private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
             MainPage.NewTab(DataHelpers.GenerateItemTab(Activator.CreateInstance(DataType), CommandType.@new), $"New {DataType.Name}");

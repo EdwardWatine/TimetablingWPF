@@ -25,14 +25,14 @@ namespace TimetablingWPF
                 StructureClasses.TimetableStructureWeek structureWeek = TimetableStructure.Weeks[week];
                 Grid gridWeek = new Grid()
                 {
-                    Width = 200
                 };
-                gridWeek.ColumnDefinitions.Add(new ColumnDefinition());
+                Grid.SetIsSharedSizeScope(gridWeek, true);
+                gridWeek.ColumnDefinitions.Add(new ColumnDefinition() { SharedSizeGroup = "A" });
                 gridWeek.RowDefinitions.Add(new RowDefinition());
                 gridWeek.Children.Add(SetInternalBorder(new TextBlock()
                 {
                     Text = structureWeek.Name,
-                    Background = GenericResources.WHITE,
+                    Background = WHITE,
                     Padding = new Thickness(2),
                     TextAlignment = TextAlignment.Center
                 })
@@ -44,14 +44,14 @@ namespace TimetablingWPF
                     if (!structureWeek.DayIsSchedulable(day)) { skipped++; continue; }
                     ColumnDefinition columnDay = new ColumnDefinition()
                     {
-                        Width = new GridLength(1, GridUnitType.Star),
+                        SharedSizeGroup = "A"
                     };
                     gridWeek.ColumnDefinitions.Add(columnDay);
 
                     TextBlock dayHeading = new TextBlock()
                     {
                         Text = structureWeek.DayNames[day],
-                        Background = GenericResources.WHITE,
+                        Background = WHITE,
                         Padding = new Thickness(2),
                         TextAlignment = TextAlignment.Center
                     };
@@ -71,7 +71,7 @@ namespace TimetablingWPF
                     TextBlock periodHeading = new TextBlock()
                     {
                         Text = structureWeek.PeriodNames[period],
-                        Background = GenericResources.WHITE,
+                        Background = WHITE,
                         Padding = new Thickness(2)
                     };
                     Border periodBorder = SetInternalBorder(periodHeading);
@@ -104,7 +104,7 @@ namespace TimetablingWPF
                 {
                     Child = gridWeek,
                     Style = (Style)Application.Current.Resources["GridLineExternalBlack"],
-                    Margin = new Thickness(0, 5, 10, 5)
+                    Margin = new Thickness(5)
                 });
             }
             return returnPanel;
