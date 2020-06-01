@@ -27,6 +27,7 @@ namespace TimetablingWPF
         public ApplicationMenu()
         {
             InitializeComponent();
+            miRecent.SetBinding(ItemsControl.ItemsSourceProperty, new Binding(nameof(RecentFileManager.FilePaths)) { Source = FileHelpers.RecentFileManager });
             Loaded += ApplicationMenu_Loaded;
         }
 
@@ -47,9 +48,10 @@ namespace TimetablingWPF
 
         public void NewFile(object sender, ExecutedRoutedEventArgs e)
         {
-            MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
-            if (result == MessageBoxResult.Yes) SaveFile(null, null);
-            if (result == MessageBoxResult.Cancel) return;
+            if (!UserSave())
+            {
+                return;
+            }
             string fpath = SaveFileDialogHelper("Create New File");
             if (fpath != null)
             {
@@ -81,13 +83,29 @@ namespace TimetablingWPF
         }
         public void OpenFile(object sender, ExecutedRoutedEventArgs e)
         {
-            MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
-            if (result == MessageBoxResult.Yes) SaveFile(null, null);
-            if (result == MessageBoxResult.Cancel) return;
+            if (!UserSave())
+            {
+                return;
+            }
             string fpath = OpenFileDialogHelper();
             if (fpath != null && fpath != GetCurrentFilePath())
             {
-                ClearData();
+                //ClearData();
+                LoadData(fpath, worker_args => RegisterOpenFile(fpath), owner: ParentWindow);
+            }
+        }
+        private bool UserSave()
+        {
+            MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
+            if (result == MessageBoxResult.Yes) SaveFile(null, null);
+            if (result == MessageBoxResult.Cancel) return false;
+            return true;
+        }
+        private void RecentClick(object sender, RoutedEventArgs e)
+        {
+            string fpath = (string)((FrameworkElement)sender).DataContext;
+            if (UserSave())
+            {
                 LoadData(fpath, worker_args => RegisterOpenFile(fpath), owner: ParentWindow);
             }
         }

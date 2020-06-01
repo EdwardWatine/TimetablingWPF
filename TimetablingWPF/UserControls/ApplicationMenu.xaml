@@ -11,6 +11,14 @@
             <MenuItem Header="_New" Command="ApplicationCommands.New"/>
             <Separator/>
             <MenuItem Header="_Open" Command="ApplicationCommands.Open"/>
+            <MenuItem Header="Open _Recent" Name="miRecent">
+                <MenuItem.ItemContainerStyle>
+                    <Style TargetType="MenuItem">
+                        <Setter Property="Header" Value="{Binding}"/>
+                        <EventSetter Event="Click" Handler="RecentClick"/>
+                    </Style>
+                </MenuItem.ItemContainerStyle>
+            </MenuItem>
             <MenuItem Header="_Import" Command="local:MenuCommands.ImportCommand"/>
             <Separator/>
             <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>

@@ -12,19 +12,41 @@ using static TimetablingWPF.DataHelpers;
 
 namespace TimetablingWPF
 {
+    public class RecentFileManager : INotifyPropertyChanged
+    {
+        public RecentFileManager()
+        {
+            UpdateRecentFilePaths();
+        }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public IList<string> FilePaths { get; private set; }
+        public void UpdateRecentFilePaths()
+        {
+            FilePaths = Properties.Settings.Default.RECENT_FILES.Cast<string>().Take(TimetableSettings.RecentListSize + 1).ToList();
+            FilePaths.Remove(FileHelpers.GetCurrentFilePath());
+            if (FilePaths.Count > TimetableSettings.RecentListSize)
+            {
+                FilePaths.RemoveAt(FilePaths.Count - 1);
+            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(FilePaths)));
+        }
+    }
     public static class FileHelpers
     {
+        public static RecentFileManager RecentFileManager { get; } = new RecentFileManager();
         public static void RegisterOpenFile(string fpath)
         {
             SetCurrentFilePath(fpath);
             Properties.Settings.Default.RECENT_FILES.Remove(fpath);
             Properties.Settings.Default.RECENT_FILES.Insert(0, fpath);
             Properties.Settings.Default.Save();
+            RecentFileManager.UpdateRecentFilePaths();
         }
         public static void RecentFilesRemove(string fpath)
         {
             Properties.Settings.Default.RECENT_FILES.Remove(fpath);
             Properties.Settings.Default.Save();
+            RecentFileManager.UpdateRecentFilePaths();
         }
         public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Action<RunWorkerCompletedEventArgs> onCancel = null, Window owner = null, bool save = true)
         {

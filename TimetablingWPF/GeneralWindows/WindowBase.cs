@@ -14,7 +14,7 @@ namespace TimetablingWPF
         {
             Closing += delegate (object sender, CancelEventArgs e) 
             { 
-                if (Application.Current.Windows.Count == 1 && DataHelpers.GetDataContainer().Unsaved)
+                if (Application.Current.Windows.Count == 1)
                 {
                     MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
                     if (result == MessageBoxResult.Yes)

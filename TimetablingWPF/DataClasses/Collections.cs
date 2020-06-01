@@ -25,6 +25,7 @@ namespace TimetablingWPF
         }
         public void AddRange(IEnumerable<T> enumerable)
         {
+            CheckReentrancy();
             bool flag = SuppressEvent;
             SuppressEvent = true;
             foreach (T item in enumerable)
@@ -32,19 +33,21 @@ namespace TimetablingWPF
                 Add(item);
             }
             SuppressEvent = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, enumerable.ToList()));
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
             SuppressEvent = flag;
         }
         public void RemoveRange(IEnumerable<T> enumerable)
         {
+            CheckReentrancy();
             bool flag = SuppressEvent;
             SuppressEvent = true;
             foreach (T item in enumerable)
             {
                 Remove(item);
             }
-            SuppressEvent = flag || false; // ensures that SuppressEvent is not accidently overwritten
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, enumerable.ToList()));
+            SuppressEvent = false; // ensures that SuppressEvent is not accidently overwritten
+            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
+            SuppressEvent = flag;
         }
         public void SetData(IEnumerable<T> enumerable)
         {
