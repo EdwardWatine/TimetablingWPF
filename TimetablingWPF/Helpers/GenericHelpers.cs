@@ -55,6 +55,10 @@ namespace TimetablingWPF
         {
             return number == 1 ? word.Singularize(false) : word.Pluralize(false);
         }
+        public static string PluralizeFromSingular(this string word, int number)
+        {
+            return number == 1 ? word : word.Pluralize();
+        }
 
         public static IList<object> InsertAndReturn(IEnumerable enumerable, object toInsert, int index = 0)
         {

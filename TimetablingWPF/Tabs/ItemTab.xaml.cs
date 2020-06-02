@@ -79,7 +79,7 @@ namespace TimetablingWPF
                     gdilContainer.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
                     ItemList itemlist = new ItemList(prop)
                     {
-                        ItemsSource = (IList)prop.PropertyInfo.GetValue(Item)
+                        ItemsSource = ((IList)prop.PropertyInfo.GetValue(Item))
                     };
                     if (prop.Type.IsInterface<INotifyCollectionChanged>())
                     {

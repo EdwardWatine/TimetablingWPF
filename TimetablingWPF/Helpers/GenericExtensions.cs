@@ -10,6 +10,7 @@ using System.Collections;
 using Xceed.Wpf.Toolkit;
 using System.Windows.Data;
 using System.Collections.Specialized;
+using System.ComponentModel;
 
 namespace TimetablingWPF
 {
@@ -72,10 +73,6 @@ namespace TimetablingWPF
             IList copy = new ObservableCollection<object>(((IEnumerable)collection).Cast<object>());
             collection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
             {
-                if (!e.IsNotPropertyChanged())
-                {
-                    return;
-                }
                 if (e.NewItems != null) { 
                     foreach (object item in e.NewItems)
                     {
@@ -112,6 +109,37 @@ namespace TimetablingWPF
         public static void DefaultDictGet<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value) where TValue : new()
         {
             dict.DefaultDictGet<TKey, TValue, TValue>(key, out value);
+        }
+        public static IList GenerateVisibles(this IList list)
+        {
+            ObservableCollection<object> collection = new ObservableCollection<object>(list.Cast<IDataObject>().Where(o => o.Visible));
+            if (list is INotifyCollectionChanged changingCollection)
+            {
+                changingCollection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+                {
+                    if (e.OldItems != null)
+                    {
+                        foreach (IDataObject item in e.OldItems.Cast<IDataObject>())
+                        {
+                            if (item.Visible)
+                            {
+                                collection.Remove(item);
+                            }
+                        }
+                    }
+                    if (e.NewItems != null)
+                    {
+                        foreach (IDataObject item in e.NewItems.Cast<IDataObject>())
+                        {
+                            if (item.Visible)
+                            {
+                                collection.Add(item);
+                            }
+                        }
+                    }
+                };
+            }
+            return collection;
         }
     }
 }

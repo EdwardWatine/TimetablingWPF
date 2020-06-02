@@ -25,29 +25,17 @@ namespace TimetablingWPF
         }
         public void AddRange(IEnumerable<T> enumerable)
         {
-            CheckReentrancy();
-            bool flag = SuppressEvent;
-            SuppressEvent = true;
             foreach (T item in enumerable)
             {
                 Add(item);
             }
-            SuppressEvent = false;
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            SuppressEvent = flag;
         }
         public void RemoveRange(IEnumerable<T> enumerable)
         {
-            CheckReentrancy();
-            bool flag = SuppressEvent;
-            SuppressEvent = true;
             foreach (T item in enumerable)
             {
                 Remove(item);
             }
-            SuppressEvent = false; // ensures that SuppressEvent is not accidently overwritten
-            OnCollectionChanged(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
-            SuppressEvent = flag;
         }
         public void SetData(IEnumerable<T> enumerable)
         {
@@ -187,7 +175,7 @@ namespace TimetablingWPF
             }
             base.InsertItem(index, item);
         }
-        private void AddToOther(TContent item)
+        public void AddToOther(TContent item)
         {
             RelationalCollection<TThis, TContent> target = (RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item);
             target.OnlyInsert(target.Count, _parent); // add the item to the corresponding RelationalCollection
@@ -225,7 +213,7 @@ namespace TimetablingWPF
         {
             base.RemoveItem(index);
         }
-        private void RemoveFromOther(TContent item)
+        public void RemoveFromOther(TContent item)
         {
             RelationalCollection<TThis, TContent> target = (RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item);
             target.OnlyRemove(target.IndexOf(_parent)); // remove the item to the corresponding RelationalCollection

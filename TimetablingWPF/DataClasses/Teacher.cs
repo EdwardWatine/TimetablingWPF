@@ -20,7 +20,8 @@ namespace TimetablingWPF
             RegisterProperty(type, nameof(Subjects));
             RegisterProperty(type, nameof(Assignments));
             DataContainer current = DataContainer.GetCurrentContainer();
-            AddSearchParameter(type, new ListSearchFactory<Teacher, Group>(t => t.Subjects.SelectMany(s => s.Groups), current.Groups, "group", "Teaches"));
+            AddSearchParameter(type, new ListSearchFactory<Teacher, Group>(t => t.Subjects.SelectMany(s => s.Groups.Concat(new Group[] { s.RelatedGroup })), 
+                current.Groups, "group", "Teaches"));
             AddSearchParameter(type, new ListSearchFactory<Teacher, Year>(t => t.Assignments.SelectMany(a => a.Lesson.Forms.Select(f => f.YearGroup)), current.YearGroups, "year", "Teaches"));
         }
         public Teacher()

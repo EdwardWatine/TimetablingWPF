@@ -22,7 +22,7 @@ namespace TimetablingWPF
     /// </summary>
     /// 
 
-    public abstract class BaseDataClass : INotifyPropertyChanged, ICloneable, IFreezable, ISaveable
+    public abstract class BaseDataClass : IDataObject, ICloneable, IFreezable, ISaveable
     {
 
         public BaseDataClass()
@@ -75,7 +75,8 @@ namespace TimetablingWPF
             }
         }
         private string _sh;
-        public bool Commited { get; private set; } = false;
+        public bool Visible { get; set; } = true;
+        public bool Committed { get; private set; } = false;
         public bool Frozen { get; private set; } = false;
         public int StorageIndex { get; set; }
         public static Dictionary<Type, IList<CustomPropertyInfo>> ExposedProperties { get; } = new Dictionary<Type, IList<CustomPropertyInfo>>();
@@ -96,11 +97,11 @@ namespace TimetablingWPF
         /// </summary>
         public virtual void Commit(DataContainer container = null)
         {
-            if (!Commited)
+            if (!Committed)
             {
                 container = container ?? DataHelpers.GetDataContainer();
                 container.AddFromBDC(this);
-                Commited = true;
+                Committed = true;
             }
         }
         public void UpdateWithClone(BaseDataClass clone)
@@ -133,9 +134,9 @@ namespace TimetablingWPF
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected void NotifyPropertyChanged(string property)
+        protected virtual void NotifyPropertyChanged(string prop)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
 
         public override string ToString()
@@ -165,7 +166,7 @@ namespace TimetablingWPF
         public object Clone()
         {
             BaseDataClass copy = (BaseDataClass)MemberwiseClone();
-            copy.Commited = false;
+            copy.Committed = false;
             copy.PropertyChanged = null;
             copy.Unfreeze();
 

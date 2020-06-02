@@ -15,7 +15,19 @@ namespace TimetablingWPF
             RegisterProperty(type, nameof(Rooms));
         }
         public RelationalCollection<Subject, Group> Subjects { get; private set; } = new RelationalCollection<Subject, Group>(nameof(Subject.Groups));
-        public RelationalCollection<Room, Group> Rooms { get; private set; } = new RelationalCollection<Room, Group>(nameof(Room.Groups));
+        private int rooms;
+        public int Rooms
+        {
+            get => rooms;
+            set
+            {
+                if (rooms != value)
+                {
+                    rooms = value;
+                    NotifyPropertyChanged(nameof(Rooms));
+                }
+            }
+        }
         private readonly IList<ErrorContainer> errorValidations = new List<ErrorContainer>()
         {
 
@@ -26,14 +38,14 @@ namespace TimetablingWPF
         {
             SaveParent(writer);
             Saving.WriteIntEnum(Subjects.Select(s => s.StorageIndex), writer);
-            Saving.WriteIntEnum(Rooms.Select(r => r.StorageIndex), writer);
+            writer.Write(Rooms);
         }
 
         public override void Load(BinaryReader reader, Version version, DataContainer container)
         {
             LoadParent(reader, version, container);
             Loading.LoadEnum(() => Subjects.Add(container.Subjects[reader.ReadInt32()]), reader);
-            Loading.LoadEnum(() => Rooms.Add(container.Rooms[reader.ReadInt32()]), reader);
+            rooms = reader.ReadInt32();
         }
     }
 }

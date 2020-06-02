@@ -188,7 +188,6 @@
     <Compile Include="DataClasses\Collections.cs" />
     <Compile Include="DataClasses\Form.cs" />
     <Compile Include="DataClasses\Subject.cs" />
-    <Compile Include="DataClasses\Room.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />
     <Compile Include="Helpers\ErrorManager.cs" />

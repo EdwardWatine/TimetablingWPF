@@ -13,7 +13,7 @@ namespace TimetablingWPF
     public static class DataHelpers
     {
         public static readonly string[] ShortenedDaysOfTheWeek = new string[] { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
-        public static readonly Type[] UserTypes = new Type[] { typeof(Teacher), typeof(Subject), typeof(Form), typeof(Room), typeof(Group), typeof(Lesson) };
+        public static readonly Type[] UserTypes = new Type[] { typeof(Teacher), typeof(Subject), typeof(Form), typeof(Group), typeof(Lesson) };
         public static string WeekToString(int week)
         {
             return TimetableStructure.Weeks[week].Name;

@@ -15,7 +15,6 @@ namespace TimetablingWPF
         public InternalObservableCollection<Form> Forms { get; } = new InternalObservableCollection<Form>();
         public InternalObservableCollection<Year> YearGroups { get; } = new InternalObservableCollection<Year>();
         public InternalObservableCollection<Lesson> Lessons { get; } = new InternalObservableCollection<Lesson>();
-        public InternalObservableCollection<Room> Rooms { get; } = new InternalObservableCollection<Room>();
         public InternalObservableCollection<Subject> Subjects { get; } = new InternalObservableCollection<Subject>();
         public InternalObservableCollection<Group> Groups { get; } = new InternalObservableCollection<Group>();
         public static DataContainer GetCurrentContainer()
@@ -29,7 +28,6 @@ namespace TimetablingWPF
             Forms.CollectionChanged += SetUnsaved;
             YearGroups.CollectionChanged += SetUnsaved;
             Lessons.CollectionChanged += SetUnsaved;
-            Rooms.CollectionChanged += SetUnsaved;
             Subjects.CollectionChanged += SetUnsaved;
             Groups.CollectionChanged += SetUnsaved;
         }
@@ -40,7 +38,6 @@ namespace TimetablingWPF
             Forms.CollectionChanged -= SetUnsaved;
             YearGroups.CollectionChanged -= SetUnsaved;
             Lessons.CollectionChanged -= SetUnsaved;
-            Rooms.CollectionChanged -= SetUnsaved;
             Subjects.CollectionChanged -= SetUnsaved;
             Groups.CollectionChanged -= SetUnsaved;
             FileHelpers.SetWindowHeaders();
@@ -52,7 +49,6 @@ namespace TimetablingWPF
             Forms.CollectionChanged += SetUnsaved;
             YearGroups.CollectionChanged += SetUnsaved;
             Lessons.CollectionChanged += SetUnsaved;
-            Rooms.CollectionChanged += SetUnsaved;
             Subjects.CollectionChanged += SetUnsaved;
             Groups.CollectionChanged += SetUnsaved;
             FileHelpers.SetWindowHeaders();
@@ -64,7 +60,6 @@ namespace TimetablingWPF
             if (dataClass is Subject subject) Subjects.Add(subject);
             if (dataClass is Lesson lesson) Lessons.Add(lesson);
             if (dataClass is Group group) Groups.Add(group);
-            if (dataClass is Room room) Rooms.Add(room);
         }
         public IList FromType(Type type)
         {
@@ -73,7 +68,6 @@ namespace TimetablingWPF
             if (type == typeof(Subject)) return Subjects;
             if (type == typeof(Lesson)) return Lessons;
             if (type == typeof(Group)) return Groups;
-            if (type == typeof(Room)) return Rooms;
             if (type == typeof(Year)) return YearGroups;
             throw new ArgumentException("Type must be a legal type");
         }
@@ -90,7 +84,6 @@ namespace TimetablingWPF
             Lessons.SetData(container.Lessons);
             Forms.SetData(container.Forms);
             Groups.SetData(container.Groups);
-            Rooms.SetData(container.Rooms);
             Subjects.SetData(container.Subjects);
             YearGroups.SetData(container.YearGroups);
         }
@@ -100,7 +93,6 @@ namespace TimetablingWPF
             Lessons.Clear();
             Forms.Clear();
             Groups.Clear();
-            Rooms.Clear();
             Subjects.Clear();
             YearGroups.Clear();
         }

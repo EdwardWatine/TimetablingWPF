@@ -103,7 +103,7 @@ namespace TimetablingWPF
             {
                 return "None";
             }
-            return $"{length} {((string)parameter).Pluralize(length)}";
+            return $"{length} {((string)parameter).PluralizeFromSingular(length)}";
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

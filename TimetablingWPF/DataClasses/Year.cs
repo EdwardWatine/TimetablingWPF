@@ -2,7 +2,7 @@
 
 namespace TimetablingWPF
 {
-    public class Year : INotifyPropertyChanged
+    public class Year : IDataObject
     {
         public Year(string name)
         {
@@ -30,6 +30,9 @@ namespace TimetablingWPF
             }
         }
         public int StorageIndex { get; set; }
+
+        public bool Visible { get; set; } = true;
+
         public void Commit(DataContainer container = null)
         {
             if (!Committed)

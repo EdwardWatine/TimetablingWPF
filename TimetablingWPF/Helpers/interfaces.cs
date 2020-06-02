@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -29,5 +30,14 @@ namespace TimetablingWPF
     {
         void Save(BinaryWriter writer);
         void Load(BinaryReader reader, Version version, DataContainer container);
+    }
+    public interface IDataObject : INotifyPropertyChanged
+    {
+        int StorageIndex { get; set; }
+        void Delete(DataContainer container);
+        string Name { get; set; }
+        bool Committed { get; }
+        bool Visible { get; }
+
     }
 }

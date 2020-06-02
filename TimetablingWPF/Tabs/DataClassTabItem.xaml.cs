@@ -78,7 +78,7 @@ namespace TimetablingWPF
             filterName.TextChanged += handler;
             filterSh.TextChanged += handler;
             cbRemove.Click += delegate (object sender, RoutedEventArgs e) { RefreshFilter(); };
-            IList data = DataHelpers.GetDataContainer().FromType(type);
+            IList data = DataHelpers.GetDataContainer().FromType(type).GenerateVisibles();
             defaultView = new ListCollectionView(data);
             ((INotifyCollectionChanged)data).CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) { defaultView.Refresh(); };
             dgMainDataGrid.ItemsSource = defaultView;
@@ -158,7 +158,7 @@ namespace TimetablingWPF
 
         private void SearchChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            btFilter.IsEnabled = true;
+            RefreshFilter();
         }
 
         private readonly ListCollectionView defaultView;
@@ -226,6 +226,7 @@ namespace TimetablingWPF
         }
         public void RefreshFilter()
         {
+            tbResult.Visibility = Visibility.Hidden;
             btFilter.IsEnabled = true;
             ListCollectionView view = defaultView;
             string nameFilter = filterName.Text.RemoveWhitespace().ToUpperInvariant();
@@ -233,8 +234,14 @@ namespace TimetablingWPF
             dgMainDataGrid.ItemsSource = view;
             if ((string.IsNullOrWhiteSpace(nameFilter) && string.IsNullOrWhiteSpace(shFilter)) || gdFilter.Visibility != Visibility.Visible)
             {
-                view.Filter = null;
-                view.CustomSort = null;
+                if (view.Filter != null)
+                {
+                    view.Filter = null;
+                }
+                if (view.CustomSort != null)
+                {
+                    view.CustomSort = null;
+                }
                 return;
             }
             if (cbRemove.IsChecked ?? true)
@@ -244,7 +251,10 @@ namespace TimetablingWPF
             }
             else
             {
-                view.Filter = null;
+                if (view.Filter != null)
+                {
+                    view.Filter = null;
+                }
             }
             if (!string.IsNullOrWhiteSpace(nameFilter))
             {
@@ -260,6 +270,8 @@ namespace TimetablingWPF
         private void FilterClick(object sender, RoutedEventArgs e)
         {
             btFilter.IsEnabled = false;
+            Stopwatch stopwatch = new Stopwatch();
+            stopwatch.Start();
             string name = filterName.Text.RemoveWhitespace().ToUpperInvariant();
             string sh = filterSh.Text.RemoveWhitespace().ToUpperInvariant();
             bool searchName = !string.IsNullOrWhiteSpace(name);
@@ -272,14 +284,23 @@ namespace TimetablingWPF
             var x = data.ToList();
             ListCollectionView view = new ListCollectionView(x);
             dgMainDataGrid.ItemsSource = view;
+            string pre;
             if (cbRemove.IsChecked ?? true)
             {
-                Predicate<object> filterPred = DataHelpers.GenerateDefaultNameFilter(name, sh);
                 view.Filter = new Predicate<object>(o =>
                 {
-                    return filterPred(o) && searches.All(s => s.Search(o));
-                    });
+                    return searches.All(s => s.Search(o));
+                });
+                pre = $"{view.Count} {"result".PluralizeFromSingular(view.Count)}";
             }
+            else
+            {
+                pre = "All results";
+            }
+            stopwatch.Stop();
+            tbResult.Text = $"{pre} ({Math.Round((double)stopwatch.ElapsedMilliseconds, MidpointRounding.AwayFromZero):N0}ms)";
+            tbResult.Visibility = Visibility.Visible;
+            
         }
     }
     public static class DataGridCommands

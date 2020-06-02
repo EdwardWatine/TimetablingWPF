@@ -126,7 +126,6 @@ namespace TimetablingWPF
                         {typeof(Teacher), window.ImportTeacher },
                         {typeof(Group), window.ImportGroup },
                         {typeof(Subject), window.ImportSubject },
-                        {typeof(Room), window.ImportRoom },
                         {typeof(Form), window.ImportForm },
                         {typeof(Lesson), window.ImportLesson },
                     };
