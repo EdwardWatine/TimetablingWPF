@@ -19,6 +19,7 @@ using static TimetablingWPF.DataHelpers;
 using System.Globalization;
 using System.Collections.Specialized;
 using TimetablingWPF;
+using System.ComponentModel;
 
 namespace TimetablingWPF
 {
@@ -34,6 +35,10 @@ namespace TimetablingWPF
             CommandType = commandType;
             Item = commandType == CommandType.@new ? originalItem : (BaseDataClass)originalItem.Clone();
             OriginalItem = originalItem;
+            Item.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+                changed = true;
+            };
             Item.Freeze();
             txSh.Text = Item.Shorthand;
             oldstring = string.Concat((Item.Name ?? "").RemoveWhitespace().Take(3));
@@ -191,6 +196,7 @@ namespace TimetablingWPF
                     gdilContainer.Children.Add(sphorizontalMenu);
                     continue;
                 }
+                propName.Margin = new Thickness(0, 2, 0, 0);
                 gdLeft.RowDefinitions.SmartInsert(-2, new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
                 gdLeft.Insert(propName, -2, 0);
                 if (is_timetable)
@@ -279,6 +285,7 @@ namespace TimetablingWPF
         private readonly BaseDataClass Item;
         private readonly CommandType CommandType;
         private string oldstring;
+        private bool changed = false;
 
         private void ToggleAll(object sender, MouseButtonEventArgs e)
         {
@@ -314,7 +321,7 @@ namespace TimetablingWPF
         }
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            if (Cancel())
+            if ((CommandType == CommandType.edit && !changed) || Cancel())
             {
                 MainPage.CloseTab(this);
             }
@@ -327,7 +334,7 @@ namespace TimetablingWPF
                 ShowErrorBox("Please fix all errors!");
                 return;
             }
-            if (ErrManager.GetNumWarnings() > 0)
+            if ((CommandType != CommandType.edit || changed) && ErrManager.GetNumWarnings() > 0)
             {
                 if (System.Windows.MessageBox.Show("There are warnings. Do you want to continue?", "Warning",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)

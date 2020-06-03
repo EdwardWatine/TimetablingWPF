@@ -24,6 +24,11 @@ namespace TimetablingWPF
         public bool Unsaved { get; private set; } = false;
         public DataContainer()
         {
+            Year none = new Year("None")
+            {
+                Visible = false
+            };
+            YearGroups.Add(none);
             Teachers.CollectionChanged += SetUnsaved;
             Forms.CollectionChanged += SetUnsaved;
             YearGroups.CollectionChanged += SetUnsaved;

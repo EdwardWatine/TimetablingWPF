@@ -11,17 +11,31 @@ namespace TimetablingWPF
         static Subject()
         {
             Type type = typeof(Subject);
+            RegisterProperty(type, nameof(Rooms), "Number of rooms");
             RegisterProperty(type, nameof(Groups));
             RegisterProperty(type, nameof(Teachers));
             RegisterProperty(type, nameof(Lessons));
         }
-        public Subject() {
+        public Subject()
+        {
             Groups.AddToOther(RelatedGroup);
         }
         public RelationalCollection<Group, Subject> Groups { get; private set; } = new RelationalCollection<Group, Subject>(nameof(Group.Subjects));
         public RelationalCollection<Teacher, Subject> Teachers { get; private set; } = new RelationalCollection<Teacher, Subject>(nameof(Teacher.Subjects));
         public InternalObservableCollection<Lesson> Lessons { get; private set; } = new InternalObservableCollection<Lesson>();
         public Group RelatedGroup { get; private set; } = new Group();
+        private int rooms;
+        public int Rooms { get => rooms;
+            set
+            {
+                if (rooms != value)
+                {
+                    rooms = value;
+                    RelatedGroup.Rooms = value;
+                    NotifyPropertyChanged(nameof(Rooms));
+                }
+            }
+        }
         protected override void NotifyPropertyChanged(string prop)
         {
             if (prop == nameof(Name))
@@ -61,6 +75,11 @@ namespace TimetablingWPF
         {
             LoadParent(reader, version, container);
             Loading.LoadEnum(() => Teachers.Add(container.Teachers[reader.ReadInt32()]), reader);
+        }
+        public override void Delete(DataContainer container = null)
+        {
+            RelatedGroup.Delete();
+            base.Delete(container);
         }
     }
 }

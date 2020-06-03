@@ -122,7 +122,7 @@ namespace TimetablingWPF
                 view.CustomSort = null;
                 return;
             }
-            view.Filter = DataHelpers.GenerateDefaultNameFilter(target, string.Empty);
+            view.Filter = DataHelpers.GenerateNameFilter(target, o => o.ToString());
             SortingComparer.Filter = target;
             view.CustomSort = SortingComparer;
             UpdateStatusBox();
@@ -264,6 +264,7 @@ namespace TimetablingWPF
             selectedItems.CollectionChanged += SelectedItemsChanged;
             ClearSelections();
         }
+
         public MultiComboBox(string itemString) : this()
         {
             ItemString = itemString;

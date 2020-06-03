@@ -21,8 +21,8 @@ namespace TimetablingWPF
         {
             Type type = typeof(Lesson);
             RegisterProperty(type, nameof(Forms));
-            RegisterProperty(type, nameof(LessonsPerCycle));
-            RegisterProperty(type, nameof(LessonLength));
+            RegisterProperty(type, nameof(LessonsPerCycle), "Lessons per cycle");
+            RegisterProperty(type, nameof(LessonLength), "Lesson length");
             RegisterProperty(type, nameof(Subject));
             RegisterProperty(type, nameof(Assignments));
         }

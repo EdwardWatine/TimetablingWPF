@@ -133,7 +133,7 @@ namespace TimetablingWPF
                 tbFactory.SetBinding(TextBlock.TextProperty, binding);
                 cellTemplate.VisualTree = tbFactory;
                 
-                dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
+                dgMainDataGrid.Columns.SmartInsert(islist ? -1 : 2, new DataGridTemplateColumn()
                 {
                     Width = new DataGridLength(width, islist ? DataGridLengthUnitType.Star : DataGridLengthUnitType.Auto),
                     Header = prop.Alias,
