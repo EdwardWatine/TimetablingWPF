@@ -19,7 +19,7 @@ namespace TimetablingWPF
                     MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
                     if (result == MessageBoxResult.Yes)
                     {
-                        FileHelpers.SaveData(FileHelpers.GetCurrentFilePath());
+                        FileHelpers.SaveData(App.FilePath);
                     }
                     if (result == MessageBoxResult.Cancel)
                     {

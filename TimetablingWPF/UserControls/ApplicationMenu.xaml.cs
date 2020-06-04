@@ -64,7 +64,7 @@ namespace TimetablingWPF
         }
         public void SaveFile(object sender, ExecutedRoutedEventArgs e)
         {
-            string fpath = GetCurrentFilePath();
+            string fpath = App.FilePath;
             if (fpath != null)
             {
                 SaveData(fpath);
@@ -88,10 +88,10 @@ namespace TimetablingWPF
                 return;
             }
             string fpath = OpenFileDialogHelper();
-            if (fpath != null && fpath != GetCurrentFilePath())
+            if (fpath != null && fpath != App.FilePath)
             {
                 //ClearData();
-                LoadData(fpath, worker_args => RegisterOpenFile(fpath), owner: ParentWindow);
+                LoadData(fpath, owner: ParentWindow);
             }
         }
         private bool UserSave()
@@ -106,13 +106,13 @@ namespace TimetablingWPF
             string fpath = (string)((FrameworkElement)sender).DataContext;
             if (UserSave())
             {
-                LoadData(fpath, worker_args => RegisterOpenFile(fpath), owner: ParentWindow);
+                LoadData(fpath, owner: ParentWindow);
             }
         }
         public void ImportFile(object sender, ExecutedRoutedEventArgs e)
         {
             string fpath = OpenFileDialogHelper();
-            if (fpath != null && fpath != GetCurrentFilePath())
+            if (fpath != null && fpath != App.FilePath)
             {
                 ImportDialog window = new ImportDialog(ParentWindow);
                 window.ShowDialog();
@@ -120,7 +120,7 @@ namespace TimetablingWPF
                 LoadData(fpath, (complete) =>
                 {
                     DataContainer dataContainer = (DataContainer)complete.Result;
-                    DataContainer currentContainer = GetDataContainer();
+                    DataContainer currentContainer = App.Data;
                     Dictionary<Type, ImportOption> typeImportMapping = new Dictionary<Type, ImportOption>()
                     {
                         {typeof(Teacher), window.ImportTeacher },
@@ -209,7 +209,7 @@ namespace TimetablingWPF
             int oldmax = TimetableStructure.TotalSchedulable;
             if (new TimetableStructureDialog(Window.GetWindow(this), true).ShowDialog() ?? false)
             {
-                foreach (Teacher teacher in GetDataContainer().Teachers)
+                foreach (Teacher teacher in App.Data.Teachers)
                 {
                     teacher.UnavailablePeriods.Clear();
                     if (teacher.MaxPeriodsPerCycle == oldmax || teacher.MaxPeriodsPerCycle > TimetableStructure.TotalSchedulable)

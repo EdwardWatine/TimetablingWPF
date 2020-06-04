@@ -70,7 +70,8 @@
             </ToolBar>
         </ToolBarTray>
         <DataGrid Name="dgMainDataGrid" HeadersVisibility="Column" IsReadOnly="True" AutoGenerateColumns="False"  CanUserResizeColumns="True" CanUserResizeRows="True"
-                          SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True">
+                          SelectionUnit="FullRow" SelectionMode="Extended" CanUserSortColumns="True" ScrollViewer.CanContentScroll="True"
+                  EnableRowVirtualization="True" ScrollViewer.ScrollChanged="Scrolled">
             <DataGrid.ContextMenu>
                 <ContextMenu Name="cmContextMenu">
                     <MenuItem x:Name="miNewItem" Header="New item"/>

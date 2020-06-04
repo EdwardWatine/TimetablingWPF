@@ -99,7 +99,7 @@ namespace TimetablingWPF
         {
             if (!Committed)
             {
-                container = container ?? DataHelpers.GetDataContainer();
+                container = container ?? App.Data;
                 container.AddFromBDC(this);
                 Committed = true;
             }
@@ -143,10 +143,6 @@ namespace TimetablingWPF
         {
             return Name;
         }
-        public override bool Equals(object obj)
-        {
-            return ReferenceEquals(this, obj);
-        }
         /// <summary>
         /// Will remove all instances of self from <see cref="RelationalCollection{T}"/>. Will then remove self from the properties list
         /// </summary>
@@ -160,7 +156,7 @@ namespace TimetablingWPF
                 }
             }
             ApplyOnType<IRelationalCollection>(delete);
-            (container ?? DataHelpers.GetDataContainer()).FromType(GetType()).Remove(this);
+            (container ?? App.Data).FromType(GetType()).Remove(this);
         }
 
         public object Clone()
@@ -210,18 +206,6 @@ namespace TimetablingWPF
         {
             writer.Write(Name);
             writer.Write(Shorthand);
-        }
-        public static bool operator ==(BaseDataClass left, object right)
-        {
-            if (left is null)
-            {
-                return right is null;
-            }
-            return left.Equals(right);
-        }
-        public static bool operator !=(BaseDataClass left, object right)
-        {
-            return !(left == right);
         }
         public abstract IEnumerable<ErrorContainer> ErrorValidations { get; }
     }

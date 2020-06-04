@@ -2,12 +2,15 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Forms.VisualStyles;
 using static TimetablingWPF.DataHelpers;
 
 namespace TimetablingWPF
@@ -23,7 +26,7 @@ namespace TimetablingWPF
         public void UpdateRecentFilePaths()
         {
             FilePaths = Properties.Settings.Default.RECENT_FILES.Cast<string>().Take(TimetableSettings.RecentListSize + 1).ToList();
-            FilePaths.Remove(FileHelpers.GetCurrentFilePath());
+            FilePaths.Remove(App.FilePath);
             if (FilePaths.Count > TimetableSettings.RecentListSize)
             {
                 FilePaths.RemoveAt(FilePaths.Count - 1);
@@ -48,7 +51,8 @@ namespace TimetablingWPF
             Properties.Settings.Default.Save();
             RecentFileManager.UpdateRecentFilePaths();
         }
-        public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Action<RunWorkerCompletedEventArgs> onCancel = null, Window owner = null, bool save = true)
+        public static void LoadData(string fpath, Action<RunWorkerCompletedEventArgs> done = null, Action<RunWorkerCompletedEventArgs> onCancel = null, 
+            Window owner = null, bool save = true)
         {
             BackgroundWorker worker = new BackgroundWorker()
             {
@@ -58,10 +62,12 @@ namespace TimetablingWPF
             worker.Dispose(); //Doesn't do anything
             Application.Current.Dispatcher.Invoke(() =>
             {
+                string newPath = null;
                 LoadingDialog box = new LoadingDialog("Loading...")
                 {
                     Owner = owner
                 };
+                SavingMode? mode = null;
                 worker.DoWork += delegate (object sender, DoWorkEventArgs e)
                 {
                     if (!File.Exists(fpath))
@@ -73,9 +79,38 @@ namespace TimetablingWPF
                     }
                     FileStream fstream = new FileStream(fpath, FileMode.Open);
                     BinaryReader reader = new BinaryReader(fstream);
+                    long byteskip = 0;
+                    mode = (SavingMode)reader.ReadInt32();
+                    if (mode == SavingMode.Autosave)
+                    {
+                        if (!save)
+                        {
+                            VisualHelpers.ShowErrorBox("Backup files cannot be used for this function");
+                            e.Result = new Exception();
+                            return;
+                        }
+                        newPath = SaveFileDialogHelper("Restore backup file");
+                        if (newPath == null)
+                        {
+                            e.Result = new Exception();
+                            return;
+                        }
+                        _ = reader.ReadString(); // dispose of the filename
+                        byteskip = reader.BaseStream.Position;
+                    }
                     e.Result = Loading.StartLoad(reader, Version.Parse(reader.ReadString()), worker, e);
                     reader.Dispose();
                     fstream.Close();
+                    if (mode == SavingMode.Autosave)
+                    {
+                        FileStream stream = new FileStream(fpath, FileMode.Open);
+                        stream.Seek(byteskip, SeekOrigin.Begin);
+                        FileStream nfile = File.OpenWrite(newPath);
+                        nfile.Write(BitConverter.GetBytes((int)SavingMode.Normal), 0, sizeof(int));
+                        stream.CopyTo(nfile);
+                        stream.Close();
+                        nfile.Close();
+                    }
                     if (worker.CancellationPending)
                     {
                         e.Cancel = true;
@@ -89,6 +124,10 @@ namespace TimetablingWPF
                 worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e)
                 {
                     box.Close();
+                    if (e.Result is Exception)
+                    {
+                        return;
+                    }
                     if (e.Error != null)
                     {
                         VisualHelpers.ShowErrorBox($"A {e.Error.GetType().Name} error occured:  {e.Error.Message}");
@@ -99,11 +138,12 @@ namespace TimetablingWPF
                         onCancel?.Invoke(e);
                         return;
                     }
-                    if (save && !(e.Result is Exception))
+                    if (save)
                     {
                         DataContainer data = (DataContainer)e.Result;
                         SetDataContainer(data);
-                        GetDataContainer().UpdateSave();
+                        App.Data.UpdateSave();
+                        RegisterOpenFile(mode == SavingMode.Normal ? fpath : newPath);
                     }
                     done?.Invoke(e);
                 };
@@ -114,13 +154,14 @@ namespace TimetablingWPF
         public static void SaveData(string fpath)
         {
             SaveDataToFile(fpath);
-            GetDataContainer().UpdateSave();
+            App.Data.UpdateSave();
         }
         private static void SaveDataToFile(string fpath)
         {
             MemoryStream all_data = new MemoryStream();
             BinaryWriter writer = new BinaryWriter(all_data);
-            DataContainer data = (DataContainer)GetDataContainer().Clone();
+            DataContainer data = (DataContainer)App.Data.Clone();
+            writer.Write((int)SavingMode.Normal);
             Saving.StartSave(writer, data);
             all_data.Seek(0, SeekOrigin.Begin);
             FileStream stream = File.OpenWrite(fpath);
@@ -133,10 +174,10 @@ namespace TimetablingWPF
         {
             OpenFileDialog dialog = new OpenFileDialog
             {
-                Filter = "Timetable files (*.TTBL)|*.TTBL|All files (*.*)|*.*",
+                Filter = $"Timetable files (*{App.Ext})|*{App.Ext}|Backup files (*{App.BkExt})|*{App.BkExt}|All files (*.*)|*.*",
                 InitialDirectory = Properties.Settings.Default.LAST_ACCESSED_PATH,
                 ValidateNames = true,
-                DefaultExt = ".ttbl",
+                DefaultExt = App.Ext,
                 Title = title
             };
             if (dialog.ShowDialog() ?? false)
@@ -151,11 +192,11 @@ namespace TimetablingWPF
         {
             SaveFileDialog dialog = new SaveFileDialog
             {
-                Filter = "Timetable files (*.TTBL)|*.TTBL|All files (*.*)|*.*",
+                Filter = $"Timetable files (*{App.Ext})|*{App.Ext}|Backup files (*{App.BkExt})|*{App.BkExt}|All files (*.*)|*.*",
                 InitialDirectory = Properties.Settings.Default.LAST_ACCESSED_PATH,
                 ValidateNames = true,
                 OverwritePrompt = true,
-                DefaultExt = ".ttbl",
+                DefaultExt = App.Ext,
                 AddExtension = true,
                 Title = title
             };
@@ -169,12 +210,8 @@ namespace TimetablingWPF
         }
         public static void SetCurrentFilePath(string fpath)
         {
-            Application.Current.Properties["CURRENT_FILE_PATH"] = fpath;
+            App.FilePath = fpath;
             SetWindowHeaders();
-        }
-        public static string GetCurrentFilePath()
-        {
-            return (string)Application.Current.Properties["CURRENT_FILE_PATH"];
         }
         public static void SetWindowHeaders()
         {
@@ -192,13 +229,79 @@ namespace TimetablingWPF
         }
         public static string GetWindowHeader()
         {
-            string header = $"Timetabler - {Application.Current.Properties["CURRENT_FILE_PATH"]}";
-            if (GetDataContainer().Unsaved)
+            string header = $"{App.Name} - {App.FilePath}";
+            if (App.Data.Unsaved)
             {
                 header = "*" + header + " [unsaved]";
             }
             return header;
         }
+        public static string MakeBackupPath(string fpath)
+        {
+            return Path.Combine(App.BkPath, fpath.GetHashCode().ToString(CultureInfo.InvariantCulture)) + App.BkExt;
+        }
+        public static string[] GetBackups(string pathMatch = null)
+        {
+            string hashpath = "";
+            if (!string.IsNullOrEmpty(pathMatch))
+            {
+                hashpath = MakeBackupPath(pathMatch);
+                if (File.Exists(hashpath))
+                {
+                    if (ReadBackupPath(hashpath) == pathMatch)
+                    {
+                        return new string[] { hashpath };
+                    }
+                }
+            }
+            string[] paths = Directory.GetFiles(App.BkPath, App.BkExt);
+            if (string.IsNullOrEmpty(pathMatch))
+            {
+                return paths;
+            }
+            foreach (string path in paths)
+            {
+                if (path == hashpath)
+                {
+                    continue;
+                }
+                if (ReadBackupPath(path) == pathMatch)
+                {
+                    return new string[] { path };
+                }
+            }
+            return Array.Empty<string>();
+        }
+        public static string ReadBackupPath(string fpath)
+        {
+            FileStream stream = new FileStream(fpath, FileMode.Open);
+            BinaryReader reader = new BinaryReader(stream);
+            string s = reader.ReadString();
+            reader.Close();
+            stream.Close();
+            return s;
+        }
+        public static void WriteBackup(string fpath)
+        {
+            MemoryStream all_data = new MemoryStream();
+            BinaryWriter writer = new BinaryWriter(all_data);
+            DataContainer data = (DataContainer)App.Data.Clone();
+            writer.Write((int)SavingMode.Autosave);
+            writer.Write(App.FilePath);
+            Saving.StartSave(writer, data);
+            all_data.Seek(0, SeekOrigin.Begin);
+            FileStream stream = File.OpenWrite(fpath);
+            all_data.CopyTo(stream);
+            stream.Close();
+            writer.Close();
+            all_data.Close();
+        }
+    }
+
+    public enum SavingMode
+    {
+        Normal,
+        Autosave
     }
 
 }

@@ -28,10 +28,9 @@ namespace TimetablingWPF
         public App()
         {
             InitializeComponent();
+            Data.SetTimer();
+            Directory.CreateDirectory(BkPath);
             EventManager.RegisterClassHandler(typeof(FrameworkElement), UIElement.GotFocusEvent, new RoutedEventHandler((s, e) => ((FrameworkElement)s).FocusVisualStyle = null), true);
-            Properties["APPLICATION_NAME"] = "Timetabler";
-            Properties["CURRENT_FILE_PATH"] = null;
-            Properties["CURRENT_DATA"] = new DataContainer();
             TimetableStructure.SetData(new List<TimetableStructureWeek>()
             {
                 new TimetableStructureWeek("A", DataHelpers.ShortenedDaysOfTheWeek,
@@ -50,11 +49,16 @@ namespace TimetablingWPF
                 }
                 if (result == MessageBoxResult.Yes)
                 {
-                    FileHelpers.SaveData(FileHelpers.GetCurrentFilePath());
+                    FileHelpers.SaveData(FilePath);
                 }
             };
-            
         }
-
+        public const string Name = "Timetabler";
+        public static string FilePath { get; set; }
+        public static readonly DataContainer Data = new DataContainer();
+        public static readonly string DocPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Name);
+        public static readonly string BkPath = Path.Combine(DocPath, "Backup");
+        public const string Ext = ".ttbl";
+        public const string BkExt = ".ttbk";
     }
 }

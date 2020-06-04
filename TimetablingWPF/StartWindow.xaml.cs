@@ -57,7 +57,6 @@ namespace TimetablingWPF
                     uris.Remove(tag); // remove the link if the file is not found
                     return;
                 }
-                RegisterOpenFile(tag.LocalPath);
                 new MainWindow(true).Show();
                 Close();
             }, owner: this); 
@@ -75,7 +74,6 @@ namespace TimetablingWPF
         private void OpenFileFromPath(string fpath)
         {
             LoadData(fpath, (worker_args) => {
-                RegisterOpenFile(fpath);
                 new MainWindow(true).Show();
                 Close();
             }, owner: this);

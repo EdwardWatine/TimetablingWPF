@@ -58,7 +58,7 @@ namespace TimetablingWPF
             InitializeComponent();
             lbMain.ItemsSource = YearList;
         }
-        private readonly IList<YearData> YearList = new ObservableCollection<YearData>(DataHelpers.GetDataContainer().YearGroups.Where(y => y.Visible).Select(y => new YearData(y)));
+        private readonly IList<YearData> YearList = new ObservableCollection<YearData>(App.Data.YearGroups.Where(y => y.Visible).Select(y => new YearData(y)));
         private bool focusFlag = false;
         private void SelectedChanged(object sender, SelectionChangedEventArgs e)
         {

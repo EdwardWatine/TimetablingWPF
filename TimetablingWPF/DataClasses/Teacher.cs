@@ -19,7 +19,7 @@ namespace TimetablingWPF
             RegisterProperty(type, nameof(MaxPeriodsPerCycle), "Maximum periods per cycle", o => $"{o}/{TimetableStructure.TotalSchedulable}");
             RegisterProperty(type, nameof(Subjects));
             RegisterProperty(type, nameof(Assignments));
-            DataContainer current = DataContainer.GetCurrentContainer();
+            DataContainer current = App.Data;
             AddSearchParameter(type, new ListSearchFactory<Teacher, Group>(t => t.Subjects.SelectMany(s => s.Groups.Concat(new Group[] { s.RelatedGroup })), 
                 current.Groups, "group", "Teaches"));
             AddSearchParameter(type, new ListSearchFactory<Teacher, Year>(t => t.Assignments.SelectMany(a => a.Lesson.Forms.Select(f => f.YearGroup)), current.YearGroups, "year", "Teaches"));

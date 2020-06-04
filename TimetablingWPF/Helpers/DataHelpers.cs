@@ -26,18 +26,14 @@ namespace TimetablingWPF
         {
             return TimetableStructure.Weeks[week].PeriodNames[period];
         }
-        public static DataContainer GetDataContainer()
-        {
-            return (DataContainer)Application.Current.Properties["CURRENT_DATA"];
-        }
         public static void SetDataContainer(DataContainer container)
         {
             TimetableStructure.SetData(container.TimetableStructure);
-            GetDataContainer().SetFromContainer(container);
+            App.Data.SetFromContainer(container);
         }
         public static void ClearData()
         {
-            GetDataContainer().ClearData();
+            App.Data.ClearData();
         }
         public static TabItem GenerateItemTab(object item, CommandType commandType)
         {
@@ -61,9 +57,9 @@ namespace TimetablingWPF
                 }
                 if (nameFilter.Length == 0 && shorthand.Length == 0) return true;
                 if (contains && name.Length != 0) return true;
-                bool nameCheck = name.Length == 0 ? false : GenericHelpers.DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
+                bool nameCheck = name.Length != 0 && GenericHelpers.DamerauLevenshteinDistance(name, nameFilter, (nameFilter.Length + 1) / 2) != int.MaxValue;
                 if (nameCheck) return true;
-                bool shCheck = sh.Length == 0 ? false : GenericHelpers.DamerauLevenshteinDistance(sh, shorthand, (sh.Length - 1) / 2) != int.MaxValue;
+                bool shCheck = sh.Length != 0 && GenericHelpers.DamerauLevenshteinDistance(sh, shorthand, (sh.Length - 1) / 2) != int.MaxValue;
                 if (shCheck) return true;
                 return false;
                ;

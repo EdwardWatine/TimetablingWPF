@@ -112,7 +112,7 @@ namespace TimetablingWPF
                     if (generic_argument == typeof(Assignment))
                     {
                         Type box_type = item_type == typeof(Teacher) ? typeof(Lesson) : typeof(Teacher);
-                        comboBox.ItemsSource = ((INotifyCollectionChanged)GetDataContainer().FromType(box_type)).GenerateOneWayCopy();
+                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(box_type)).GenerateOneWayCopy();
                         comboBox.ItemString = box_type.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
                         IntegerUpDown iupdown = new IntegerUpDown()
@@ -184,7 +184,7 @@ namespace TimetablingWPF
                     }
                     else
                     {
-                        comboBox.ItemsSource = ((INotifyCollectionChanged)GetDataContainer().FromType(generic_argument)).GenerateOneWayCopy();
+                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(generic_argument)).GenerateOneWayCopy();
                         comboBox.ItemString = generic_argument.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
 
@@ -251,7 +251,7 @@ namespace TimetablingWPF
                     {
                         Placeholder = $"-- {prop.Type.Name} --",
                         IsEditable = true,
-                        ItemsSource = GetDataContainer().FromType(prop.Type),
+                        ItemsSource = App.Data.FromType(prop.Type),
                         Margin = new Thickness(0, 5, 0, 0),
                         Width = 150,
                         HorizontalAlignment = HorizontalAlignment.Left

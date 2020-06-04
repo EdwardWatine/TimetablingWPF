@@ -37,7 +37,7 @@ namespace TimetablingWPF
         {
             if (!Committed)
             {
-                (container ?? DataHelpers.GetDataContainer()).YearGroups.Add(this);
+                (container ?? App.Data).YearGroups.Add(this);
                 Committed = true;
             }
         }
@@ -47,7 +47,7 @@ namespace TimetablingWPF
             {
                 form.YearGroup = null;
             }
-            (container ?? DataHelpers.GetDataContainer()).YearGroups.Remove(this);
+            (container ?? App.Data).YearGroups.Remove(this);
         }
         public override string ToString()
         {

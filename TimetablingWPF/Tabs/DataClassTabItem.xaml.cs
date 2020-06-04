@@ -64,21 +64,18 @@ namespace TimetablingWPF
             attachButtonCommand(btEditToolbar, editBinding);
             attachButtonCommand(btDuplicateToolbar, dupBinding); // attach commands to the toolbar
             attachButtonCommand(btDeleteToolbar, delBinding);
-            timer = new Timer(300) { 
-                AutoReset = false
-            };
-            timer.Elapsed += delegate (object sender, ElapsedEventArgs e)
+            searchtimer.Elapsed += delegate (object sender, ElapsedEventArgs e)
             {
                 Dispatcher.Invoke(() => RefreshFilter());
             };
             void handler(object sender, TextChangedEventArgs e) {
-                timer.Stop();
-                timer.Start();
+                searchtimer.Stop();
+                searchtimer.Start();
             };
             filterName.TextChanged += handler;
             filterSh.TextChanged += handler;
             cbRemove.Click += delegate (object sender, RoutedEventArgs e) { RefreshFilter(); };
-            IList data = DataHelpers.GetDataContainer().FromType(type).GenerateVisibles();
+            IList data = App.Data.FromType(type).GenerateVisibles();
             defaultView = new ListCollectionView(data);
             ((INotifyCollectionChanged)data).CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) { defaultView.Refresh(); };
             dgMainDataGrid.ItemsSource = defaultView;
@@ -119,8 +116,26 @@ namespace TimetablingWPF
                         Content = tb
                     };
                     tbFactory.SetValue(ToolTipProperty, tt);
-                    tt.Opened += delegate (object sender, RoutedEventArgs e) { tt.Content = VisualHelpers.GenerateTimetable((IEnumerable<TimetableSlot>)prop.PropertyInfo.GetValue(tt.DataContext)); };
+                    scrolltimer.Elapsed += delegate (object sender_i, ElapsedEventArgs e_i)
+                    {
+                        Dispatcher.Invoke(() =>
+                        {
+                            if (tt.IsOpen)
+                            {
+                                DateTime date = DateTime.Now;
+                                tt.Content = VisualHelpers.GenerateTimetable((IEnumerable<TimetableSlot>)prop.PropertyInfo.GetValue(tt.DataContext));
+                            }
+                        });
+                    };
+                    tt.Opened += delegate (object sender, RoutedEventArgs e) 
+                    {
+                        if (!scrolltimer.Enabled)
+                        {
+                            tt.Content = VisualHelpers.GenerateTimetable((IEnumerable<TimetableSlot>)prop.PropertyInfo.GetValue(tt.DataContext));
+                        }
+                    };
                     tt.Closed += delegate (object sender, RoutedEventArgs e) { tt.Content = tb; };
+                    tb.MouseLeave += delegate (object sender, MouseEventArgs e) { tt.IsOpen = false; };
                 }
                 else if (islist)
                 {
@@ -165,7 +180,16 @@ namespace TimetablingWPF
         public Type DataType { get; }
         private readonly InternalObservableCollection<SearchBase> searches;
         private readonly SortingComparer FilterComparer = new SortingComparer();
-        private readonly Timer timer;
+        private readonly Timer searchtimer = new Timer(TimetableSettings.DelayBeforeSearching)
+        {
+            AutoReset = false
+        };
+        private readonly Timer scrolltimer = new Timer(TimetableSettings.TooltipDelay)
+        {
+            AutoReset = false,
+            Enabled = false
+        };
+
         private void ExecuteNewItem(object sender, ExecutedRoutedEventArgs e)
         {
             MainPage.NewTab(DataHelpers.GenerateItemTab(Activator.CreateInstance(DataType), CommandType.@new), $"New {DataType.Name}");
@@ -300,7 +324,12 @@ namespace TimetablingWPF
             stopwatch.Stop();
             tbResult.Text = $"{pre} ({Math.Round((double)stopwatch.ElapsedMilliseconds, MidpointRounding.AwayFromZero):N0}ms)";
             tbResult.Visibility = Visibility.Visible;
-            
+        }
+
+        private void Scrolled(object sender, ScrollChangedEventArgs e)
+        {
+            scrolltimer.Stop();
+            scrolltimer.Start();
         }
     }
     public static class DataGridCommands

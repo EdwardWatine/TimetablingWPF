@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Humanizer;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace TimetablingWPF
 {
@@ -17,9 +21,37 @@ namespace TimetablingWPF
         public InternalObservableCollection<Lesson> Lessons { get; } = new InternalObservableCollection<Lesson>();
         public InternalObservableCollection<Subject> Subjects { get; } = new InternalObservableCollection<Subject>();
         public InternalObservableCollection<Group> Groups { get; } = new InternalObservableCollection<Group>();
-        public static DataContainer GetCurrentContainer()
+        public Timer Timer { get; private set; }
+        private void Autosave(object sender, ElapsedEventArgs e)
         {
-            return DataHelpers.GetDataContainer();
+            Timer.Stop();
+            string[] bks = FileHelpers.GetBackups(App.FilePath);
+            string path;
+            if (bks.Length == 0)
+            {
+                int prefix = 0;
+                path = FileHelpers.MakeBackupPath(App.FilePath);
+                while (File.Exists(path))
+                {
+                    path = $"{prefix}{FileHelpers.MakeBackupPath(App.FilePath)}";
+                    prefix++;
+                }
+            }
+            else
+            {
+                path = bks[0];
+            }
+            FileHelpers.WriteBackup(path);
+            if (Unsaved)
+            {
+                Timer.Start();
+            }
+        }
+        public void SetTimer()
+        {
+            Timer = new Timer(TimetableSettings.AutosaveInterval);
+            Timer.Elapsed += Autosave;
+            Timer.Stop();
         }
         public bool Unsaved { get; private set; } = false;
         public DataContainer()
@@ -39,6 +71,7 @@ namespace TimetablingWPF
         private void SetUnsaved(object sender, NotifyCollectionChangedEventArgs e)
         {
             Unsaved = true;
+            Timer?.Start();
             Teachers.CollectionChanged -= SetUnsaved;
             Forms.CollectionChanged -= SetUnsaved;
             YearGroups.CollectionChanged -= SetUnsaved;
@@ -50,6 +83,7 @@ namespace TimetablingWPF
         public void UpdateSave()
         {
             Unsaved = false;
+            Timer?.Stop();
             Teachers.CollectionChanged += SetUnsaved;
             Forms.CollectionChanged += SetUnsaved;
             YearGroups.CollectionChanged += SetUnsaved;
@@ -106,7 +140,8 @@ namespace TimetablingWPF
         {
             DataContainer dc = new DataContainer()
             {
-                TimetableStructure = new List<StructureClasses.TimetableStructureWeek>(TimetableStructure)
+                TimetableStructure = new List<StructureClasses.TimetableStructureWeek>(TimetableStructure),
+                Timer = null
             };
             dc.SetFromContainer(this);
             return dc;

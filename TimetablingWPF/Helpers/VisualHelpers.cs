@@ -169,7 +169,7 @@ namespace TimetablingWPF
         /// <returns></returns>
         public static MessageBoxResult ShowUnsavedBox()
         {
-            if (DataHelpers.GetDataContainer().Unsaved)
+            if (App.Data.Unsaved)
             {
                 return MessageBox.Show("Your data has not been saved. Save the file?", "Unsaved Data", MessageBoxButton.YesNoCancel, MessageBoxImage.Exclamation);
             }
