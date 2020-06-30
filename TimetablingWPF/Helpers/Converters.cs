@@ -191,12 +191,11 @@ namespace TimetablingWPF
             return null;
         }
     }
-    public class URISetatter : IValueConverter
+    public class URIConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Uri URI = (Uri)value;
-            return (string)parameter == "filename" ? System.IO.Path.GetFileName(URI.LocalPath) : URI.LocalPath;
+            return System.IO.Path.GetFileName((string)value);
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

@@ -68,6 +68,10 @@
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="AvsAn, Version=3.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AvsAn.3.0.1\lib\net45\AvsAn.dll</HintPath>
@@ -154,6 +158,9 @@
     <Compile Include="DataClasses\Searching\SearchBase.cs" />
     <Compile Include="DataClasses\TimetableSlot.cs" />
     <Compile Include="DataClasses\Year.cs" />
+    <Compile Include="GeneralWindows\BackupWindow.xaml.cs">
+      <DependentUpon>BackupWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="GeneralWindows\InformationWindow.xaml.cs">
       <DependentUpon>InformationWindow.xaml</DependentUpon>
     </Compile>
@@ -216,6 +223,10 @@
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
+    <Page Include="GeneralWindows\BackupWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Tabs\ItemTab.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -368,6 +379,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Media\ExpandIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\AppIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\AppIcon2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

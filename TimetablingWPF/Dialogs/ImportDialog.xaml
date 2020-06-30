@@ -37,7 +37,6 @@
                     <ColumnDefinition Width="Auto" SharedSizeGroup="A"/>
                     <ColumnDefinition SharedSizeGroup="A"/>
                     <ColumnDefinition SharedSizeGroup="A"/>
-                    <ColumnDefinition SharedSizeGroup="A"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -67,9 +66,6 @@
                 </Border>
                 <Border Grid.Column="5" Style="{StaticResource GridLineInternal}">
                     <TextBlock Text="Group"/>
-                </Border>
-                <Border Grid.Column="6" Style="{StaticResource GridLineInternal}">
-                    <TextBlock Text="Room"/>
                 </Border>
                 <Border Grid.Row="1" Style="{StaticResource GridLineInternalVertical}">
                     <TextBlock Text="Do not Import"/>
@@ -152,20 +148,6 @@
                         <RadioButton Name="GroupImport" Grid.Row="1" HorizontalAlignment="Center"/>
                         <RadioButton Name="GroupReplace" Grid.Row="2" HorizontalAlignment="Center"/>
                         <RadioButton Name="GroupMerge" Grid.Row="3" HorizontalAlignment="Center"/>
-                    </Grid>
-                </Border>
-                <Border Style="{StaticResource GridLineInternal}" Grid.Column="6" Grid.Row="1" Grid.RowSpan="4">
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <RadioButton Name="RoomImportFalse" IsChecked="True" HorizontalAlignment="Center"/>
-                        <RadioButton Name="RoomImport" Grid.Row="1" HorizontalAlignment="Center"/>
-                        <RadioButton Name="RoomReplace" Grid.Row="2" HorizontalAlignment="Center"/>
-                        <RadioButton Name="RoomMerge" Grid.Row="3" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
                 <Border Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource GridLineInternal}">

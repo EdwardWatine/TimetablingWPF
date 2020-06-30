@@ -175,5 +175,13 @@ namespace TimetablingWPF
             }
             return MessageBoxResult.No;
         }
+
+        public static bool? UnsavedDialog()
+        {
+            MessageBoxResult result = ShowUnsavedBox();
+            if (result == MessageBoxResult.Yes) return true;
+            if (result == MessageBoxResult.Cancel) return null;
+            return false;
+        }
     }
 }

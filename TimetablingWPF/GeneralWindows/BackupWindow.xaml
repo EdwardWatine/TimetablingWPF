@@ -1,0 +1,40 @@
+﻿<Window x:Class="TimetablingWPF.BackupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TimetablingWPF"
+        mc:Ignorable="d" WindowStartupLocation="CenterOwner"
+        Title="FullBackupWindow" Height="200" Width="400">
+    <Window.Resources>
+        <local:NullToBool x:Key="nullBoolConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Name="tbMain" Text="All the backups are listed below:" Margin="5,0,0,0" FontSize="12"/>
+        <ListBox Name="lbMain" Grid.Row="1">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Filename}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding Path}" FontSize="10" Margin="5,0,0,0" Foreground="#404040"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Padding="2,0,2,0" Content="Delete Backup" HorizontalAlignment="Center" Click="DeleteClick" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullBoolConverter}}"/>
+            <Button Padding="2,0,2,0" Content="Restore Backup" HorizontalAlignment="Center" Click="RestoreClick" Grid.Column="1" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullBoolConverter}}"/>
+            <Button Padding="2,0,2,0" Content="Restore and Open Backup" HorizontalAlignment="Center" Click="RestoreLoad" Grid.Column="1" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullBoolConverter}}"/>
+        </Grid>
+    </Grid>
+</Window>

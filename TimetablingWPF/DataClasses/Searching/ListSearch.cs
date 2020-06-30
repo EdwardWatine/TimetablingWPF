@@ -71,7 +71,7 @@ namespace TimetablingWPF.Searching
                 {
                     return options.SelectedItems.AsParallel().Cast<TCollection>().Any(g => values.Contains(g));
                 }
-                return !options.SelectedItems.AsParallel().Cast<TCollection>().Any(g => !values.Contains(g));
+                return options.SelectedItems.AsParallel().Cast<TCollection>().All(g => values.Contains(g));
             }
         }
     }

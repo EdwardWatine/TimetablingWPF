@@ -25,13 +25,13 @@ namespace TimetablingWPF
         private void Autosave(object sender, ElapsedEventArgs e)
         {
             Timer.Stop();
-            string[] bks = FileHelpers.GetBackups(App.FilePath);
+            IEnumerable<string> bks = FileHelpers.GetBackups(App.FilePath);
             string path;
-            if (bks.Length == 0)
+            if (!bks.Any())
             {
                 int prefix = 0;
                 path = FileHelpers.MakeBackupPath(App.FilePath);
-                while (File.Exists(path))
+                while (File.Exists(path) && FileHelpers.ReadBackupPath(path) != App.FilePath)
                 {
                     path = $"{prefix}{FileHelpers.MakeBackupPath(App.FilePath)}";
                     prefix++;
@@ -39,7 +39,7 @@ namespace TimetablingWPF
             }
             else
             {
-                path = bks[0];
+                path = bks.First();
             }
             FileHelpers.WriteBackup(path);
             if (Unsaved)

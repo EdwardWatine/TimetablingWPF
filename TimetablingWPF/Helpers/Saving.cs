@@ -42,6 +42,7 @@ namespace TimetablingWPF
             {
                 y.StorageIndex = i;
                 writer.Write(y.Name);
+                writer.Write(y.Visible);
             }, writer);
             foreach (Type type in DataHelpers.UserTypes)
             {

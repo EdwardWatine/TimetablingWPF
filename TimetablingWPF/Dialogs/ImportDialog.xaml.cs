@@ -39,7 +39,6 @@ namespace TimetablingWPF
         public ImportOption ImportSubject => CheckableToImport(SubjectImport, SubjectReplace, SubjectMerge);
         public ImportOption ImportForm => CheckableToImport(FormImport, FormImportFalse, FormMerge);
         public ImportOption ImportGroup => CheckableToImport(GroupImport, GroupReplace, GroupMerge);
-        public ImportOption ImportRoom => CheckableToImport(RoomImport, RoomReplace, RoomMerge);
         public ImportOption ImportAssignment => CheckableToImport(AssignmentImport);
         private void Confirm(object sender, RoutedEventArgs e)
         {

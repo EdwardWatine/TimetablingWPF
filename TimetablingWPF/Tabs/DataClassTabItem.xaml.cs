@@ -198,7 +198,7 @@ namespace TimetablingWPF
         private void ExecuteEditItem(object sender, ExecutedRoutedEventArgs e)
         {
             object item = dgMainDataGrid.SelectedItem; // edit item tab
-            MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.edit), $"Edit {item.GetType().Name}");
+            MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.edit), $"Edit {DataType.Name}");
 
         }
 
@@ -210,7 +210,7 @@ namespace TimetablingWPF
         private void ExecuteDuplicateItem(object sender, ExecutedRoutedEventArgs e)
         {
             object item = dgMainDataGrid.SelectedItem; // duplicate item tab
-            MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.copy), $"New {item.GetType().Name}");
+            MainPage.NewTab(DataHelpers.GenerateItemTab(item, CommandType.copy), $"New {DataType.Name}");
         }
 
         private void CanExecuteDuplicateItem(object sender, CanExecuteRoutedEventArgs e)

@@ -63,7 +63,10 @@ namespace TimetablingWPF
             LoadEnum(() =>
             {
                 string name = reader.ReadString();
-                Year year = new Year(name);
+                Year year = new Year(name)
+                {
+                    Visible = reader.ReadBoolean()
+                };
                 year.Commit(container);
             }, reader);
             object[] parameters = new object[] { reader, version, container };

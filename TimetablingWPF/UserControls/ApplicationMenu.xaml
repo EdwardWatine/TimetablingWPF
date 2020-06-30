@@ -21,6 +21,8 @@
             </MenuItem>
             <MenuItem Header="_Import" Command="local:MenuCommands.ImportCommand"/>
             <Separator/>
+            <MenuItem Header="_View Backups" Click="ViewBackups"/>
+            <Separator/>
             <MenuItem Header="_Save" Command="ApplicationCommands.Save"/>
             <MenuItem Header="Save _As" Command="ApplicationCommands.SaveAs" InputGestureText="Ctrl+Shift+S"/>
         </MenuItem>

@@ -16,7 +16,7 @@
     </Window.Background>
     <Window.Resources>
 
-        <local:URISetatter x:Key="URISetatter"/>
+        <local:URIConverter x:Key="URIC"/>
         <Style x:Key="HyperlinkStyle" TargetType="Hyperlink">
             <Style.Triggers>
 
@@ -126,14 +126,14 @@
                     <DataTemplate>
 
                         <TextBlock HorizontalAlignment="Left" Margin="0,20,0,0" FontSize="12">
-                            <InlineUIContainer>
+                            <InlineUIContainer BaselineAlignment="Center">
                                 <Image MaxHeight="{Binding ElementName=fpath, Path=ActualHeight}"
                                        Source="{StaticResource FileIcon}"/>
                             </InlineUIContainer>         
-                            <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click" Tag="{Binding}">
+                            <Hyperlink Style="{StaticResource HyperlinkStyle}" Click="Recent_File_Click">
                                 <TextBlock x:Name="fpath"
-                                           Text="{Binding Converter={StaticResource URISetatter}, ConverterParameter=filename}"
-                                           ToolTip="{Binding Converter={StaticResource URISetatter}}"/>
+                                           Text="{Binding Converter={StaticResource URIC}}"
+                                           ToolTip="{Binding}"/>
                             </Hyperlink>
                         </TextBlock>
                     </DataTemplate>
@@ -145,7 +145,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" HorizontalAlignment="Center" Foreground="#FFFFFF" FontSize="12">
-                    <InlineUIContainer>
+                    <InlineUIContainer BaselineAlignment="Center">
                         <Image MaxHeight="{Binding ElementName=fpath, Path=ActualHeight}" 
                                 Source="{StaticResource FolderIcon}"/>
                     </InlineUIContainer>

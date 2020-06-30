@@ -30,36 +30,46 @@ namespace TimetablingWPF
         public StartWindow()
         {
             InitializeComponent();
+
             IEnumerable<string> lines = Properties.Settings.Default.RECENT_FILES.Cast<string>(); // access the recent files
             if (!lines.Any())
             {
                 tbNoRecentFiles.Visibility = Visibility.Visible; // show a message to the user
                 icRecentFiles.Visibility = Visibility.Collapsed;
             }
-            uris = new ObservableCollection<Uri>(lines.Take(6).Select(x => new Uri(x)));
+            uris = new ObservableCollection<string>(lines.Take(6));
             icRecentFiles.ItemsSource = uris;
             Show();
+            BackupWindow bwindow = new BackupWindow(this, s => OpenFileFromPath(s), true);
+            if (bwindow.Paths.Any())
+            {
+                bwindow.ShowDialog();
+            }
             string fpath = Environment.GetCommandLineArgs().ElementAtOrDefault(1); // enable double click for files
             if (!string.IsNullOrEmpty(fpath))
             {
                 OpenFileFromPath(fpath);
+                return;
             }
         }
-        private readonly ObservableCollection<Uri> uris;
+        private readonly ObservableCollection<string> uris;
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = (Hyperlink)e.Source;
-            Uri tag = (Uri)link.Tag;
-            LoadData(tag.LocalPath, (worker_args) =>
+            string path = (string)link.DataContext;
+            LoadData(path, exception: (worker_args) =>
             {
                 if (worker_args.Result is FileNotFoundException)
                 {
-                    uris.Remove(tag); // remove the link if the file is not found
+                    uris.Remove(path); // remove the link if the file is not found
                     return;
                 }
+            },
+            done: (worker_args) => 
+            {
                 new MainWindow(true).Show();
                 Close();
-            }, owner: this); 
+            }, owner: this);
         }
 
         private void OpenFile(object sender, RoutedEventArgs e)

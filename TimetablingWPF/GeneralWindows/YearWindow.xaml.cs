@@ -97,7 +97,7 @@ namespace TimetablingWPF
         }
         private void CloseClick(object sender, RoutedEventArgs e)
         {
-            if (!YearList.Any(yd => !yd.Year.Committed || yd.Deleted) ||
+            if (YearList.All(yd => yd.Year.Committed && !yd.Deleted) ||
                 VisualHelpers.ShowWarningBox("Any changes you have made will not be saved. Continue?") == MessageBoxResult.OK)
             {
                 Close();

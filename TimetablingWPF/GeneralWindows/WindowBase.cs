@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace TimetablingWPF
 {
@@ -12,6 +14,7 @@ namespace TimetablingWPF
     {
         public WindowBase()
         {
+            Icon = BitmapFrame.Create(new Uri("../../Media/AppIcon2.png", UriKind.Relative));
             Closing += delegate (object sender, CancelEventArgs e) 
             { 
                 if (Application.Current.Windows.Count == 1)

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Xceed.Wpf.Toolkit;
 using static TimetablingWPF.DataHelpers;
 using static TimetablingWPF.FileHelpers;
 
@@ -48,18 +49,17 @@ namespace TimetablingWPF
 
         public void NewFile(object sender, ExecutedRoutedEventArgs e)
         {
-            if (!UserSave())
+            if (DoUnsavedDialog())
             {
-                return;
-            }
-            string fpath = SaveFileDialogHelper("Create New File");
-            if (fpath != null)
-            {
-                TimetableStructureDialog structureDialog = new TimetableStructureDialog(ParentWindow, false);
-                if (!structureDialog.ShowDialog() ?? false) { return; }
-                ClearData();
-                SaveData(fpath);
-                RegisterOpenFile(fpath);
+                string fpath = SaveFileDialogHelper("Create New File");
+                if (fpath != null)
+                {
+                    TimetableStructureDialog structureDialog = new TimetableStructureDialog(ParentWindow, false);
+                    if (!structureDialog.ShowDialog() ?? false) { return; }
+                    ClearData();
+                    SaveData(fpath);
+                    RegisterOpenFile(fpath);
+                }
             }
         }
         public void SaveFile(object sender, ExecutedRoutedEventArgs e)
@@ -83,28 +83,35 @@ namespace TimetablingWPF
         }
         public void OpenFile(object sender, ExecutedRoutedEventArgs e)
         {
-            if (!UserSave())
+            bool? save = VisualHelpers.UnsavedDialog();
+            if (DoUnsavedDialog())
             {
-                return;
-            }
-            string fpath = OpenFileDialogHelper();
-            if (fpath != null && fpath != App.FilePath)
-            {
-                //ClearData();
-                LoadData(fpath, owner: ParentWindow);
+                string fpath = OpenFileDialogHelper();
+                if (fpath != null && fpath != App.FilePath)
+                {
+                    //ClearData();
+                    LoadData(fpath, owner: ParentWindow);
+                }
             }
         }
-        private bool UserSave()
+        private bool DoUnsavedDialog()
         {
-            MessageBoxResult result = VisualHelpers.ShowUnsavedBox();
-            if (result == MessageBoxResult.Yes) SaveFile(null, null);
-            if (result == MessageBoxResult.Cancel) return false;
+            if (App.Data.Unsaved)
+            {
+                bool? result = VisualHelpers.UnsavedDialog();
+                if (result == true)
+                {
+                    SaveFile(null, null);
+                }
+                return result != null;
+            }
             return true;
         }
+
         private void RecentClick(object sender, RoutedEventArgs e)
         {
             string fpath = (string)((FrameworkElement)sender).DataContext;
-            if (UserSave())
+            if (DoUnsavedDialog())
             {
                 LoadData(fpath, owner: ParentWindow);
             }
@@ -155,7 +162,7 @@ namespace TimetablingWPF
                                         int max = currentdata.Name.Length > target.Name.Length ? currentdata.Name.Length: target.Name.Length;
                                         if (GenericHelpers.DamerauLevenshteinDistance(currentdata.Name, target.Name, max * 3 / 8) != int.MaxValue)
                                         {
-                                            if (MessageBox.Show($"'{currentdata.Name}' is similar to '{target.Name}'. Import '{currentdata.Name}'?", "Import?", 
+                                            if (System.Windows.MessageBox.Show($"'{currentdata.Name}' is similar to '{target.Name}'. Import '{currentdata.Name}'?", "Import?",
                                                 MessageBoxButton.YesNo, MessageBoxImage.Information) == MessageBoxResult.Yes)
                                             {
                                                 similar = currentdata;
@@ -224,6 +231,11 @@ namespace TimetablingWPF
         private void DebugBreakpoint(object sender, RoutedEventArgs e)
         {
             Debugger.Break();
+        }
+
+        private void ViewBackups(object sender, RoutedEventArgs e)
+        {
+            new BackupWindow(ParentWindow, s => LoadData(s, owner: ParentWindow)).Show();
         }
     }
     public static class MenuCommands
