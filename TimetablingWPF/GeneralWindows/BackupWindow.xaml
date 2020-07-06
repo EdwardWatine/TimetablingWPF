@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimetablingWPF"
         mc:Ignorable="d" WindowStartupLocation="CenterOwner"
-        Title="FullBackupWindow" Height="200" Width="400">
+        Title="FullBackupWindow" Height="300" Width="600">
     <Window.Resources>
         <local:NullToBool x:Key="nullBoolConverter"/>
     </Window.Resources>
@@ -33,7 +33,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Button Padding="2,0,2,0" Content="Delete Backup" HorizontalAlignment="Center" Click="DeleteClick" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullBoolConverter}}"/>
-            <Button Padding="2,0,2,0" Content="Restore Backup" HorizontalAlignment="Center" Click="RestoreClick" Grid.Column="1" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullBoolConverter}}"/>
+            <Button Padding="2,0,2,0" Content="Restore Backup" HorizontalAlignment="Center" Click="RestoreClick" Grid.Column="2" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullBoolConverter}}"/>
             <Button Padding="2,0,2,0" Content="Restore and Open Backup" HorizontalAlignment="Center" Click="RestoreLoad" Grid.Column="1" IsEnabled="{Binding SelectedItem, ElementName=lbMain, Converter={StaticResource nullBoolConverter}}"/>
         </Grid>
     </Grid>

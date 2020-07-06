@@ -69,6 +69,7 @@ namespace TimetablingWPF
                     Owner = owner
                 };
                 SavingMode? mode = null;
+                long skip = 0;
                 worker.DoWork += delegate (object sender, DoWorkEventArgs e)
                 {
                     if (!File.Exists(fpath))
@@ -78,9 +79,11 @@ namespace TimetablingWPF
                         e.Result = new FileNotFoundException();
                         return;
                     }
-                    FileStream fstream = new FileStream(fpath, FileMode.Open);
-                    BinaryReader reader = new BinaryReader(fstream);
+                    MemoryStream mstream = new MemoryStream(File.ReadAllBytes(fpath));
+                    BinaryReader reader = new BinaryReader(mstream);
                     mode = (SavingMode)reader.ReadInt32();
+                    _ = reader.ReadString();
+                    skip = mstream.Position;
                     if (mode == SavingMode.Backup)
                     {
                         if (!save)
@@ -95,12 +98,10 @@ namespace TimetablingWPF
                             e.Cancel = true;
                             return;
                         }
-                        _ = reader.ReadString(); // dispose of the filename
-                        RestoreBackup(reader.BaseStream.Position, fpath, newPath);
                     }
                     e.Result = Loading.StartLoad(reader, Version.Parse(reader.ReadString()), worker, e);
                     reader.Dispose();
-                    fstream.Close();
+                    mstream.Dispose();
                     if (worker.CancellationPending)
                     {
                         e.Cancel = true;
@@ -114,6 +115,11 @@ namespace TimetablingWPF
                 worker.RunWorkerCompleted += delegate (object sender, RunWorkerCompletedEventArgs e)
                 {
                     box.Close();
+                    if (e.Cancelled)
+                    {
+                        onCancel?.Invoke(e);
+                        return;
+                    }
                     if (e.Result is Exception)
                     {
                         exception?.Invoke(e);
@@ -124,17 +130,18 @@ namespace TimetablingWPF
                         VisualHelpers.ShowErrorBox($"A {e.Error.GetType().Name} error occured:  {e.Error.Message}");
                         return;
                     }
-                    if (e.Cancelled)
-                    {
-                        onCancel?.Invoke(e);
-                        return;
-                    }
                     if (save)
                     {
                         DataContainer data = (DataContainer)e.Result;
                         SetDataContainer(data);
                         App.Data.UpdateSave();
                         RegisterOpenFile(mode == SavingMode.Normal ? fpath : newPath);
+                        FileStream stream = new FileStream(fpath, FileMode.Open);
+                        stream.Seek(skip, SeekOrigin.Begin);
+                        if (mode == SavingMode.Backup)
+                        {
+                            RestoreBackup(stream, newPath);
+                        }
                     }
                     done?.Invoke(e);
                 };
@@ -142,17 +149,14 @@ namespace TimetablingWPF
                 worker.RunWorkerAsync();
             });
         }
-        public static void RestoreBackup(long byteskip, string fpath, string newPath)
+        public static void RestoreBackup(FileStream stream, string newPath)
         {
-            new Thread(new ThreadStart(() => {
-                FileStream stream = new FileStream(fpath, FileMode.Open);
-                stream.Seek(byteskip, SeekOrigin.Begin);
-                FileStream nfile = File.OpenWrite(newPath);
-                nfile.Write(BitConverter.GetBytes((int)SavingMode.Normal), 0, sizeof(int));
-                stream.CopyTo(nfile);
-                stream.Close();
-                nfile.Close();
-            })).Start();
+            FileStream nfile = File.OpenWrite(newPath);
+            nfile.Write(BitConverter.GetBytes((int)SavingMode.Normal), 0, sizeof(int));
+            stream.CopyTo(nfile);
+            nfile.Dispose();
+            stream.Dispose();
+            File.Delete(stream.Name);
         }
         public static void SaveData(string fpath)
         {
@@ -169,9 +173,9 @@ namespace TimetablingWPF
             all_data.Seek(0, SeekOrigin.Begin);
             FileStream stream = File.OpenWrite(fpath);
             all_data.CopyTo(stream);
-            stream.Close();
-            writer.Close();
-            all_data.Close();
+            stream.Dispose();
+            writer.Dispose();
+            all_data.Dispose();
         }
         public static string OpenFileDialogHelper(string title = "Open")
         {
@@ -183,6 +187,7 @@ namespace TimetablingWPF
                 DefaultExt = App.Ext,
                 Title = title
             };
+            dialog.CustomPlaces.Add(new FileDialogCustomPlace(App.BkPath));
             if (dialog.ShowDialog() ?? false)
             {
                 Properties.Settings.Default.LAST_ACCESSED_PATH = dialog.FileName;
@@ -286,8 +291,8 @@ namespace TimetablingWPF
             BinaryReader reader = new BinaryReader(stream);
             _ = reader.ReadInt32();
             string s = reader.ReadString();
-            reader.Close();
-            stream.Close();
+            reader.Dispose();
+            stream.Dispose();
             return s;
         }
         public static void WriteBackup(string fpath)
@@ -301,9 +306,9 @@ namespace TimetablingWPF
             all_data.Seek(0, SeekOrigin.Begin);
             FileStream stream = File.OpenWrite(fpath);
             all_data.CopyTo(stream);
-            stream.Close();
-            writer.Close();
-            all_data.Close();
+            stream.Dispose();
+            writer.Dispose();
+            all_data.Dispose();
         }
     }
 

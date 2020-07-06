@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -179,6 +180,14 @@ namespace TimetablingWPF
         public static bool? UnsavedDialog()
         {
             MessageBoxResult result = ShowUnsavedBox();
+            if (result != MessageBoxResult.Cancel)
+            {
+                string backup = FileHelpers.GetBackups(App.FilePath).FirstOrDefault();
+                if (backup != null)
+                {
+                    File.Delete(backup);
+                }
+            }
             if (result == MessageBoxResult.Yes) return true;
             if (result == MessageBoxResult.Cancel) return null;
             return false;

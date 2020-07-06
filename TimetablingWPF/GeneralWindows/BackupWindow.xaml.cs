@@ -39,6 +39,11 @@ namespace TimetablingWPF
                 temp = temp.OrderBy(b => b.FileExists ? 1 : 0);
             }
             Paths = new ObservableCollection<BackupInfo>(temp);
+            if (!temp.Any())
+            {
+                lbMain.Items.Add("There are no backup files to display...");
+                return;
+            }
             lbMain.ItemsSource = Paths;
         }
         private void DeleteClick(object sender, RoutedEventArgs e)
@@ -46,6 +51,11 @@ namespace TimetablingWPF
             BackupInfo pinfo = (BackupInfo)lbMain.SelectedItem;
             File.Delete(pinfo.BackupPath);
             Paths.RemoveAt(lbMain.SelectedIndex);
+            if (Paths.Count == 0)
+            {
+                lbMain.ItemsSource = null;
+                lbMain.Items.Add("There are no backup files to display...");
+            }
         }
         private void RestoreClick(object sender, RoutedEventArgs e)
         {
@@ -59,9 +69,8 @@ namespace TimetablingWPF
             BinaryReader reader = new BinaryReader(stream);
             _ = reader.ReadInt32(); // dispose of backup flag
             _ = reader.ReadString(); // dispose of the filename
-            RestoreBackup(reader.BaseStream.Position, pinfo.BackupPath, path);
-            reader.Close();
-            stream.Close();
+            RestoreBackup(stream, path);
+            reader.Dispose();
             DeleteClick(null, null);
         }
 
@@ -92,7 +101,7 @@ namespace TimetablingWPF
     {
         public BackupInfo(string path)
         {
-            Path = FileHelpers.ReadBackupPath(path);
+            Path = ReadBackupPath(path);
             FileExists = File.Exists(Path);
             Filename = System.IO.Path.GetFileName(Path);
             BackupPath = path;
