@@ -20,6 +20,7 @@ using System.Globalization;
 using System.Collections.Specialized;
 using TimetablingWPF;
 using System.ComponentModel;
+using System.Windows.Media.Animation;
 
 namespace TimetablingWPF
 {
@@ -46,8 +47,12 @@ namespace TimetablingWPF
             txName.Text = originalItem.Name;
             txName.SelectionStart = txName.Text.Length;
             int iters = 0;
-            Grid gdRight = new Grid();
+            Grid gdRight = new Grid()
+            {
+                Opacity = 0
+            };
             Type item_type = originalItem.GetType();
+            tbTitle.Text = $"{(commandType == CommandType.@new ? "New" : "Edit")} {item_type.Name}";
             foreach (CustomPropertyInfo prop in BaseDataClass.ExposedProperties[item_type])
             {
                 TextBlock propName = new TextBlock()
@@ -65,6 +70,8 @@ namespace TimetablingWPF
                         gdRight.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
                         gdRight.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Star) });
                         gdMain.Insert(gdRight, 1, 1);
+                        Storyboard.SetTarget(anim1, gdRight);
+                        Storyboard.SetTarget(anim2, gdBottom);
                     }
                     iters++;
                     Grid gdilContainer = new Grid();
@@ -206,7 +213,8 @@ namespace TimetablingWPF
                         HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                         VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
                         Margin = new Thickness(0, 5, 0, 0),
-                        Content = GenerateTimetable((ObservableCollection<TimetableSlot>)prop.PropertyInfo.GetValue(Item), ToggleSlot, ToggleAll)
+                        Content = GenerateTimetable((ObservableCollection<TimetableSlot>)prop.PropertyInfo.GetValue(Item), ToggleSlot, ToggleAll),
+                        BorderThickness = new Thickness(1)
                     };
                     gdLeft.Insert(svPeriods, -2, 1);
                     continue;

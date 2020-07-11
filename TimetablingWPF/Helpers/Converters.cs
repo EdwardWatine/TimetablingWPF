@@ -8,7 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Data;
-using Xceed.Wpf.Toolkit.PropertyGrid.Editors;
+using System.Windows.Media;
+using Microsoft.VisualStudio.Modeling.Diagrams;
 
 namespace TimetablingWPF
 {
@@ -208,6 +209,52 @@ namespace TimetablingWPF
         {
             Debugger.Break();
             return value;
+        }
+        public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+    public class Root2Multiplier : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (double)value * 1.42;
+        }
+        public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
+        {
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Taken from https://thomaslevesque.com/2011/03/21/wpf-how-to-bind-to-data-when-the-datacontext-is-not-inherited/
+    /// </summary>
+    public class BindingProxy : Freezable
+    {
+        protected override Freezable CreateInstanceCore()
+        {
+            return new BindingProxy();
+        }
+
+        public object Data
+        {
+            get { return GetValue(DataProperty); }
+            set { SetValue(DataProperty, value); }
+        }
+
+        public static readonly DependencyProperty DataProperty =
+            DependencyProperty.Register("Data", typeof(object), typeof(BindingProxy), new UIPropertyMetadata(null));
+    }
+
+    public class ColorToTintedBrush : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            Color color = (Color)value;
+            HslColor hsl = HslColor.FromRgbColor(color.ToDrawingColor());
+            hsl.Luminosity = (int)(240 * 0.95);
+            return new SolidColorBrush(hsl.ToRgbColor().ToMediaColor());
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

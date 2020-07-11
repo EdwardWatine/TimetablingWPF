@@ -141,5 +141,13 @@ namespace TimetablingWPF
             }
             return collection;
         }
+        public static System.Windows.Media.Color ToMediaColor(this System.Drawing.Color color)
+        {
+            return System.Windows.Media.Color.FromRgb(color.R, color.G, color.B);
+        }
+        public static System.Drawing.Color ToDrawingColor(this System.Windows.Media.Color color)
+        {
+            return System.Drawing.Color.FromArgb(color.R, color.G, color.B);
+        }
     }
 }

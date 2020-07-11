@@ -7,7 +7,39 @@
              xmlns:tlkt="http://schemas.xceed.com/wpf/xaml/toolkit"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+    <local:TabBase.Resources>
+        <local:Root2Multiplier x:Key="R2M"/>
+        <local:BindingProxy x:Key="ColorProxy" Data="{DynamicResource PrimaryColor}"/>
+        <local:ColorToTintedBrush x:Key="ColToBrush"/>
+    </local:TabBase.Resources>
     <Grid Name="gdMain">
+        <Grid.Background>
+            <DrawingBrush Stretch="None">
+                <DrawingBrush.Drawing>
+                    <GeometryDrawing Brush="{Binding Data, Source={StaticResource ColorProxy}, Converter={StaticResource ColToBrush}}">
+                        <GeometryDrawing.Geometry>
+                            <EllipseGeometry x:Name="bgEllipse" Center="0.5, 0.5" RadiusX="0" RadiusY="0"/>
+                        </GeometryDrawing.Geometry>
+                    </GeometryDrawing>
+                </DrawingBrush.Drawing>
+            </DrawingBrush>
+        </Grid.Background>
+        <Grid.Triggers>
+            <EventTrigger RoutedEvent="Grid.Loaded">
+                <BeginStoryboard>
+                    <Storyboard>
+                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
+                                     Storyboard.TargetName="bgEllipse" Storyboard.TargetProperty="RadiusX"/>
+                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
+                                     Storyboard.TargetName="bgEllipse" Storyboard.TargetProperty="RadiusY"/>
+                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Storyboard.TargetName="tbTitle" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.3" FillBehavior="HoldEnd"/>
+                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Storyboard.TargetName="gdLeft" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.8" FillBehavior="HoldEnd"/>
+                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Name="anim1" Storyboard.TargetName="gdBottom" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.8" FillBehavior="HoldEnd"/>
+                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Name="anim2" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.8" FillBehavior="HoldEnd"/>
+                    </Storyboard>
+                </BeginStoryboard>
+            </EventTrigger>
+        </Grid.Triggers>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
@@ -17,8 +49,8 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.ColumnSpan="2" Name="tbTitle" Style="{StaticResource HeaderText}" HorizontalAlignment="Center"/>
-        <Grid Grid.Row="1" Name="gdLeft">
+        <TextBlock Grid.ColumnSpan="2" Name="tbTitle" Style="{StaticResource HeaderText}" HorizontalAlignment="Center" Opacity="0"/>
+        <Grid Grid.Row="1" Name="gdLeft" Opacity="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -38,7 +70,7 @@
                 <StackPanel Name="spErrors" Orientation="Vertical" Width="{Binding ActualWidth, ElementName=svErrors}"/>
             </ScrollViewer>
         </Grid>
-        <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,5,0,0">
+        <Grid HorizontalAlignment="Stretch" Grid.Row="2" Grid.ColumnSpan="2" Margin="0,5,0,0" Name="gdBottom" Opacity="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="5*"/>
                 <ColumnDefinition Width="*"/>
