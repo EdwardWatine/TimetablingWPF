@@ -55,7 +55,7 @@ namespace TimetablingWPF
         }
         public const string Name = "Timetabler";
         public static string FilePath { get; set; }
-        public static readonly DataContainer Data = new DataContainer();
+        public static readonly SingletonDataContainer Data = SingletonDataContainer.Instance;
         public static readonly string DocPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), Name);
         public static readonly string BkPath = Path.Combine(DocPath, "Backup");
         public const string Ext = ".ttbl";

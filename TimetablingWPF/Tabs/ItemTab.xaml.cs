@@ -258,6 +258,10 @@ namespace TimetablingWPF
                     };
                     pcbox.comboBox.SetBinding(PlaceholderComboBox.SelectedItemProperty,
                         new Binding(prop.PropertyInfo.Name) { Source = Item, Mode = BindingMode.TwoWay });
+                    if (prop.Type == typeof(Year))
+                    {
+                        pcbox.SelectedItem = App.Data.NoneYear;
+                    }
                     gdLeft.Insert(pcbox, -2, 1);
                     continue;
                 }
@@ -270,7 +274,6 @@ namespace TimetablingWPF
                 ErrManager.AddError(error);
             }
         }
-
         private void NameChanged(object sender, TextChangedEventArgs e)
         {
             if (txSh.Text == oldstring)
@@ -329,18 +332,10 @@ namespace TimetablingWPF
 
         private void Confirm(object sender, RoutedEventArgs e)
         {
-            if (ErrManager.GetNumErrors() > 0)
+            if (ErrManager.CountErrors(ErrorType.Critical) > 0)
             {
-                ShowErrorBox("Please fix all errors!");
+                ShowErrorBox("Please fix all critical errors!");
                 return;
-            }
-            if ((CommandType != CommandType.edit || changed) && ErrManager.GetNumWarnings() > 0)
-            {
-                if (System.Windows.MessageBox.Show("There are warnings. Do you want to continue?", "Warning",
-                    MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
-                {
-                    return;
-                }
             }
             Item.Name = txName.Text.Trim();
             Item.Shorthand = txSh.Text;

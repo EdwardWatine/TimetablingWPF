@@ -14,8 +14,9 @@ namespace TimetablingWPF
 {
     public enum ErrorType
     {
-        Error = 0,
-        Warning = 1
+        Critical = 0,
+        Error = 1,
+        Warning = 2
     }
 
     public class ErrorData
@@ -108,9 +109,13 @@ namespace TimetablingWPF
                     source = (ImageSource)Application.Current.Resources["WarningIcon"];
                     colour = (SolidColorBrush)Application.Current.Resources["WarningBrush"];
                     break;
-                default:
+                case ErrorType.Error:
                     source = (ImageSource)Application.Current.Resources["ErrorIcon"];
                     colour = (SolidColorBrush)Application.Current.Resources["ErrorBrush"];
+                    break;
+                default:
+                    colour = (SolidColorBrush)Application.Current.Resources["ErrorBrush"];
+                    source = (ImageSource)Application.Current.Resources["CriticalIcon"];
                     break;
             }
             Image im = new Image()
@@ -151,24 +156,12 @@ namespace TimetablingWPF
             }
         }
         private readonly Dictionary<ErrorContainer, Grid> Errors = new Dictionary<ErrorContainer, Grid>();
-        public int GetNumErrors()
+        public int CountErrors(ErrorType errorType)
         {
             int count = 0;
             foreach (ErrorContainer error in Errors.Keys)
             {
-                if (error.ErrorType == ErrorType.Error)
-                {
-                    count += error.UpdateError() ? 1 : 0;
-                }
-            }
-            return count;
-        }
-        public int GetNumWarnings()
-        {
-            int count = 0;
-            foreach (ErrorContainer error in Errors.Keys)
-            {
-                if (error.ErrorType == ErrorType.Warning)
+                if (error.ErrorType == errorType)
                 {
                     count += error.UpdateError() ? 1 : 0;
                 }

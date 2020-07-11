@@ -29,13 +29,14 @@ namespace TimetablingWPF
         public Lesson()
         {
             Assignments.CollectionChanged += AssignmentsChanged;
-            ErrorContainer no_subject = new ErrorContainer((e) => Subject == null, (e) => "No subject has been selected.", ErrorType.Error);
+            ErrorContainer no_subject = new ErrorContainer((e) => Subject == null, (e) => "No subject has been selected.", ErrorType.Critical);
             no_subject.BindProperty(this, nameof(Subject));
 
             ErrorContainer too_many_lessons = new ErrorContainer(e => LessonLength * LessonsPerCycle > TimetableStructure.TotalSchedulable, e => $"This lesson has a minimum of {LessonsPerCycle * LessonLength} periods per cycle, but there is a maximum of {TimetableStructure.TotalSchedulable} periods per cycle.",
-                ErrorType.Error);
+                ErrorType.Critical); ;
             too_many_lessons.BindProperty(this, nameof(LessonLength));
             too_many_lessons.BindProperty(this, nameof(LessonsPerCycle));
+            errorValidations.Add(too_many_lessons);
 
             ErrorContainer too_many_assigned = new ErrorContainer(e =>
             {
@@ -46,11 +47,12 @@ namespace TimetablingWPF
                 e =>
                 {
                     int total = (int)e.Data;
-                    return $"This lesson has {total} lessons assigned, but there is supposed to be {LessonsPerCycle}";
+                    return $"This lesson has {total} lessons assigned, but there is supposed to be {LessonsPerCycle} in total";
                 },
-                ErrorType.Warning);
+                ErrorType.Error);
             too_many_assigned.BindProperty(this, nameof(LessonsPerCycle));
             too_many_assigned.BindCollection(Assignments);
+            errorValidations.Add(too_many_assigned);
 
             ErrorContainer insuf_teacher_slots = new ErrorContainer((e) =>
             {
@@ -64,14 +66,10 @@ namespace TimetablingWPF
                     IEnumerable<Lesson> errors = (IEnumerable<Lesson>)e.Data;
                     return $"The following teachers have more periods assigned to them than they have available: {GenericHelpers.FormatEnumerable(errors)}.";
                 },
-                ErrorType.Warning);
+                ErrorType.Error);
             insuf_teacher_slots.BindCollection(Assignments);
             insuf_teacher_slots.BindProperty(this, nameof(LessonLength));
-
-            errorValidations = new List<ErrorContainer>()
-            {
-                no_subject, too_many_lessons, too_many_assigned, insuf_teacher_slots
-            };
+            errorValidations.Add(insuf_teacher_slots);
         }
         public RelationalCollection<Form, Lesson> Forms { get; private set; } = new RelationalCollection<Form, Lesson>(nameof(Form.Lessons));
         private int _lpc;
@@ -189,8 +187,5 @@ namespace TimetablingWPF
             Subject = container.Subjects[reader.ReadInt32()];
             Loading.LoadEnum(() => Assignments.Add(new Assignment(container.Teachers[reader.ReadInt32()], this, reader.ReadInt32())), reader);
         }
-
-        private readonly IList<ErrorContainer> errorValidations;
-        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

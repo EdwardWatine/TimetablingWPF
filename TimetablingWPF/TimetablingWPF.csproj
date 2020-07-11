@@ -170,6 +170,8 @@
     <Compile Include="Tabs\ItemTab.xaml.cs">
       <DependentUpon>ItemTab.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UIClasses\BackgroundTaskManager.cs" />
+    <Compile Include="UserControls\BackgroundTaskDisplayer.cs" />
     <Compile Include="UserControls\MultiComboBox.xaml.cs">
       <DependentUpon>MultiComboBox.xaml</DependentUpon>
     </Compile>
@@ -197,7 +199,7 @@
     <Compile Include="DataClasses\Subject.cs" />
     <Compile Include="DataClasses\TimetableStructure.cs" />
     <Compile Include="DataClasses\BaseDataClass.cs" />
-    <Compile Include="Helpers\ErrorManager.cs" />
+    <Compile Include="UIClasses\ErrorManager.cs" />
     <Compile Include="Tabs\DataClassTabItem.xaml.cs">
       <DependentUpon>DataClassTabItem.xaml</DependentUpon>
     </Compile>
@@ -223,6 +225,7 @@
     <Compile Include="UserControls\PlaceholderComboBox.xaml.cs">
       <DependentUpon>PlaceholderComboBox.xaml</DependentUpon>
     </Compile>
+    <Compile Include="UserControls\SaveStateDisplayer.cs" />
     <Page Include="GeneralWindows\BackupWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -247,8 +250,6 @@
     <Resource Include="Media\DownArrowIcon.png" />
     <Resource Include="Media\UpArrowIcon.png" />
     <Resource Include="Media\CheckIcon.png" />
-    <Resource Include="Media\ErrorIcon.png" />
-    <Resource Include="Media\WarningIcon.png" />
     <Resource Include="Media\PlusIcon.png" />
     <Resource Include="Media\CrossIcon.png" />
     <Page Include="Dialogs\ImportDialog.xaml">
@@ -385,6 +386,15 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Media\AppIcon2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Media\ErrorIcon.png" />
+    <Resource Include="Media\WarningIcon.png" />
+    <Resource Include="Media\CriticalIcon.png" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Media\BlackBinIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

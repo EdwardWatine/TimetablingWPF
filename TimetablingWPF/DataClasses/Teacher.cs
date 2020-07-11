@@ -30,6 +30,7 @@ namespace TimetablingWPF
             ErrorContainer no_periods = new ErrorContainer((e) => MaxPeriodsPerCycle <= 0, (e) => "Teacher has no free periods.",
                 ErrorType.Warning);
             no_periods.BindProperty(this, "MaxPeriodsPerCycle");
+            errorValidations.Add(no_periods);
 
             ErrorContainer insuf_periods = new ErrorContainer((e) =>
             {
@@ -38,9 +39,10 @@ namespace TimetablingWPF
                 return MaxPeriodsPerCycle < assigned;
             },
                 (e) => $"Teacher has fewer free periods ({MaxPeriodsPerCycle}) than assigned periods ({e.Data}).",
-                ErrorType.Warning);
+                ErrorType.Error);
             insuf_periods.BindCollection(UnavailablePeriods);
             insuf_periods.BindCollection(Assignments);
+            errorValidations.Add(insuf_periods);
 
             ErrorContainer lesson_missing = new ErrorContainer((e) =>
             {
@@ -56,6 +58,7 @@ namespace TimetablingWPF
                 ErrorType.Warning);
             lesson_missing.BindCollection(Assignments);
             lesson_missing.BindCollection(Subjects);
+            errorValidations.Add(lesson_missing);
 
             ErrorContainer insuf_lesson_slots = new ErrorContainer((e) =>
             {
@@ -72,11 +75,7 @@ namespace TimetablingWPF
                 },
                 ErrorType.Warning);
             insuf_lesson_slots.BindCollection(Assignments);
-
-            errorValidations = new List<ErrorContainer>()
-            {
-                no_periods, insuf_lesson_slots, insuf_periods, lesson_missing
-            };
+            errorValidations.Add(lesson_missing);
         }
         public ObservableCollection<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollection<TimetableSlot>();
         public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>(nameof(Subject.Teachers));
@@ -159,8 +158,5 @@ namespace TimetablingWPF
             MaxPeriodsPerCycle = reader.ReadInt32();
             Loading.LoadEnum(() => UnavailablePeriods.Add(TimetableSlot.FromInt(reader.ReadInt32())), reader);
         }
-
-        private readonly IEnumerable<ErrorContainer> errorValidations;
-        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
     }
 }

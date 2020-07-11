@@ -28,12 +28,6 @@ namespace TimetablingWPF
                 }
             }
         }
-        private readonly IList<ErrorContainer> errorValidations = new List<ErrorContainer>()
-        {
-
-        };
-        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
-
         public override void Save(BinaryWriter writer)
         {
             SaveParent(writer);

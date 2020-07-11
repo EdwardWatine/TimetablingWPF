@@ -8,7 +8,7 @@
         Title="CheckboxPopup" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         MinHeight="200" MinWidth="300">
     <Window.Background>
-        <SolidColorBrush Color="{DynamicResource PrimaryColor}"/>
+        <SolidColorBrush Color="#FFFFFF"/>
     </Window.Background>
     <Window.Resources>
         <local:InverseBoolMulti x:Key="InverseBoolConverter"/>
@@ -22,13 +22,13 @@
                 <Setter Property="Margin" Value="0,6,0,7"/>
             </Style.Setters>
         </Style>
-        <Style x:Key="GridLineInternalVertical" TargetType="Border" BasedOn="{StaticResource GridLineInternal}">
+        <Style x:Key="GridLineInternalVertical" TargetType="Border" BasedOn="{StaticResource GridLineInternalBlack}">
             <Setter Property="BorderThickness" Value="1,0,1,0"/>
         </Style>
     </Window.Resources>
     <StackPanel Orientation="Vertical">
         <TextBlock Text="Select data to import" Style="{StaticResource HeaderText}"/>
-        <Border Style="{StaticResource GridLineExternal}" BorderThickness="0,1,0,0">
+        <Border Style="{StaticResource GridLineExternalBlack}" BorderThickness="0,1,0,0">
             <Grid IsSharedSizeScope="True">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -47,24 +47,24 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                <Border Style="{StaticResource GridLineInternal}" BorderThickness="1,0,1,1">
+                <Border Style="{StaticResource GridLineInternalBlack}" BorderThickness="1,0,1,1">
                     <CheckBox VerticalContentAlignment="Center" Margin="5,0,0,0" Name="TimetableStructureImport">
                         <TextBlock Text="Timetable Structure"/>
                     </CheckBox>
                 </Border>
-                <Border Grid.Column="1" Style="{StaticResource GridLineInternal}">
+                <Border Grid.Column="1" Style="{StaticResource GridLineInternalBlack}">
                     <TextBlock Text="Teacher"/>
                 </Border>
-                <Border Grid.Column="2" Style="{StaticResource GridLineInternal}">
+                <Border Grid.Column="2" Style="{StaticResource GridLineInternalBlack}">
                     <TextBlock Text="Lesson"/>
                 </Border>
-                <Border Grid.Column="3" Style="{StaticResource GridLineInternal}">
+                <Border Grid.Column="3" Style="{StaticResource GridLineInternalBlack}">
                     <TextBlock Text="Subject"/>
                 </Border>
-                <Border Grid.Column="4" Style="{StaticResource GridLineInternal}">
+                <Border Grid.Column="4" Style="{StaticResource GridLineInternalBlack}">
                     <TextBlock Text="Form"/>
                 </Border>
-                <Border Grid.Column="5" Style="{StaticResource GridLineInternal}">
+                <Border Grid.Column="5" Style="{StaticResource GridLineInternalBlack}">
                     <TextBlock Text="Group"/>
                 </Border>
                 <Border Grid.Row="1" Style="{StaticResource GridLineInternalVertical}">
@@ -77,10 +77,10 @@
                     <TextBlock Text="Import and replace"/>
                 </Border>
                 <Border Grid.Row="4" Style="{StaticResource GridLineInternalVertical}" BorderThickness="1,0,1,1">
-                    <TextBlock Text="Import and Merge"/>
+                    <TextBlock Text="Import and merge"/>
                 </Border>
                 <Border Grid.Row="5" Style="{StaticResource GridLineInternalVertical}" BorderThickness="0,0,1,0"/>
-                <Border Style="{StaticResource GridLineInternal}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4">
+                <Border Style="{StaticResource GridLineInternalBlack}" Grid.Column="1" Grid.Row="1" Grid.RowSpan="4">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -94,7 +94,7 @@
                         <RadioButton Name="TeacherMerge" Grid.Row="3" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
-                <Border Style="{StaticResource GridLineInternal}" Grid.Column="2" Grid.Row="1" Grid.RowSpan="4">
+                <Border Style="{StaticResource GridLineInternalBlack}" Grid.Column="2" Grid.Row="1" Grid.RowSpan="4">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -108,7 +108,7 @@
                         <RadioButton Name="LessonMerge" Grid.Row="3" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
-                <Border Style="{StaticResource GridLineInternal}" Grid.Column="3" Grid.Row="1" Grid.RowSpan="4">
+                <Border Style="{StaticResource GridLineInternalBlack}" Grid.Column="3" Grid.Row="1" Grid.RowSpan="4">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -122,7 +122,7 @@
                         <RadioButton Name="SubjectMerge" Grid.Row="3" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
-                <Border Style="{StaticResource GridLineInternal}" Grid.Column="4" Grid.Row="1" Grid.RowSpan="4">
+                <Border Style="{StaticResource GridLineInternalBlack}" Grid.Column="4" Grid.Row="1" Grid.RowSpan="4">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -136,7 +136,7 @@
                         <RadioButton Name="FormMerge" Grid.Row="3" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
-                <Border Style="{StaticResource GridLineInternal}" Grid.Column="5" Grid.Row="1" Grid.RowSpan="4">
+                <Border Style="{StaticResource GridLineInternalBlack}" Grid.Column="5" Grid.Row="1" Grid.RowSpan="4">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="*"/>
@@ -150,7 +150,7 @@
                         <RadioButton Name="GroupMerge" Grid.Row="3" HorizontalAlignment="Center"/>
                     </Grid>
                 </Border>
-                <Border Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource GridLineInternal}">
+                <Border Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2" Style="{StaticResource GridLineInternalBlack}">
                     <CheckBox IsChecked="True" Name="AssignmentImport">
                         <CheckBox.IsEnabled>
                             <MultiBinding Converter="{StaticResource InverseBoolConverter}">

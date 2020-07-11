@@ -231,15 +231,48 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <local:ApplicationMenu/>
-        <dgbz:TabablzControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch" ShowDefaultCloseButton="True" ItemContainerStyle="{StaticResource TabItemStyle}">
+        <dgbz:TabablzControl Name="tcMainTabControl" Grid.Row="1" VerticalAlignment="Stretch" ShowDefaultCloseButton="True" ItemContainerStyle="{StaticResource TabItemStyle}" Background="{DynamicResource SecondaryBrush}">
             <dgbz:TabablzControl.InterTabController>
                 <dgbz:InterTabController InterTabClient="{StaticResource tabClient}"/>
             </dgbz:TabablzControl.InterTabController>
         </dgbz:TabablzControl>
-        <StatusBar Grid.Row="2" Background="#FF0000" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
-            <StatusBarItem>Hello</StatusBarItem>
-            <StatusBarItem>Hello2</StatusBarItem>
-
+        <StatusBar Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+            <StatusBar.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1, 0">
+                    <GradientStop Color="{DynamicResource PrimaryColor}" Offset="0.5"/>
+                    <GradientStop Color="{DynamicResource SecondaryColor}" Offset="1.5"/>
+                </LinearGradientBrush>
+            </StatusBar.Background>
+            <StatusBar.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                </ItemsPanelTemplate>
+            </StatusBar.ItemsPanel>
+            <StatusBarItem Grid.Column="0">
+                <StackPanel Orientation="Horizontal" Margin="10,0">
+                    <StackPanel Orientation="Horizontal" Margin="0,0,5,0">
+                        <Image MaxHeight="{Binding ActualHeight, ElementName=tbError}" Source="{StaticResource ErrorIcon}" VerticalAlignment="Center"/>
+                        <TextBlock Name="tbError" Text="0" Foreground="{DynamicResource SecondaryBrush}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <Image Margin="0" MaxHeight="{Binding ActualHeight, ElementName=tbWarning}" Source="{StaticResource WarningIcon}" VerticalAlignment="Center"/>
+                        <TextBlock Margin="0" Text="0" Name="tbWarning" Foreground="{DynamicResource SecondaryBrush}" VerticalAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="1">
+                <local:BackgroundTaskDisplayer Grid.Column="1" Foreground="{DynamicResource SecondaryBrush}" x:Name="tbBackground" Margin="10,0"/>
+            </StatusBarItem>
+            <StatusBarItem Grid.Column="3">
+                <local:SaveStateDisplayer Grid.Column="3" Foreground="{DynamicResource SecondaryBrush}" Margin="10,0"/>
+            </StatusBarItem>
         </StatusBar>
     </Grid>
 </Page>

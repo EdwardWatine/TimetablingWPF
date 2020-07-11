@@ -48,10 +48,6 @@ namespace TimetablingWPF
             }
             base.NotifyPropertyChanged(prop);
         }
-        private readonly IList<ErrorContainer> errorValidations = new List<ErrorContainer>()
-        {
-
-        };
         public override void Commit(DataContainer container = null)
         {
             if (!Committed)
@@ -63,8 +59,6 @@ namespace TimetablingWPF
             }
             base.Commit(container);
         }
-        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
-
         public override void Save(BinaryWriter writer)
         {
             SaveParent(writer);

@@ -56,16 +56,18 @@ namespace TimetablingWPF
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 5, 10, 5)
             };
+            Grid.SetIsSharedSizeScope(gridWeek, true);
             gridWeek.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
             gridWeek.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(1, GridUnitType.Auto) });
             gridWeek.RowDefinitions.Add(new RowDefinition()); // set up container grid
             Border weekHeader = SetInternalBorder(new EditableText() // create the week name
             {
                 Text = structureWeek.Name,
-                Background = GenericResources.WHITE,
+                Background = WHITE,
                 Padding = new Thickness(2),
                 TextAlignment = TextAlignment.Center
             });
+            weekHeader.BorderThickness = new Thickness(1);
             gridWeek.Insert(weekHeader, 0, 1);
 
 
@@ -73,18 +75,20 @@ namespace TimetablingWPF
             {
                 ColumnDefinition columnDay = new ColumnDefinition()
                 {
-                    Width = new GridLength(1, GridUnitType.Auto),
+                    SharedSizeGroup = "A"
                 };
                 gridWeek.ColumnDefinitions.Add(columnDay);
 
                 EditableText dayHeading = new EditableText() // add the day name
                 {
                     Text = structureWeek.DayNames[day],
-                    Background = GenericResources.WHITE,
+                    Background = WHITE,
                     Padding = new Thickness(2),
-                    Tag = gridWeek
+                    Tag = gridWeek,
+                    HorizontalAlignment = HorizontalAlignment.Center
                 };
                 Border dayBorder = SetInternalBorder(dayHeading);
+                dayBorder.BorderThickness = new Thickness(0, 1, 1, 1);
                 gridWeek.Insert(dayBorder, 0, day + 2);
             }
 
@@ -103,6 +107,7 @@ namespace TimetablingWPF
                     Tag = gridWeek
                 };
                 Border periodBorder = SetInternalBorder(periodHeading);
+                periodBorder.BorderThickness = new Thickness(1, 0, 1, 1);
                 gridWeek.Insert(periodBorder, period + 1, 1);
                 gridWeek.Children.Add(GenerateCross(period + 1));
                 for (int day = 0; day < structureWeek.DayNames.Count; day++)
@@ -133,7 +138,7 @@ namespace TimetablingWPF
             gridWeek.Insert(newPeriod, -1, 0);
             Image removeWeek = new Image() // add the image that removes the week
             {
-                Source = (ImageSource)Application.Current.Resources["WhiteBinIcon"],
+                Source = (ImageSource)Application.Current.Resources["BlackBinIcon"],
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Height = 30,
                 Cursor = Cursors.Hand
@@ -277,9 +282,10 @@ namespace TimetablingWPF
             };
             periodHeading.MouseLeftButtonDown += PeriodClick;
             Border periodBorder = SetInternalBorder(periodHeading);
-            grid.Insert(periodBorder, -1, 1);
+            periodBorder.BorderThickness = new Thickness(1, 0, 1, 1);
+            grid.Insert(periodBorder, -2, 1);
             grid.Children.Add(GenerateCross(length-1));
-            int days = grid.ColumnDefinitions.Count - 1;
+            int days = grid.ColumnDefinitions.Count - 2;
             for (int day = 0; day < days; day++)
             {
                 Rectangle rect = new Rectangle()
@@ -289,7 +295,7 @@ namespace TimetablingWPF
                 };
                 rect.MouseLeftButtonDown += RectLeftClick;
                 Border rectBorder = SetInternalBorder(rect);
-                grid.Insert(rectBorder, -1, day + 2);
+                grid.Insert(rectBorder, -2, day + 2);
             }
         }
         private Image GenerateCross(int row)

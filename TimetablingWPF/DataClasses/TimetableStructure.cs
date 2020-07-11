@@ -47,7 +47,7 @@ namespace TimetablingWPF
         public static void Load(BinaryReader reader, Version version, DataContainer container)
         {
             
-            container.SetTimetableStructure(
+            container.SetTimetableStructureAndHeaders(
                 Loading.LoadAndReturnList(() =>
                 {
                     return new TimetableStructureWeek(reader.ReadString(),

@@ -72,30 +72,5 @@ namespace TimetablingWPF
         }
 
         public string Text => comboBox.Text;
-        public T GetObject<T>() where T : BaseDataClass, new()
-        {
-            if (SelectedItem == null)
-            {
-                if (string.IsNullOrWhiteSpace(Text) || !IsEditable || IsReadOnly)
-                {
-                    return null;
-                }
-                return new T() { Name = Text };
-            }
-            return (T)SelectedItem;
-        }
-        public BaseDataClass GetObject(Type type)
-        {
-            if (SelectedItem == null)
-            {
-                if (string.IsNullOrWhiteSpace(Text) || !IsEditable || IsReadOnly)
-                {
-                    return null;
-                }
-                BaseDataClass bdc = (BaseDataClass)Activator.CreateInstance(type);
-                bdc.Name = Text;
-            }
-            return (BaseDataClass)SelectedItem;
-        }
     }
 }

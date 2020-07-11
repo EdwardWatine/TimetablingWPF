@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace TimetablingWPF
 {
@@ -36,6 +36,7 @@ namespace TimetablingWPF
 
         public static void StartSave(BinaryWriter writer, DataContainer data)
         {
+            Thread.Sleep(5000);
             writer.Write(Assembly.GetExecutingAssembly().GetName().Version.ToString());
             TimetableStructure.Save(writer);
             WriteList(data.YearGroups, (y, i) =>

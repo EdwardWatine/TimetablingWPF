@@ -28,21 +28,19 @@ namespace TimetablingWPF
         public BaseDataClass()
         {
             ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this);  //Links to all the RelationalCollections on instance creation
-            void SubscribeToCollectionChange(PropertyInfo prop, INotifyCollectionChanged val) //Propagates changes in internal collections
-            {
-                void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-                {
-                    if (e.IsNotPropertyChanged() && !Frozen) //Ensures that the change is propagated if it wasn't propagated by another object
-                    {
-                        NotifyPropertyChanged(prop.Name);
-                    }
-                    //Debug.WriteLine($"{Name} (a {GetType().Name}) registered a change in property {prop.Name} caused by {e.Action}");
-                }
-                val.CollectionChanged += Val_CollectionChanged;
-            }
-            
-
             ApplyOnType<INotifyCollectionChanged>(SubscribeToCollectionChange);
+        }
+        private void SubscribeToCollectionChange(PropertyInfo prop, INotifyCollectionChanged val) //Propagates changes in internal collections
+        {
+            void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            {
+                if (e.IsNotPropertyChanged() && !Frozen) //Ensures that the change is propagated if it wasn't propagated by another object
+                {
+                    NotifyPropertyChanged(prop.Name);
+                }
+                //Debug.WriteLine($"{Name} (a {GetType().Name}) registered a change in property {prop.Name} caused by {e.Action}");
+            }
+            val.CollectionChanged += Val_CollectionChanged;
         }
 
         public string Name
@@ -75,6 +73,8 @@ namespace TimetablingWPF
             }
         }
         private string _sh;
+        public int LastWarnings { get; private set; } = 0;
+        public int LastErrors { get; private set; } = 0;
         public bool Visible { get; set; } = true;
         public bool Committed { get; private set; } = false;
         public bool Frozen { get; private set; } = false;
@@ -207,6 +207,7 @@ namespace TimetablingWPF
             writer.Write(Name);
             writer.Write(Shorthand);
         }
-        public abstract IEnumerable<ErrorContainer> ErrorValidations { get; }
+        protected List<ErrorContainer> errorValidations { get; } = new List<ErrorContainer>();
+        public ReadOnlyCollection<ErrorContainer> ErrorValidations => errorValidations.AsReadOnly();
     }
 }

@@ -26,11 +26,8 @@ namespace TimetablingWPF
         }
         public Form()
         {
-            ErrorContainer no_year = new ErrorContainer(e => YearGroup == null, e => "No year group has been assigned", ErrorType.Warning);
-            errorValidations = new List<ErrorContainer>()
-            {
-                no_year
-            };
+            ErrorContainer no_year = new ErrorContainer(e => YearGroup == null, e => "No year group has been assigned", ErrorType.Critical);
+            errorValidations.Add(no_year);
         }
         public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");
         private Year _year;
@@ -48,9 +45,6 @@ namespace TimetablingWPF
                 }
             }
         }
-
-        private readonly IList<ErrorContainer> errorValidations;
-        public override IEnumerable<ErrorContainer> ErrorValidations => errorValidations;
 
         public override void Save(BinaryWriter writer)
         {

@@ -65,12 +65,16 @@ namespace TimetablingWPF
             {
                 return;
             }
-            FileStream stream = new FileStream(pinfo.BackupPath, FileMode.Open);
-            BinaryReader reader = new BinaryReader(stream);
-            _ = reader.ReadInt32(); // dispose of backup flag
-            _ = reader.ReadString(); // dispose of the filename
-            RestoreBackup(stream, path);
-            reader.Dispose();
+            using (FileStream stream = new FileStream(pinfo.BackupPath, FileMode.Open))
+            {
+                using (BinaryReader reader = new BinaryReader(stream))
+                {
+                    _ = reader.ReadInt32(); // dispose of backup flag
+                    _ = reader.ReadString(); // dispose of the filename
+                    RestoreBackup(stream, path);
+                }
+            }
+            File.Delete(pinfo.BackupPath);
             DeleteClick(null, null);
         }
 

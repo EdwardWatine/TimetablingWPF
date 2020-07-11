@@ -44,6 +44,7 @@ namespace TimetablingWPF
             ParentWindow.InputBindings.Add(new InputBinding(ApplicationCommands.SaveAs, new KeyGesture(Key.S, ModifierKeys.Control | ModifierKeys.Shift)));
 
             ParentWindow.CommandBindings.Add(new CommandBinding(MenuCommands.FindFilterCommand, ExecuteFindFilter, CanExecuteFindFilter));
+            ParentWindow.CommandBindings.Add(new CommandBinding(MenuCommands.BackupCommand, ExecuteBackupFile));
             
         }
 
@@ -207,6 +208,10 @@ namespace TimetablingWPF
         {
             e.CanExecute = ParentWindow.CanExecuteFindFilter();
         }
+        public void ExecuteBackupFile(object sender, ExecutedRoutedEventArgs e)
+        {
+            App.Data.Autosave();
+        }
         public void BlockingViewClick(object sender, RoutedEventArgs e)
         {
             
@@ -248,6 +253,11 @@ namespace TimetablingWPF
             new InputGestureCollection()
             {
                 new KeyGesture(Key.F, ModifierKeys.Control)
+            });
+        public static readonly RoutedUICommand BackupCommand = new RoutedUICommand("BackupFile", "BackupFile", typeof(MenuCommands),
+            new InputGestureCollection()
+            {
+                new KeyGesture(Key.B, ModifierKeys.Control)
             });
     }
 }
