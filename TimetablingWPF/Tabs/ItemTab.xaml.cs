@@ -281,6 +281,10 @@ namespace TimetablingWPF
             {
                 ErrManager.AddError(error);
             }
+            if (CommandType != CommandType.@new)
+            {
+                ErrManager.UpdateAll();
+            }
         }
         private void NameChanged(object sender, TextChangedEventArgs e)
         {

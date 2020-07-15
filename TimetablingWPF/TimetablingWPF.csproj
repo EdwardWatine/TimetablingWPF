@@ -392,10 +392,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Media\ErrorIcon.png" />
-    <Resource Include="Media\WarningIcon.png" />
-    <Resource Include="Media\CriticalIcon.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Media\WarningIcon.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="Media\BlackBinIcon.png" />
   </ItemGroup>

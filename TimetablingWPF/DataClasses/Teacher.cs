@@ -27,10 +27,10 @@ namespace TimetablingWPF
         public Teacher()
         {
             Assignments.CollectionChanged += AssignmentsChanged;
-            ErrorContainer no_periods = new ErrorContainer((e) => MaxPeriodsPerCycle <= 0, (e) => "Teacher has no free periods.",
+            ErrorContainer no_periods = new ErrorContainer((e) => MaxPeriodsPerCycle == 0, (e) => "Teacher has no free periods.",
                 ErrorType.Warning);
             no_periods.BindProperty(this, "MaxPeriodsPerCycle");
-            errorValidations.Add(no_periods);
+            ErrorList.Add(no_periods);
 
             ErrorContainer insuf_periods = new ErrorContainer((e) =>
             {
@@ -42,7 +42,7 @@ namespace TimetablingWPF
                 ErrorType.Error);
             insuf_periods.BindCollection(UnavailablePeriods);
             insuf_periods.BindCollection(Assignments);
-            errorValidations.Add(insuf_periods);
+            ErrorList.Add(insuf_periods);
 
             ErrorContainer lesson_missing = new ErrorContainer((e) =>
             {
@@ -58,7 +58,7 @@ namespace TimetablingWPF
                 ErrorType.Warning);
             lesson_missing.BindCollection(Assignments);
             lesson_missing.BindCollection(Subjects);
-            errorValidations.Add(lesson_missing);
+            ErrorList.Add(lesson_missing);
 
             ErrorContainer insuf_lesson_slots = new ErrorContainer((e) =>
             {
@@ -75,7 +75,8 @@ namespace TimetablingWPF
                 },
                 ErrorType.Warning);
             insuf_lesson_slots.BindCollection(Assignments);
-            errorValidations.Add(lesson_missing);
+            ErrorList.Add(lesson_missing);
+            BindToErrors();
         }
         public ObservableCollection<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollection<TimetableSlot>();
         public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>(nameof(Subject.Teachers));

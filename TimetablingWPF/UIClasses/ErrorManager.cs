@@ -24,9 +24,8 @@ namespace TimetablingWPF
         public object Data { get; set; }
     }
 
-    public class ErrorContainer
+    public class ErrorContainer : INotifyErrorStateChanged
     {
-        public event RoutedEventHandler StateChanged;
         public ErrorContainer(Func<ErrorData, bool> errorFunc, Func<ErrorData, string> messageFunc, ErrorType errorType)
         {
             ErrorType = errorType;
@@ -40,8 +39,8 @@ namespace TimetablingWPF
         public bool UpdateError()
         {
             errorData = new ErrorData();
-            ErrorState = ErrorFunc(errorData);
-            return ErrorState;
+            IsErroredState = ErrorFunc(errorData);
+            return IsErroredState;
         }
         public void BindCollection(INotifyCollectionChanged collection)
         {
@@ -57,17 +56,19 @@ namespace TimetablingWPF
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1030:Use events where appropriate")]
-        protected virtual void RaiseStateChanged()
+        protected virtual void RaiseErrorChanged()
         {
-            StateChanged?.Invoke(this, new RoutedEventArgs());
+            ErrorStateChanged?.Invoke(this, new ErrorStateChangedEventArgs(IsErroredState, ErrorType));
         }
-
         public ErrorType ErrorType { get; }
         private readonly Func<ErrorData, string> MessageFunc;
         private readonly Func<ErrorData, bool> ErrorFunc;
         private ErrorData errorData;
         private bool state = false;
-        public bool ErrorState
+
+        public event ErrorStateChangedEventHandler ErrorStateChanged;
+
+        public bool IsErroredState
         {
             get => state;
             private set
@@ -75,7 +76,7 @@ namespace TimetablingWPF
                 if (state ^ value)
                 {
                     state = value;
-                    RaiseStateChanged();
+                    RaiseErrorChanged();
                 }
             }
         }
@@ -115,7 +116,7 @@ namespace TimetablingWPF
                     break;
                 default:
                     colour = (SolidColorBrush)Application.Current.Resources["ErrorBrush"];
-                    source = (ImageSource)Application.Current.Resources["CriticalIcon"];
+                    source = (ImageSource)Application.Current.Resources["CrossIcon"];
                     break;
             }
             Image im = new Image()
@@ -136,12 +137,12 @@ namespace TimetablingWPF
             Errors[error] = gd;
             Parent.Children.Add(gd);
             gd.SetBinding(FrameworkElement.WidthProperty, new Binding("ActualWidth") { Source = Parent, Mode = BindingMode.OneWay });
-            error.StateChanged += delegate (object sender, RoutedEventArgs e) { UpdateError(error); };
+            error.ErrorStateChanged += delegate (object sender, ErrorStateChangedEventArgs e) { UpdateError(error); };
         }
         public void UpdateError(ErrorContainer error)
         {
             Grid gd = Errors[error];
-            bool state = error.ErrorState;
+            bool state = error.IsErroredState;
             gd.Visibility = state ? Visibility.Visible : Visibility.Collapsed;
             if (state)
             {

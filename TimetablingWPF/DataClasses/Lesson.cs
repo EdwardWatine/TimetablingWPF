@@ -36,7 +36,7 @@ namespace TimetablingWPF
                 ErrorType.Critical); ;
             too_many_lessons.BindProperty(this, nameof(LessonLength));
             too_many_lessons.BindProperty(this, nameof(LessonsPerCycle));
-            errorValidations.Add(too_many_lessons);
+            ErrorList.Add(too_many_lessons);
 
             ErrorContainer too_many_assigned = new ErrorContainer(e =>
             {
@@ -52,7 +52,7 @@ namespace TimetablingWPF
                 ErrorType.Error);
             too_many_assigned.BindProperty(this, nameof(LessonsPerCycle));
             too_many_assigned.BindCollection(Assignments);
-            errorValidations.Add(too_many_assigned);
+            ErrorList.Add(too_many_assigned);
 
             ErrorContainer insuf_teacher_slots = new ErrorContainer((e) =>
             {
@@ -69,7 +69,8 @@ namespace TimetablingWPF
                 ErrorType.Error);
             insuf_teacher_slots.BindCollection(Assignments);
             insuf_teacher_slots.BindProperty(this, nameof(LessonLength));
-            errorValidations.Add(insuf_teacher_slots);
+            ErrorList.Add(insuf_teacher_slots);
+            BindToErrors();
         }
         public RelationalCollection<Form, Lesson> Forms { get; private set; } = new RelationalCollection<Form, Lesson>(nameof(Form.Lessons));
         private int _lpc;

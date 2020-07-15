@@ -21,10 +21,30 @@ namespace TimetablingWPF
             InitializeComponent();
             tcMainTabControl.ClosingItemCallback = CloseTab;
             tcMainTabControl.SelectionChanged += TabChanged;
+            tbError.SetBinding(TextBlock.TextProperty, new Binding(nameof(App.Data.NumErrors))
+            {
+                Source = App.Data,
+                UpdateSourceTrigger = UpdateSourceTrigger.Explicit
+            });
+            tbWarning.SetBinding(TextBlock.TextProperty, new Binding(nameof(App.Data.NumWarnings))
+            {
+                Source = App.Data,
+                UpdateSourceTrigger = UpdateSourceTrigger.Explicit
+            });
+            App.Data.ErrorStateChanged += delegate (object sender, ErrorStateChangedEventArgs e)
+            {
+                if (e.ErrorType == ErrorType.Error)
+                {
+                    tbError.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
+                }
+                if (e.ErrorType == ErrorType.Warning)
+                {
+                    tbWarning.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
+                }
+            };
         }
 
         public Stack<TabItem> TabHistory { get; } = new Stack<TabItem>();
-
         public void NewTab(TabItem tabItem, string title, bool focus = true)
         {
             tabItem.Header = title;

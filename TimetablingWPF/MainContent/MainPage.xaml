@@ -262,8 +262,8 @@
                         <TextBlock Name="tbError" Text="0" Foreground="{DynamicResource SecondaryBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal">
-                        <Image Margin="0" MaxHeight="{Binding ActualHeight, ElementName=tbWarning}" Source="{StaticResource WarningIcon}" VerticalAlignment="Center"/>
-                        <TextBlock Margin="0" Text="0" Name="tbWarning" Foreground="{DynamicResource SecondaryBrush}" VerticalAlignment="Center"/>
+                        <Image MaxHeight="{Binding ActualHeight, ElementName=tbWarning}" Source="{StaticResource WarningIcon}" VerticalAlignment="Center"/>
+                        <TextBlock Name="tbWarning" Foreground="{DynamicResource SecondaryBrush}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </StackPanel>
             </StatusBarItem>

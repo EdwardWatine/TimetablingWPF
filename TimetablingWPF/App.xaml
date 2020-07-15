@@ -22,7 +22,6 @@
         <BitmapImage x:Key="CheckIcon" UriSource="Media/CheckIcon.png"/>
         <BitmapImage x:Key="FilterIcon" UriSource="Media/FilterIcon.png"/>
         <BitmapImage x:Key="ExpandIcon" UriSource="Media/ExpandIcon.png"/>
-        <BitmapImage x:Key="CriticalIcon" UriSource="Media/CriticalIcon.png"/>
         <BitmapImage x:Key="BlackBinIcon" UriSource="Media/BlackBinIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>

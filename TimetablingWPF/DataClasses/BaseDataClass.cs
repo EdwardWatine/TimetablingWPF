@@ -22,7 +22,7 @@ namespace TimetablingWPF
     /// </summary>
     /// 
 
-    public abstract class BaseDataClass : IDataObject, ICloneable, IFreezable, ISaveable
+    public abstract class BaseDataClass : IDataObject, ICloneable, IFreezable, ISaveable, INotifyErrorStateChanged
     {
 
         public BaseDataClass()
@@ -73,8 +73,6 @@ namespace TimetablingWPF
             }
         }
         private string _sh;
-        public int LastWarnings { get; private set; } = 0;
-        public int LastErrors { get; private set; } = 0;
         public bool Visible { get; set; } = true;
         public bool Committed { get; private set; } = false;
         public bool Frozen { get; private set; } = false;
@@ -133,7 +131,11 @@ namespace TimetablingWPF
         /// Event when property is changed
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
-
+        public event ErrorStateChangedEventHandler ErrorStateChanged;
+        private void ErrorsChanged(object sender, ErrorStateChangedEventArgs e)
+        {
+            ErrorStateChanged?.Invoke(this, e);
+        }
         protected virtual void NotifyPropertyChanged(string prop)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
@@ -207,7 +209,26 @@ namespace TimetablingWPF
             writer.Write(Name);
             writer.Write(Shorthand);
         }
-        protected List<ErrorContainer> errorValidations { get; } = new List<ErrorContainer>();
-        public ReadOnlyCollection<ErrorContainer> ErrorValidations => errorValidations.AsReadOnly();
+        protected List<ErrorContainer> ErrorList { get; } = new List<ErrorContainer>();
+        protected void BindToErrors()
+        {
+            foreach (ErrorContainer error in ErrorList)
+            {
+                error.ErrorStateChanged += ErrorsChanged;
+            }
+        }
+        public int GetErrorCount(ErrorType errorType)
+        {
+            int count = 0;
+            foreach (ErrorContainer error in ErrorList)
+            {
+                if (error.ErrorType == errorType)
+                {
+                    count += error.UpdateError() ? 1 : 0;
+                }
+            }
+            return count;
+        }
+        public ReadOnlyCollection<ErrorContainer> ErrorValidations => ErrorList.AsReadOnly();
     }
 }

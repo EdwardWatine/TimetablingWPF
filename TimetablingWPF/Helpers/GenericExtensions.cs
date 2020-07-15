@@ -90,7 +90,7 @@ namespace TimetablingWPF
         }
         public static bool IsNotPropertyChanged(this NotifyCollectionChangedEventArgs e)
         {
-            return (e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || !ReferenceEquals(e.NewItems[0], e.OldItems[0]));
+            return (e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || !ReferenceEquals(e.NewItems[0], e.OldItems[0])) && (e.Action != NotifyCollectionChangedAction.Move);
         }
         public static void DefaultDictGet<TKey, TValue, TDefault>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value) where TDefault : TValue, new()
         {

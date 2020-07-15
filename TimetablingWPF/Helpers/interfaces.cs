@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
@@ -38,6 +39,20 @@ namespace TimetablingWPF
         string Name { get; set; }
         bool Committed { get; }
         bool Visible { get; }
-
+    }
+    public class ErrorStateChangedEventArgs
+    {
+        public ErrorStateChangedEventArgs(bool errorState, ErrorType errorType)
+        {
+            ErrorState = errorState;
+            ErrorType = errorType;
+        }
+        public bool ErrorState { get; }
+        public ErrorType ErrorType { get; }
+    }
+    public delegate void ErrorStateChangedEventHandler(object sender, ErrorStateChangedEventArgs e);
+    public interface INotifyErrorStateChanged
+    {
+        event ErrorStateChangedEventHandler ErrorStateChanged;
     }
 }
