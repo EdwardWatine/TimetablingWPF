@@ -28,7 +28,7 @@ namespace TimetablingWPF
             timer.Elapsed += Animate;
             timer.AutoReset = false;
             Text = "ummm, hello?";
-            fadeto = VisualHelpers.GenerateDoubleAnimation(0, 1, fade_duration, this, OpacityProperty, new QuadraticEase());
+            fadeto = VisualHelpers.GenerateDoubleAnimation(1, 0, fade_duration, this, OpacityProperty, new QuadraticEase());
             fadeto.Completed += FadeToDone;
             fadefrom = VisualHelpers.GenerateDoubleAnimation(0, 1, fade_duration, this, OpacityProperty, new QuadraticEase());
             fadefrom.Completed += FadeFromDone;
