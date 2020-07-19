@@ -28,6 +28,7 @@ namespace TimetablingWPF
         }
         public Lesson()
         {
+            Subject = App.Data.NoneSubject;
             Assignments.CollectionChanged += AssignmentsChanged;
             ErrorContainer no_subject = new ErrorContainer((e) => Subject == null, (e) => "No subject has been selected.", ErrorType.Critical);
             no_subject.BindProperty(this, nameof(Subject));

@@ -247,14 +247,11 @@ namespace TimetablingWPF
             DependencyProperty.Register("Data", typeof(object), typeof(BindingProxy), new UIPropertyMetadata(null));
     }
 
-    public class ColorToTintedBrush : IValueConverter
+    public class TinterConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Color color = (Color)value;
-            HslColor hsl = HslColor.FromRgbColor(color.ToDrawingColor());
-            hsl.Luminosity = (int)(240 * 0.95);
-            return new SolidColorBrush(hsl.ToRgbColor().ToMediaColor());
+            return VisualHelpers.TintColour((Color)value, double.Parse((string)parameter, CultureInfo.InvariantCulture));
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

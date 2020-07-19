@@ -156,12 +156,13 @@
                 <Setter.Value>
                     <ControlTemplate TargetType="CheckBox">
                         <StackPanel Orientation="Horizontal">
-                            <Border Name="CheckboxBorder" Width="14" Height="14" BorderBrush="#000" BorderThickness="1" VerticalAlignment="Center" Margin="4,0,0,0" Background="#FFFFFF"/>
-                            <Path Stroke="#000000" StrokeThickness="2" Width="8" Height="9" Name="Checkmark">
-                                <Path.Data>
-                                    <PathGeometry Figures="M 0 4 L 0 4 M 3 9 L 3 9"/>
-                                </Path.Data>
-                            </Path>
+                            <Border Name="CheckboxBorder" Width="14" Height="14" BorderBrush="#000" BorderThickness="1" VerticalAlignment="Center" Margin="4,0,0,0" Background="#FFFFFF">
+                                <Path Stroke="#000000" StrokeThickness="2" Width="8" Height="9" Name="Checkmark">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M 0 4 L 0 4 M 3 9 L 3 9"/>
+                                    </Path.Data>
+                                </Path>
+                            </Border>
                             <ContentPresenter Margin="4,0,0,0" HorizontalAlignment="Left" RecognizesAccessKey="True" VerticalAlignment="Center"/>
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup Name="CommonStates">

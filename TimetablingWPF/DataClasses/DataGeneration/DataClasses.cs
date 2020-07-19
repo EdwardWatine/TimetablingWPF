@@ -19,5 +19,17 @@ namespace TimetablingWPF
                 }.Commit();
             }
         }
+        public static void GenerateAllDataTypes(int number)
+        {
+            foreach (Type type in DataHelpers.UserTypes) {
+                for (int i = 0; i < number; i++)
+                {
+                    BaseDataClass obj = (BaseDataClass)Activator.CreateInstance(type);
+                    obj.Name = $"{type.Name}-{i}";
+                    obj.Shorthand = $"{type.Name.Substring(0, 2).ToUpperInvariant()}{i}";
+                    obj.Commit();
+                }
+            }
+        }
     }
 }

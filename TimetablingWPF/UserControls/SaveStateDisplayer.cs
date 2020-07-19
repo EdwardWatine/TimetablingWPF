@@ -28,21 +28,9 @@ namespace TimetablingWPF
             timer.Elapsed += Animate;
             timer.AutoReset = false;
             Text = "ummm, hello?";
-            DoubleAnimation fade = new DoubleAnimation(1, 0, new Duration(TimeSpan.FromMilliseconds(fade_duration)))
-            {
-                EasingFunction = new QuadraticEase()
-            };
-            fadeto.Children.Add(fade);
+            fadeto = VisualHelpers.GenerateDoubleAnimation(0, 1, fade_duration, this, OpacityProperty, new QuadraticEase());
             fadeto.Completed += FadeToDone;
-            Storyboard.SetTarget(fadeto, this);
-            Storyboard.SetTargetProperty(fade, new PropertyPath(OpacityProperty));
-            fade = new DoubleAnimation(0, 1, new Duration(TimeSpan.FromMilliseconds(fade_duration)))
-            {
-                EasingFunction = new QuadraticEase()
-            };
-            fadefrom.Children.Add(fade);
-            Storyboard.SetTarget(fadefrom, this);
-            Storyboard.SetTargetProperty(fade, new PropertyPath(OpacityProperty));
+            fadefrom = VisualHelpers.GenerateDoubleAnimation(0, 1, fade_duration, this, OpacityProperty, new QuadraticEase());
             fadefrom.Completed += FadeFromDone;
             App.Data.SaveStateChanged += SaveStateChanged;
             SaveStateChanged();

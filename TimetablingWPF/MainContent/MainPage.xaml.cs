@@ -31,16 +31,10 @@ namespace TimetablingWPF
                 Source = App.Data,
                 UpdateSourceTrigger = UpdateSourceTrigger.Explicit
             });
-            App.Data.ErrorStateChanged += delegate (object sender, ErrorStateChangedEventArgs e)
+            App.Data.ErrorStateChanged += delegate (ErrorStateChangedEventArgs e)
             {
-                if (e.ErrorType == ErrorType.Error)
-                {
-                    tbError.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
-                }
-                if (e.ErrorType == ErrorType.Warning)
-                {
-                    tbWarning.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
-                }
+                tbError.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
+                tbWarning.GetBindingExpression(TextBlock.TextProperty).UpdateTarget();
             };
         }
 

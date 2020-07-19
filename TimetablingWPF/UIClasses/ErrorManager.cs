@@ -58,7 +58,7 @@ namespace TimetablingWPF
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1030:Use events where appropriate")]
         protected virtual void RaiseErrorChanged()
         {
-            ErrorStateChanged?.Invoke(this, new ErrorStateChangedEventArgs(IsErroredState, ErrorType));
+            ErrorStateChanged?.Invoke(new ErrorStateChangedEventArgs(this));
         }
         public ErrorType ErrorType { get; }
         private readonly Func<ErrorData, string> MessageFunc;
@@ -137,7 +137,7 @@ namespace TimetablingWPF
             Errors[error] = gd;
             Parent.Children.Add(gd);
             gd.SetBinding(FrameworkElement.WidthProperty, new Binding("ActualWidth") { Source = Parent, Mode = BindingMode.OneWay });
-            error.ErrorStateChanged += delegate (object sender, ErrorStateChangedEventArgs e) { UpdateError(error); };
+            error.ErrorStateChanged += delegate (ErrorStateChangedEventArgs e) { UpdateError(error); };
         }
         public void UpdateError(ErrorContainer error)
         {

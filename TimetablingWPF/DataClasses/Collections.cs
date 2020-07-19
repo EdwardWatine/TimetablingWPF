@@ -165,7 +165,7 @@ namespace TimetablingWPF
                 frozenAddElements.Enqueue(item);
                 return;
             }
-            AddToOther(item);
+            AddParentToOther(item);
         }
         protected virtual void OnlyInsert(int index, TContent item)
         {
@@ -175,7 +175,7 @@ namespace TimetablingWPF
             }
             base.InsertItem(index, item);
         }
-        public void AddToOther(TContent item)
+        public void AddParentToOther(TContent item)
         {
             RelationalCollection<TThis, TContent> target = (RelationalCollection<TThis, TContent>)typeof(TContent).GetProperty(OtherSetProperty).GetValue(item);
             target.OnlyInsert(target.Count, _parent); // add the item to the corresponding RelationalCollection
@@ -207,7 +207,7 @@ namespace TimetablingWPF
         {
             RemoveFromOther(this[index]);
             base.SetItem(index, item);
-            AddToOther(item);
+            AddParentToOther(item);
         }
         protected virtual void OnlyRemove(int index)
         {
@@ -227,7 +227,7 @@ namespace TimetablingWPF
             Frozen = false;
             while (frozenAddElements.Count > 0)
             {
-                AddToOther(frozenAddElements.Dequeue()); // unfreeze and add the elements
+                AddParentToOther(frozenAddElements.Dequeue()); // unfreeze and add the elements
             }
             while (frozenRemoveElements.Count > 0)
             {

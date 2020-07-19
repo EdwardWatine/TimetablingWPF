@@ -234,17 +234,19 @@ namespace TimetablingWPF
         {
             e.CanExecute = dgMainDataGrid.SelectedItems.Count >= 1;// && dgMainDataGrid.IsFocused; // at least one item is selected
         }
+        private const int show_duration = 150;
+        private bool filterShown = false;
+        private void AnimateFilter()
+        {
+            double from = filterShown ? 0 : gdFilter.RenderSize.Height;
+            double to = filterShown ? gdFilter.RenderSize.Height : 0;
+            VisualHelpers.GenerateDoubleAnimation(from, to, show_duration, gdFilter, HeightProperty, new System.Windows.Media.Animation.QuadraticEase()).Begin();
+        }
 
         public void ExecuteToggleFilter()
         {
-            bool visible = gdFilter.Visibility == Visibility.Visible;
-            if (visible)
-            {
-                gdFilter.Visibility = Visibility.Collapsed;
-                RefreshFilter();
-                return;
-            }
-            gdFilter.Visibility = Visibility.Visible;
+            filterShown = !filterShown;
+            AnimateFilter();
             RefreshFilter();
             filterName.Focus();
         }
@@ -256,7 +258,7 @@ namespace TimetablingWPF
             string nameFilter = filterName.Text.RemoveWhitespace().ToUpperInvariant();
             string shFilter = filterSh.Text.RemoveWhitespace().ToUpperInvariant();
             dgMainDataGrid.ItemsSource = view;
-            if ((string.IsNullOrWhiteSpace(nameFilter) && string.IsNullOrWhiteSpace(shFilter)) || gdFilter.Visibility != Visibility.Visible)
+            if ((string.IsNullOrWhiteSpace(nameFilter) && string.IsNullOrWhiteSpace(shFilter)) || filterShown)
             {
                 if (view.Filter != null)
                 {
@@ -268,6 +270,7 @@ namespace TimetablingWPF
                 }
                 return;
             }
+            BackgroundTaskManager.Tasks.Add(searchTask);
             if (cbRemove.IsChecked ?? true)
             {
                 Predicate<object> filterPred = DataHelpers.GenerateDefaultNameFilter(nameFilter, shFilter);
@@ -285,7 +288,11 @@ namespace TimetablingWPF
                 FilterComparer.Filter = nameFilter;
                 view.CustomSort = FilterComparer;
             }
+            BackgroundTaskManager.Tasks.Remove(searchTask);
         }
+        private readonly BackgroundTask searchTask = new BackgroundTask("Searching data", "Searching and sorting data to match a string");
+        private readonly BackgroundTask filterTask = new BackgroundTask("Filtering data", "Filtering data to match the filter conditions");
+
         public override bool Cancel()
         {
             return true;
@@ -293,6 +300,7 @@ namespace TimetablingWPF
 
         private void FilterClick(object sender, RoutedEventArgs e)
         {
+            BackgroundTaskManager.Tasks.Add(filterTask);
             btFilter.IsEnabled = false;
             Stopwatch stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -324,6 +332,7 @@ namespace TimetablingWPF
             stopwatch.Stop();
             tbResult.Text = $"{pre} ({Math.Round((double)stopwatch.ElapsedMilliseconds, MidpointRounding.AwayFromZero):N0}ms)";
             tbResult.Visibility = Visibility.Visible;
+            BackgroundTaskManager.Tasks.Remove(filterTask);
         }
 
         private void Scrolled(object sender, ScrollChangedEventArgs e)

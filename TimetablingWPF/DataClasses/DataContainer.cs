@@ -77,7 +77,7 @@ namespace TimetablingWPF
 
         private void NotifyErrorStateChanged(ErrorStateChangedEventArgs e)
         {
-            ErrorStateChanged?.Invoke(this, e);
+            ErrorStateChanged?.Invoke(e.AppendObject(this));
         }
         public void Autosave()
         {
@@ -137,9 +137,17 @@ namespace TimetablingWPF
             };
             YearGroups.Add(none);
             NoneYear = none;
+            Subject noneS = new Subject()
+            {
+                Name = "None",
+                Shorthand = "NONE",
+                Visible = false
+            };
+            Subjects.Add(noneS);
+            NoneSubject = noneS;
             DataLists = new List<INotifyCollectionChanged>()
             {
-                Teachers, Lessons, Subjects, Groups, Forms
+                Teachers, Lessons, Subjects, Groups, Forms, YearGroups
             };
             foreach (INotifyCollectionChanged collection in DataLists)
             {
@@ -148,7 +156,7 @@ namespace TimetablingWPF
         }
         private void SetUnsaved(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e != null && e.IsNotPropertyChanged())
+            if (e != null && e.IsNotPropertyChanged() && !ReferenceEquals(sender, YearGroups))
             {
                 if (e.NewItems != null)
                 {
@@ -157,10 +165,10 @@ namespace TimetablingWPF
                         BaseDataClass obj = (BaseDataClass)item;
                         int errs = obj.GetErrorCount(ErrorType.Error);
                         NumErrors += errs;
-                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(true, ErrorType.Error));
+                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(obj));
                         errs = obj.GetErrorCount(ErrorType.Warning);
                         NumWarnings += errs;
-                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(true, ErrorType.Warning));
+                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(obj));
                         obj.ErrorStateChanged += ObjectErrorStateChanged;
                     }
                 }
@@ -171,10 +179,10 @@ namespace TimetablingWPF
                         BaseDataClass obj = (BaseDataClass)item;
                         int errs = obj.GetErrorCount(ErrorType.Error);
                         NumErrors -= errs;
-                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(false, ErrorType.Error));
+                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(obj));
                         errs = obj.GetErrorCount(ErrorType.Warning);
                         NumWarnings -= errs;
-                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(false, ErrorType.Warning));
+                        if (errs > 0) NotifyErrorStateChanged(new ErrorStateChangedEventArgs(obj));
                         obj.ErrorStateChanged -= ObjectErrorStateChanged;
                     }
                 }
@@ -188,11 +196,12 @@ namespace TimetablingWPF
             }
         }
 
-        private void ObjectErrorStateChanged(object sender, ErrorStateChangedEventArgs e)
+        private void ObjectErrorStateChanged(ErrorStateChangedEventArgs e)
         {
-            int change = e.ErrorState ? 1 : -1;
-            if (e.ErrorType == ErrorType.Error) NumErrors += change;
-            if (e.ErrorType == ErrorType.Warning) NumWarnings += change;
+            ErrorContainer error = (ErrorContainer)e.ObjectChain[0];
+            int change = error.IsErroredState ? 1 : -1;
+            if (error.ErrorType == ErrorType.Error) NumErrors += change;
+            if (error.ErrorType == ErrorType.Warning) NumWarnings += change;
             NotifyErrorStateChanged(e);
         }
 
@@ -202,12 +211,6 @@ namespace TimetablingWPF
             Unsaved = false;
             SaveStateChanged?.Invoke();
             Timer?.Stop();
-            Teachers.CollectionChanged += SetUnsaved;
-            Forms.CollectionChanged += SetUnsaved;
-            YearGroups.CollectionChanged += SetUnsaved;
-            Lessons.CollectionChanged += SetUnsaved;
-            Subjects.CollectionChanged += SetUnsaved;
-            Groups.CollectionChanged += SetUnsaved;
             FileHelpers.SetWindowHeaders();
         }
         public void ClearData()
@@ -219,8 +222,10 @@ namespace TimetablingWPF
             Subjects.Clear();
             YearGroups.Clear();
             YearGroups.Add(NoneYear);
+            Subjects.Add(NoneSubject);
         }
         public Year NoneYear { get; private set; }
+        public Subject NoneSubject { get; private set; }
         public object ToContainer()
         {
             DataContainer dc = new DataContainer();

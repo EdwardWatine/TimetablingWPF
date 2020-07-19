@@ -20,7 +20,7 @@
         </DataTemplate>
     </TabItem.Resources>
     <DockPanel Name="dpMain" LastChildFill="True">
-        <Grid Name="gdFilter" Visibility="Collapsed" DockPanel.Dock="Top">
+        <Grid Name="gdFilter" Height="0" DockPanel.Dock="Top">
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>

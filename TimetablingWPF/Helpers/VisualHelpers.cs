@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.VisualStudio.Modeling.Diagrams;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using static TimetablingWPF.GenericResources;
 
@@ -80,7 +82,7 @@ namespace TimetablingWPF
                     skipped = 0;
                     for (int day = 0; day < structureWeek.DayNames.Count; day++)
                     {
-                        if (!structureWeek.DayIsSchedulable(day)) { skipped++;  continue; }
+                        if (!structureWeek.DayIsSchedulable(day)) { skipped++; continue; }
                         bool schedulable = structureWeek.PeriodIsSchedulable(day, period);
                         TimetableSlot slot = new TimetableSlot(week, day, period);
                         bool isUnavailable = slots.Contains(slot);
@@ -191,6 +193,22 @@ namespace TimetablingWPF
             if (result == MessageBoxResult.Yes) return true;
             if (result == MessageBoxResult.Cancel) return null;
             return false;
+        }
+
+        public static Storyboard GenerateDoubleAnimation(double from, double to, int duration, DependencyObject obj, DependencyProperty property, IEasingFunction ease = null)
+        {
+            Storyboard sb = new Storyboard();
+            DoubleAnimation db = new DoubleAnimation(from, to, duration.ToMillisDuration()) { EasingFunction = ease };
+            sb.Children.Add(db);
+            Storyboard.SetTarget(sb, obj);
+            Storyboard.SetTargetProperty(db, new PropertyPath(property));
+            return sb;
+        }
+        public static Color TintColour(Color color, double factor)
+        {
+            HslColor hsl = HslColor.FromRgbColor(color.ToDrawingColor());
+            hsl.Luminosity = (int)(240 * factor);
+            return hsl.ToRgbColor().ToMediaColor();
         }
     }
 }

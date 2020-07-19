@@ -242,6 +242,11 @@ namespace TimetablingWPF
         {
             new BackupWindow(ParentWindow, s => LoadData(s, owner: ParentWindow)).Show();
         }
+
+        private void ErrorListClick(object sender, RoutedEventArgs e)
+        {
+            new ErrorWindow().Show();
+        }
     }
     public static class MenuCommands
     {

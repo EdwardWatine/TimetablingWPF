@@ -28,6 +28,7 @@ namespace TimetablingWPF
         {
             ErrorContainer no_year = new ErrorContainer(e => YearGroup == null, e => "No year group has been assigned", ErrorType.Critical);
             ErrorList.Add(no_year);
+            YearGroup = App.Data.NoneYear;
             BindToErrors();
         }
         public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");

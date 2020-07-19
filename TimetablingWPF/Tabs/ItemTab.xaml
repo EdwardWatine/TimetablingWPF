@@ -10,13 +10,16 @@
     <local:TabBase.Resources>
         <local:Root2Multiplier x:Key="R2M"/>
         <local:BindingProxy x:Key="ColorProxy" Data="{DynamicResource PrimaryColor}"/>
-        <local:ColorToTintedBrush x:Key="ColToBrush"/>
+        <local:TinterConverter x:Key="tinter"/>
     </local:TabBase.Resources>
     <Grid Name="gdMain">
         <Grid.Background>
             <DrawingBrush Stretch="None">
                 <DrawingBrush.Drawing>
-                    <GeometryDrawing Brush="{Binding Data, Source={StaticResource ColorProxy}, Converter={StaticResource ColToBrush}}">
+                    <GeometryDrawing>
+                        <GeometryDrawing.Brush>
+                            <SolidColorBrush Color="{Binding Data, Source={StaticResource ColorProxy}, Converter={StaticResource tinter}, ConverterParameter=0.95}"/>
+                        </GeometryDrawing.Brush>
                         <GeometryDrawing.Geometry>
                             <EllipseGeometry x:Name="bgEllipse" Center="0.5, 0.5" RadiusX="0" RadiusY="0"/>
                         </GeometryDrawing.Geometry>

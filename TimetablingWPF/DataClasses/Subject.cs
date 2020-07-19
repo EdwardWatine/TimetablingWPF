@@ -18,7 +18,7 @@ namespace TimetablingWPF
         }
         public Subject()
         {
-            Groups.AddToOther(RelatedGroup);
+            Groups.AddParentToOther(RelatedGroup);
         }
         public RelationalCollection<Group, Subject> Groups { get; private set; } = new RelationalCollection<Group, Subject>(nameof(Group.Subjects));
         public RelationalCollection<Teacher, Subject> Teachers { get; private set; } = new RelationalCollection<Teacher, Subject>(nameof(Teacher.Subjects));

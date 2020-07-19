@@ -171,5 +171,9 @@ namespace TimetablingWPF
             arg1 = arg2;
             arg2 = temp;
         }
+        public static Duration ToMillisDuration(this int num)
+        {
+            return new Duration(TimeSpan.FromMilliseconds(num));
+        }
     }
 }

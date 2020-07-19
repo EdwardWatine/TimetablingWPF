@@ -37,6 +37,7 @@
         </MenuItem>
         <MenuItem Header="_View">
             <MenuItem Header="_Year Groups" Click="YearView"/>
+            <MenuItem Header="_Error List" Click="ErrorListClick"/>
             <MenuItem Header="_Data Views">
                 <MenuItem Header="_Teacher"/>
             </MenuItem>

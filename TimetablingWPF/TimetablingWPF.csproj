@@ -174,7 +174,11 @@
       <DependentUpon>ItemTab.xaml</DependentUpon>
     </Compile>
     <Compile Include="UIClasses\BackgroundTaskManager.cs" />
+    <Compile Include="UserControls\AnimatableScrollViewer.cs" />
     <Compile Include="UserControls\BackgroundTaskDisplayer.cs" />
+    <Compile Include="GeneralWindows\ErrorWindow.xaml.cs">
+      <DependentUpon>ErrorWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="UserControls\MultiComboBox.xaml.cs">
       <DependentUpon>MultiComboBox.xaml</DependentUpon>
     </Compile>
@@ -219,7 +223,7 @@
     <Compile Include="UserControls\ItemList.xaml.cs">
       <DependentUpon>ItemList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="UserControls\LoadingDialog.xaml.cs">
+    <Compile Include="Dialogs\LoadingDialog.xaml.cs">
       <DependentUpon>LoadingDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\ImportDialog.xaml.cs">
@@ -234,6 +238,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Tabs\ItemTab.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="GeneralWindows\ErrorWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -283,7 +291,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\LoadingDialog.xaml">
+    <Page Include="Dialogs\LoadingDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

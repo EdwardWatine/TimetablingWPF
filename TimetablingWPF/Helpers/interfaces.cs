@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
@@ -42,15 +43,26 @@ namespace TimetablingWPF
     }
     public class ErrorStateChangedEventArgs
     {
-        public ErrorStateChangedEventArgs(bool errorState, ErrorType errorType)
+        public ErrorStateChangedEventArgs() { }
+        public ErrorStateChangedEventArgs(object sender)
         {
-            ErrorState = errorState;
-            ErrorType = errorType;
+            objectChain.Add(sender);
         }
-        public bool ErrorState { get; }
-        public ErrorType ErrorType { get; }
+        private IList<object> objectChain = new List<object>();
+        public ReadOnlyCollection<object> ObjectChain => new ReadOnlyCollection<object>(objectChain);
+        public ErrorStateChangedEventArgs AppendObject(object obj)
+        {
+            ErrorStateChangedEventArgs args = new ErrorStateChangedEventArgs()
+            {
+                objectChain = new List<object>(objectChain)
+                {
+                    obj
+                }
+            };
+            return args;
+        }
     }
-    public delegate void ErrorStateChangedEventHandler(object sender, ErrorStateChangedEventArgs e);
+    public delegate void ErrorStateChangedEventHandler(ErrorStateChangedEventArgs e);
     public interface INotifyErrorStateChanged
     {
         event ErrorStateChangedEventHandler ErrorStateChanged;

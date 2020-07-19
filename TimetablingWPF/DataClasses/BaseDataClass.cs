@@ -132,9 +132,9 @@ namespace TimetablingWPF
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         public event ErrorStateChangedEventHandler ErrorStateChanged;
-        private void ErrorsChanged(object sender, ErrorStateChangedEventArgs e)
+        private void ErrorsChanged(ErrorStateChangedEventArgs e)
         {
-            ErrorStateChanged?.Invoke(this, e);
+            ErrorStateChanged?.Invoke(e.AppendObject(this));
         }
         protected virtual void NotifyPropertyChanged(string prop)
         {
@@ -203,11 +203,13 @@ namespace TimetablingWPF
         {
             Name = reader.ReadString();
             Shorthand = reader.ReadString();
+            Visible = reader.ReadBoolean();
         }
         protected void SaveParent(BinaryWriter writer)
         {
             writer.Write(Name);
             writer.Write(Shorthand);
+            writer.Write(Visible);
         }
         protected List<ErrorContainer> ErrorList { get; } = new List<ErrorContainer>();
         protected void BindToErrors()
