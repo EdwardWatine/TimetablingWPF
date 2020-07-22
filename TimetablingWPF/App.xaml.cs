@@ -27,6 +27,7 @@ namespace TimetablingWPF
     {
         public App()
         {
+            //GenericHelpers.LogTime("A");
             InitializeComponent();
             Data.SetTimer();
             Directory.CreateDirectory(BkPath);
@@ -52,6 +53,7 @@ namespace TimetablingWPF
                     FileHelpers.SaveData(FilePath);
                 }
             };
+            //GenericHelpers.LogTime("B");
         }
         public const string Name = "Timetabler";
         public static string FilePath { get; set; }

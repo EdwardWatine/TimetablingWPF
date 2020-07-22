@@ -10,7 +10,7 @@ using System.Windows.Controls;
 
 namespace TimetablingWPF.Searching
 {
-    public class ListSearchFactory<TThis, TCollection> :  SearchFactory
+    public class ListSearchFactory<TThis, TCollection> : SearchFactory
     {
         public ListSearchFactory(Func<TThis, IEnumerable<TCollection>> valuesGenerator, IList optionlist, string optiontype, string verb)
         {
@@ -62,7 +62,7 @@ namespace TimetablingWPF.Searching
 
             public override bool Search(object item)
             {
-                IEnumerable<TCollection> values = ValuesGenerator((TThis)item);
+                HashSet<TCollection> values = new HashSet<TCollection>(ValuesGenerator((TThis)item));
                 if (options.SelectedItems.Count == 0)
                 {
                     return true;

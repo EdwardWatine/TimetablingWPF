@@ -23,6 +23,7 @@ namespace TimetablingWPF
             AddSearchParameter(type, new ListSearchFactory<Teacher, Group>(t => t.Subjects.SelectMany(s => s.Groups.Concat(new Group[] { s.RelatedGroup })), 
                 current.Groups, "group", "Teaches"));
             AddSearchParameter(type, new ListSearchFactory<Teacher, Year>(t => t.Assignments.SelectMany(a => a.Lesson.Forms.Select(f => f.YearGroup)), current.YearGroups, "year", "Teaches"));
+            AddSearchParameter(type, new ComparisonSearchFactory<Teacher>(t => t.UnavailablePeriods.Count, "Unavailable periods"));
         }
         public Teacher()
         {

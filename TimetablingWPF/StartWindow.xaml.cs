@@ -29,6 +29,7 @@ namespace TimetablingWPF
     {
         public StartWindow()
         {
+            //GenericHelpers.LogTime("C");
             InitializeComponent();
 
             IEnumerable<string> lines = Properties.Settings.Default.RECENT_FILES.Cast<string>(); // access the recent files
@@ -40,6 +41,7 @@ namespace TimetablingWPF
             uris = new ObservableCollection<string>(lines.Take(6));
             icRecentFiles.ItemsSource = uris;
             Show();
+            //GenericHelpers.LogTime("D");
             BackupWindow bwindow = new BackupWindow(this, s => OpenFileFromPath(s), true);
             if (bwindow.Paths.Any())
             {

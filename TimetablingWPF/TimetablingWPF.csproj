@@ -156,7 +156,9 @@
     <Compile Include="DataClasses\CustomPropertyInfo.cs" />
     <Compile Include="DataClasses\DataGeneration\DataClasses.cs" />
     <Compile Include="DataClasses\Group.cs" />
+    <Compile Include="DataClasses\Searching\ComparisonModifier.cs" />
     <Compile Include="DataClasses\Searching\ListLogicModifier.cs" />
+    <Compile Include="DataClasses\Searching\ComparisonSearch.cs" />
     <Compile Include="DataClasses\Searching\ListSearch.cs" />
     <Compile Include="DataClasses\Searching\SearchBase.cs" />
     <Compile Include="DataClasses\TimetableSlot.cs" />

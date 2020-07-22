@@ -175,5 +175,10 @@ namespace TimetablingWPF
         {
             return new Duration(TimeSpan.FromMilliseconds(num));
         }
+        public static void LogTime(string msg = "")
+        {
+            Console.Write(DateTime.Now.TimeOfDay);
+            Console.WriteLine("\t" + msg);
+        }
     }
 }
