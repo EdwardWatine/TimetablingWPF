@@ -25,18 +25,21 @@ namespace TimetablingWPF
         {
             return new NotifyCollectionChangedEventHandler((sender, e) =>
             {
-                if (e.NewItems != null)
+                if (e.IsAddOrRemove())
                 {
-                    foreach (object obj in e.NewItems)
+                    if (e.NewItems != null)
                     {
-                        list.Add(obj);
+                        foreach (object obj in e.NewItems)
+                        {
+                            list.Add(obj);
+                        }
                     }
-                }
-                if (e.OldItems != null)
-                {
-                    foreach (object obj in e.OldItems)
+                    if (e.OldItems != null)
                     {
-                        list.Remove(obj);
+                        foreach (object obj in e.OldItems)
+                        {
+                            list.Remove(obj);
+                        }
                     }
                 }
             });

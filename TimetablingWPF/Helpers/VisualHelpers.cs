@@ -18,7 +18,6 @@ namespace TimetablingWPF
 {
     class VisualHelpers
     {
-
         public static StackPanel GenerateTimetable(IEnumerable<TimetableSlot> slots, MouseButtonEventHandler leftClickHandler = null,
             MouseButtonEventHandler rightClickHandler = null)
         {

@@ -68,29 +68,23 @@ namespace TimetablingWPF
         {
             return AvsAnLib.AvsAn.Query(str).Article + " " + str;
         }
-        public static IList GenerateOneWayCopy(this INotifyCollectionChanged collection)
+        public static void LinkList(this INotifyCollectionChanged collection, IList target)
         {
-            IList copy = new ObservableCollection<object>(((IEnumerable)collection).Cast<object>());
-            collection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
-            {
-                if (e.NewItems != null) { 
-                    foreach (object item in e.NewItems)
-                    {
-                        copy.Add(item);
-                    }
-                }
-                if (e.OldItems != null) {
-                    foreach (object item in e.OldItems)
-                    {
-                        copy.Remove(item);
-                    }
-                }
-            };
+            collection.CollectionChanged += GenericHelpers.GenerateLinkHandler(target);
+        }
+        public static ObservableCollection<object> GenerateOneWayCopyExtension(this INotifyCollectionChanged collection)
+        {
+            ObservableCollection<object> copy = new ObservableCollection<object>(((IEnumerable)collection).Cast<object>());
+            collection.LinkList(copy);
             return copy;
         }
-        public static bool IsNotPropertyChanged(this NotifyCollectionChangedEventArgs e)
+        public static bool IsAddOrRemove(this NotifyCollectionChangedEventArgs e)
         {
             return (e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || !ReferenceEquals(e.NewItems[0], e.OldItems[0])) && (e.Action != NotifyCollectionChangedAction.Move);
+        }
+        public static bool IsReplace(this NotifyCollectionChangedEventArgs e)
+        {
+            return e.NewItems != null && e.OldItems != null && ReferenceEquals(e.NewItems[0], e.OldItems[0]);
         }
         public static void DefaultDictGet<TKey, TValue, TDefault>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value) where TDefault : TValue, new()
         {
@@ -110,35 +104,48 @@ namespace TimetablingWPF
         {
             dict.DefaultDictGet<TKey, TValue, TValue>(key, out value);
         }
-        public static IList GenerateVisibles(this IList list)
+        public static InternalObservableCollection<T> Filter<T>(this IEnumerable<T> list, Predicate<T> predicate)
         {
-            ObservableCollection<object> collection = new ObservableCollection<object>(list.Cast<IDataObject>().Where(o => o.Visible));
+            InternalObservableCollection<T> collection = new InternalObservableCollection<T>(list.Cast<T>().Where(t => predicate(t)));
             if (list is INotifyCollectionChanged changingCollection)
             {
                 changingCollection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
                 {
-                    if (e.OldItems != null)
+                    if (!e.IsAddOrRemove())
                     {
-                        foreach (IDataObject item in e.OldItems.Cast<IDataObject>())
+                        if (e.OldItems != null)
                         {
-                            if (item.Visible)
+                            foreach (T item in e.OldItems.Cast<T>())
                             {
-                                collection.Remove(item);
+                                if (predicate(item))
+                                {
+                                    collection.Remove(item);
+                                }
                             }
                         }
-                    }
-                    if (e.NewItems != null)
-                    {
-                        foreach (IDataObject item in e.NewItems.Cast<IDataObject>())
+                        if (e.NewItems != null)
                         {
-                            if (item.Visible)
+                            foreach (T item in e.NewItems.Cast<T>())
                             {
-                                collection.Add(item);
+                                if (predicate(item))
+                                {
+                                    collection.Add(item);
+                                }
                             }
                         }
                     }
                 };
             }
+            collection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
+            {
+                if (e.IsReplace())
+                {
+                    if (!predicate((T)e.NewItems[0]))
+                    {
+                        collection.RemoveAt(e.NewStartingIndex);
+                    }
+                }
+            };
             return collection;
         }
         public static System.Windows.Media.Color ToMediaColor(this System.Drawing.Color color)

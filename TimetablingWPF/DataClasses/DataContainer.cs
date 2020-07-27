@@ -62,10 +62,11 @@ namespace TimetablingWPF
     }
     public sealed class SingletonDataContainer : DataContainer, INotifyErrorStateChanged
     {
+        public InternalObservableCollection<BaseDataClass> AllData { get; }
         public static SingletonDataContainer Instance { get; } = new SingletonDataContainer();
         public int NumErrors { get; private set; } = 0;
         public int NumWarnings { get; private set; } = 0;
-        public static BackgroundTask BackupTask { get; } = new BackgroundTask("Backing up", "Backing up the data of the current application.");
+        private static BackgroundTask BackupTask { get; } = new BackgroundTask("Backing up", "Backing up the data of the current application.");
         private Timer Timer;
         public delegate void SaveStateChangedHandler();
         public event SaveStateChangedHandler SaveStateChanged;
@@ -73,7 +74,6 @@ namespace TimetablingWPF
 
         public TimeSpan LastSave { get; private set; }
         public TimeSpan? LastBackup { get; private set; } = null;
-        private readonly IList<INotifyCollectionChanged> DataLists;
 
         private void NotifyErrorStateChanged(ErrorStateChangedEventArgs e)
         {
@@ -131,6 +131,7 @@ namespace TimetablingWPF
         public bool Unsaved { get; private set; } = false;
         private SingletonDataContainer()
         {
+            AllData = Teachers.Concat<BaseDataClass>(Forms, Subjects, Groups, Lessons);
             Year none = new Year("None")
             {
                 Visible = false
@@ -145,18 +146,12 @@ namespace TimetablingWPF
             };
             Subjects.Add(noneS);
             NoneSubject = noneS;
-            DataLists = new List<INotifyCollectionChanged>()
-            {
-                Teachers, Lessons, Subjects, Groups, Forms, YearGroups
-            };
-            foreach (INotifyCollectionChanged collection in DataLists)
-            {
-                collection.CollectionChanged += SetUnsaved;
-            }
+            AllData.CollectionChanged += SetUnsaved;
+            YearGroups.CollectionChanged += SetUnsaved;
         }
         private void SetUnsaved(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e != null && e.IsNotPropertyChanged() && !ReferenceEquals(sender, YearGroups))
+            if (e != null && e.IsAddOrRemove() && ReferenceEquals(sender, AllData))
             {
                 if (e.NewItems != null)
                 {

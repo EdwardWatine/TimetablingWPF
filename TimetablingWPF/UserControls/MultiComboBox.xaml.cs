@@ -217,7 +217,7 @@ namespace TimetablingWPF
         }
         private void SelectedItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (!e.IsNotPropertyChanged())
+            if (!e.IsAddOrRemove())
             {
                 return;
             }

@@ -22,7 +22,7 @@ namespace TimetablingWPF
     /// </summary>
     /// 
 
-    public abstract class BaseDataClass : IDataObject, ICloneable, IFreezable, ISaveable, INotifyErrorStateChanged
+    public abstract class BaseDataClass : IDataObject, IFreezable, ISaveable, INotifyErrorStateChanged
     {
 
         public BaseDataClass()
@@ -34,7 +34,7 @@ namespace TimetablingWPF
         {
             void Val_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
             {
-                if (e.IsNotPropertyChanged() && !Frozen) //Ensures that the change is propagated if it wasn't propagated by another object
+                if (e.IsAddOrRemove() && !Frozen) //Ensures that the change is propagated if it wasn't propagated by another object
                 {
                     NotifyPropertyChanged(prop.Name);
                 }
@@ -102,21 +102,38 @@ namespace TimetablingWPF
                 Committed = true;
             }
         }
-        public void UpdateWithClone(BaseDataClass clone)
+        public void Update(BaseDataClass source)
         {
             Type type = GetType();
-            if (type != clone.GetType())
+            if (type != source.GetType())
             {
                 throw new ArgumentException("The clone class must be of the same type as the calling class.");
             }
+            Name = source.Name;
+            Shorthand = source.Shorthand;
             foreach (CustomPropertyInfo prop in ExposedProperties[type])
             {
-                prop.PropertyInfo.SetValue(this, prop.PropertyInfo.GetValue(clone));
-                NotifyPropertyChanged(prop.PropertyInfo.Name);
+                object value = prop.PropertyInfo.GetValue(source);
+                if (value is ICloneable cloneable)
+                {
+                    value = cloneable.Clone();
+                }
+                if (value is IRelationalCollection rc)
+                {
+                    rc.Parent = this;
+                }
+                prop.PropertyInfo.SetValue(this, value);
+                if (prop.Type.IsInterface<IList>())
+                {
+                    NotifyPropertyChanged(prop.PropertyInfo.Name);
+                }
             }
-            Name = clone.Name;
-            Shorthand = clone.Shorthand;
-            Frozen = clone.Frozen;
+        }
+        public BaseDataClass Clone()
+        {
+            BaseDataClass copy = (BaseDataClass)Activator.CreateInstance(GetType());
+            copy.Update(this);
+            return copy;
         }
         public void MergeWith(BaseDataClass merger)
         {
@@ -159,18 +176,6 @@ namespace TimetablingWPF
             }
             ApplyOnType<IRelationalCollection>(delete);
             (container ?? App.Data).FromType(GetType()).Remove(this);
-        }
-
-        public object Clone()
-        {
-            BaseDataClass copy = (BaseDataClass)MemberwiseClone();
-            copy.Committed = false;
-            copy.PropertyChanged = null;
-            copy.Unfreeze();
-
-            copy.ApplyOnType<ICloneable>((prop, val) => prop.SetValue(copy, val.Clone())); //copies all copyable objects
-            copy.ApplyOnType<IRelationalCollection>((prop, val) => val.Parent = this); //reassigns the parent of copied lists
-            return copy;
         }
 
         public virtual void Freeze()

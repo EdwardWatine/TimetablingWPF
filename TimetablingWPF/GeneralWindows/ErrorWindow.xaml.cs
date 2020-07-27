@@ -39,7 +39,9 @@ namespace TimetablingWPF
                 header.SetResourceReference(TextBlock.BackgroundProperty, "PrimaryBrush");
                 Headers.Add(header);
                 spMain.Children.Add(header);
-                IList list = App.Data.FromType(type);
+                ObservableCollection<BaseDataClass> list = App.Data.FromType(type).Cast<BaseDataClass>().Filter(
+                    o => o.Visible && o.ErrorValidations.Any(e => e.IsErroredState)
+                );
                 Console.WriteLine(list.Count);
                 for (int i = 0; i < list.Count; i++)
                 {

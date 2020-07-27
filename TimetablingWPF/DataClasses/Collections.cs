@@ -55,15 +55,22 @@ namespace TimetablingWPF
         {
             RemoveRange(enumerable.Cast<T>());
         }
-
-        public ObservableCollection<T> GenerateOneWayCopy()
+        public InternalObservableCollection<TBase> Concat<TBase>(params INotifyCollectionChanged[] collections)
+        {
+            InternalObservableCollection<TBase> copy = new InternalObservableCollection<TBase>();
+            copy.AddRange(this);
+            this.LinkList(copy);
+            foreach (INotifyCollectionChanged collection in collections)
+            {
+                copy.AddRange((IEnumerable)collection);
+                collection.LinkList(copy);
+            }
+            return copy;
+        }
+        public virtual ObservableCollection<T> GenerateOneWayCopy()
         {
             ObservableCollection<T> collection = new ObservableCollection<T>(this);
-            CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
-            {
-                if (e.NewItems != null) { collection.AddRange(e.NewItems); }
-                if (e.OldItems != null) { collection.RemoveRange(e.OldItems); }
-            };
+            this.LinkList(collection);
             return collection;
         }
     }
@@ -111,6 +118,12 @@ namespace TimetablingWPF
         public override object Clone()
         {
             return new InternalObservableCollection<T>(this);
+        }
+        public override ObservableCollection<T> GenerateOneWayCopy()
+        {
+            InternalObservableCollection<T> collection = new InternalObservableCollection<T>(this);
+            this.LinkList(collection);
+            return collection;
         }
     }
     /// <summary>

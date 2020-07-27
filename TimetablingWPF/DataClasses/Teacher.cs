@@ -20,9 +20,9 @@ namespace TimetablingWPF
             RegisterProperty(type, nameof(Subjects));
             RegisterProperty(type, nameof(Assignments));
             DataContainer current = App.Data;
-            AddSearchParameter(type, new ListSearchFactory<Teacher, Group>(t => t.Subjects.SelectMany(s => s.Groups.Concat(new Group[] { s.RelatedGroup })), 
+            AddSearchParameter(type, new ListSearchFactory<Teacher, Group>(t => t.Subjects.SelectMany(s => s.Groups.Concat(new Group[] { s.RelatedGroup })).Distinct(), 
                 current.Groups, "group", "Teaches"));
-            AddSearchParameter(type, new ListSearchFactory<Teacher, Year>(t => t.Assignments.SelectMany(a => a.Lesson.Forms.Select(f => f.YearGroup)), current.YearGroups, "year", "Teaches"));
+            AddSearchParameter(type, new ListSearchFactory<Teacher, Year>(t => t.Assignments.SelectMany(a => a.Lesson.Forms.Select(f => f.YearGroup)).Distinct(), current.YearGroups, "year", "Teaches"));
             AddSearchParameter(type, new ComparisonSearchFactory<Teacher>(t => t.UnavailablePeriods.Count, "Unavailable periods"));
         }
         public Teacher()
@@ -30,7 +30,7 @@ namespace TimetablingWPF
             Assignments.CollectionChanged += AssignmentsChanged;
             ErrorContainer no_periods = new ErrorContainer((e) => MaxPeriodsPerCycle == 0, (e) => "Teacher has no free periods.",
                 ErrorType.Warning);
-            no_periods.BindProperty(this, "MaxPeriodsPerCycle");
+            no_periods.BindProperty(this, nameof(MaxPeriodsPerCycle));
             ErrorList.Add(no_periods);
 
             ErrorContainer insuf_periods = new ErrorContainer((e) =>

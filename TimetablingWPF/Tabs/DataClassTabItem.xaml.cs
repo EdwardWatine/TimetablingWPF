@@ -75,9 +75,9 @@ namespace TimetablingWPF
             filterName.TextChanged += handler;
             filterSh.TextChanged += handler;
             cbRemove.Click += delegate (object sender, RoutedEventArgs e) { RefreshFilter(); };
-            IList data = App.Data.FromType(type).GenerateVisibles();
+            ObservableCollection<IDataObject> data = App.Data.FromType(type).Cast<IDataObject>().Filter(o => o.Visible);
             defaultView = new ListCollectionView(data);
-            ((INotifyCollectionChanged)data).CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) { defaultView.Refresh(); };
+            data.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) { defaultView.Refresh(); };
             dgMainDataGrid.ItemsSource = defaultView;
             dgMainDataGrid.Columns.Add(new DataGridTemplateColumn()
             {

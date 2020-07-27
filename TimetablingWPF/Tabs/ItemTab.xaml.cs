@@ -34,7 +34,7 @@ namespace TimetablingWPF
             InitializeComponent();
             ErrManager = new ErrorManager(spErrors);
             CommandType = commandType;
-            Item = commandType == CommandType.@new ? originalItem : (BaseDataClass)originalItem.Clone();
+            Item = commandType == CommandType.@new ? originalItem : originalItem.Clone();
             OriginalItem = originalItem;
             Item.PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
             {
@@ -119,7 +119,7 @@ namespace TimetablingWPF
                     if (generic_argument == typeof(Assignment))
                     {
                         Type box_type = item_type == typeof(Teacher) ? typeof(Lesson) : typeof(Teacher);
-                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(box_type)).GenerateOneWayCopy();
+                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(box_type)).GenerateOneWayCopyExtension();
                         comboBox.ItemString = box_type.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
                         IntegerUpDown iupdown = new IntegerUpDown()
@@ -191,13 +191,13 @@ namespace TimetablingWPF
                     }
                     else
                     {
-                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(generic_argument)).GenerateOneWayCopy();
+                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(generic_argument)).GenerateOneWayCopyExtension();
                         comboBox.ItemString = generic_argument.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
 
                         object value = prop.PropertyInfo.GetValue(Item);
                         comboBox.SetSelected((IEnumerable)value);
-                        ((INotifyCollectionChanged)comboBox.SelectedItems).CollectionChanged += GenericHelpers.GenerateLinkHandler((IList)value);
+                        ((INotifyCollectionChanged)comboBox.SelectedItems).LinkList((IList)value);
                         itemlist.DeleteAction = o => comboBox.SelectedItems.Remove(o);
                     }
                     gdilContainer.Children.Add(sphorizontalMenu);
@@ -357,7 +357,7 @@ namespace TimetablingWPF
             }
             if (CommandType == CommandType.edit)
             {
-                OriginalItem.UpdateWithClone(Item);
+                OriginalItem.Update(Item);
                 OriginalItem.Unfreeze();
             }
             else
