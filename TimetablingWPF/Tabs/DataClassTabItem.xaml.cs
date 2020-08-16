@@ -21,6 +21,7 @@ using Humanizer;
 using TimetablingWPF.Searching;
 using static TimetablingWPF.GenericHelpers;
 using System.Timers;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -75,7 +76,7 @@ namespace TimetablingWPF
             filterName.TextChanged += handler;
             filterSh.TextChanged += handler;
             cbRemove.Click += delegate (object sender, RoutedEventArgs e) { RefreshFilter(); };
-            ObservableCollection<IDataObject> data = App.Data.FromType(type).Cast<IDataObject>().Filter(o => o.Visible);
+            Filtering<BaseDataClass> data = ((INotifyCollectionChanged)App.Data.FromType(type)).Casting<BaseDataClass>().Filtering(o => o.Visible);
             defaultView = new ListCollectionView(data);
             data.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) { defaultView.Refresh(); };
             dgMainDataGrid.ItemsSource = defaultView;
@@ -107,7 +108,7 @@ namespace TimetablingWPF
                 FrameworkElementFactory tbFactory = new FrameworkElementFactory(typeof(TextBlock));
                 tbFactory.SetValue(StyleProperty, Resources["tbStyle"]);
                 Binding binding = new Binding(prop.PropertyInfo.Name);
-                if (prop.Type == typeof(ObservableCollection<TimetableSlot>))
+                if (prop.Type == typeof(ObservableCollectionExtended<TimetableSlot>))
                 {
                     binding.Converter = new ListReportLength();
                     TextBlock tb = new TextBlock() { Text = "Loading..." };
@@ -162,7 +163,7 @@ namespace TimetablingWPF
                     new InformationWindow((BaseDataClass)dgMainDataGrid.SelectedItem).Show();
                 }
             };
-            searches = new InternalObservableCollection<SearchBase>(BaseDataClass.SearchParameters.DefaultDictGet<Type, IList<SearchFactory>, List<SearchFactory>>(type).Select(sf => sf.GenerateSearch()).ToList());
+            searches = BaseDataClass.SearchParameters.DefaultDictGet<Type, IList<SearchFactory>, List<SearchFactory>>(type).Select(sf => sf.GenerateSearch()).ToObservable();
             searches.CollectionChanged += SearchChanged;
             foreach (SearchBase search in searches)
             {
@@ -178,13 +179,13 @@ namespace TimetablingWPF
 
         private readonly ListCollectionView defaultView;
         public Type DataType { get; }
-        private readonly InternalObservableCollection<SearchBase> searches;
+        private readonly ObservableCollectionExtended<SearchBase> searches;
         private readonly SortingComparer FilterComparer = new SortingComparer();
-        private readonly Timer searchtimer = new Timer(TimetableSettings.DelayBeforeSearching)
+        private readonly Timer searchtimer = new Timer(LocalSettings.DelayBeforeSearching)
         {
             AutoReset = false
         };
-        private readonly Timer scrolltimer = new Timer(TimetableSettings.TooltipDelay)
+        private readonly Timer scrolltimer = new Timer(LocalSettings.TooltipDelay)
         {
             AutoReset = false,
             Enabled = false

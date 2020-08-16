@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Reflection;
 using System.Collections;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -70,7 +71,7 @@ namespace TimetablingWPF
             {
                 if (prop.Type.IsInterface<IList>())
                 {
-                    if (prop.Type != typeof(ObservableCollection<TimetableSlot>))
+                    if (prop.Type != typeof(ObservableCollectionExtended<TimetableSlot>))
                     {
                         IList data = (IList)prop.PropertyInfo.GetValue(item);
                         StackPanel sp;

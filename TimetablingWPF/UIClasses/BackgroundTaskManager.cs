@@ -6,12 +6,13 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
     public static class BackgroundTaskManager
     {
-        public static ObservableCollection<BackgroundTask> Tasks { get; } = new ObservableCollection<BackgroundTask>();
+        public static ObservableCollectionExtended<BackgroundTask> Tasks { get; } = new ObservableCollectionExtended<BackgroundTask>();
     }
 
     public struct BackgroundTask : IEquatable<BackgroundTask>

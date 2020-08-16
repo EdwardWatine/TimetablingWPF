@@ -15,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -32,7 +33,8 @@ namespace TimetablingWPF
         public event SelectionChangedEventHandler SelectionChanged;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Usage", "CA2227:Collection properties should be read only")]
-        public IList ItemsSource
+        private IList unselecteditems = new ObservableCollectionExtended<object>();
+        public IEnumerable ItemsSource
         {
             get => (IList)GetValue(ItemsSourceProperty);
             set
@@ -40,19 +42,26 @@ namespace TimetablingWPF
                 if (!ReferenceEquals(ItemsSource, value))
                 {
                     SetValue(ItemsSourceProperty, value);
-                    ListCollectionView view_l = new ListCollectionView(value);
+                    ListCollectionView view_l;
                     if (value is INotifyCollectionChanged collection)
                     {
+                        unselecteditems = collection.GenerateOneWayCopy();
+                        view_l = new ListCollectionView(unselecteditems);
                         collection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e) { 
                             view_l.Refresh();
                             if (e.OldItems != null)
                             {
-                                foreach (object item in e.OldItems)
+                                foreach (object item in e.OldItems)  
                                 {
                                     SelectedItems.Remove(item);
                                 }
                             }
                         };
+                    }
+                    else
+                    {
+                        unselecteditems = value.Cast<object>().ToList();
+                        view_l = new ListCollectionView(unselecteditems);
                     }
                     view = view_l;
                     selectedItems.Clear();
@@ -75,9 +84,9 @@ namespace TimetablingWPF
                 }
             }
         }
-        public IList SelectedItems => selectedItems;
+        public IList SelectedItems   => selectedItems;
         private bool IgnoreSelection = false;
-        private readonly ObservableCollection<object> selectedItems = new ObservableCollection<object>();
+        private readonly ObservableCollectionExtended<object> selectedItems = new ObservableCollectionExtended<object>();
         private ListCollectionView view;
         private readonly MouseButtonEventHandler mouseCaptureHandler;
         private string lastString = null;
@@ -110,6 +119,7 @@ namespace TimetablingWPF
                 return;
             }
             popup.IsOpen = true;
+            ClearSelections();
             if (lastString == tbMain.Text)
             {
                 return;
@@ -120,16 +130,18 @@ namespace TimetablingWPF
             {
                 view.Filter = null;
                 view.CustomSort = null;
+                UpdateStatusBox();
                 return;
             }
             view.Filter = DataHelpers.GenerateNameFilter(target, o => o.ToString());
             SortingComparer.Filter = target;
             view.CustomSort = SortingComparer;
+            svPop.ScrollToHome();
             UpdateStatusBox();
         }
         private void UpdateStatusBox()
         {
-            if (ItemsSource.Count == 0)
+            if (unselecteditems.Count == 0)
             {
                 tbStatus.Text = $"No {ItemString.Pluralize()} to display";
                 tbStatus.Visibility = Visibility.Visible;
@@ -149,6 +161,7 @@ namespace TimetablingWPF
             SetClosedText();
             RemoveHandler(Mouse.PreviewMouseDownOutsideCapturedElementEvent, mouseCaptureHandler);
             popup.IsOpen = false;
+            svPop.ScrollToHome();
             Mouse.Capture(null);
             Keyboard.ClearFocus();
         }
@@ -171,7 +184,7 @@ namespace TimetablingWPF
         }
         private void Select(object sender, MouseButtonEventArgs e)
         {
-            object item = lbFiltered.SelectedItem;
+            object item = ((FrameworkElement)sender).DataContext;
             Select(item);
             Keyboard.Focus(tbMain);
         }
@@ -183,12 +196,14 @@ namespace TimetablingWPF
         {
             if (item != null && !IgnoreSelection)
             {
+                double scroll = svPop.VerticalOffset;
                 IgnoreSelection = true;
-                ItemsSource.Remove(item);
+                unselecteditems.Remove(item);
                 selectedItems.Add(item);
                 RaiseSelectionChanged(new List<object>(), new List<object>() { item });
                 ClearSelections();
                 IgnoreSelection = false;
+                svPop.ScrollToVerticalOffset(scroll);
             }
         }
         private void ClearSelections()
@@ -198,7 +213,7 @@ namespace TimetablingWPF
         }
         private void Deselect(object sender, MouseButtonEventArgs e)
         {
-            object item = lbSelected.SelectedItem;
+            object item = ((FrameworkElement)sender).DataContext;
             Deselect(item);
             Keyboard.Focus(tbMain);
         }
@@ -206,13 +221,15 @@ namespace TimetablingWPF
         {
             if (item != null && !IgnoreSelection)
             {
+                double scroll = svPop.VerticalOffset;
                 IgnoreSelection = true;
-                ItemsSource.Add(item);
+                unselecteditems.Add(item);
                 selectedItems.Remove(item);
                 RaiseSelectionChanged(new List<object>() { item }, new List<object>());
                 ClearSelections();
                 IgnoreSelection = false;
                 UpdateStatusBox();
+                svPop.ScrollToVerticalOffset(scroll);
             }
         }
         private void SelectedItemsChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -239,15 +256,27 @@ namespace TimetablingWPF
         }
         public void SetSelected(IEnumerable enumerable)
         {
+            DeselectAll();
             foreach (object item in enumerable)
             {
                 Select(item);
             }
         }
+        public void DeselectAll()
+        {
+            foreach (object item in selectedItems)
+            {
+                Deselect(item);
+            }
+        }
+        public void FocusGainedPopup(object sender, RoutedEventArgs e)
+        {
+            tbMain.Focus();
+        }
         public MultiComboBox()
         {
             InitializeComponent();
-            ItemsSource = new ObservableCollection<object>();
+            ItemsSource = new ObservableCollectionExtended<object>();
             lbSelected.ItemsSource = selectedItems;
             lbSelected.SelectedItem = null;
             mouseCaptureHandler = new MouseButtonEventHandler(ReleaseControl);
@@ -259,12 +288,8 @@ namespace TimetablingWPF
                 Keyboard.Focus(tbMain);
                 e.Handled = true;
             };
-            lbFiltered.PreviewMouseUp += Select;
-            lbSelected.PreviewMouseUp += Deselect;
             selectedItems.CollectionChanged += SelectedItemsChanged;
-            ClearSelections();
         }
-
         public MultiComboBox(string itemString) : this()
         {
             ItemString = itemString;

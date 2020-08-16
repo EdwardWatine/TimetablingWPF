@@ -17,6 +17,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using static TimetablingWPF.FileHelpers;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -38,8 +39,9 @@ namespace TimetablingWPF
                 tbNoRecentFiles.Visibility = Visibility.Visible; // show a message to the user
                 icRecentFiles.Visibility = Visibility.Collapsed;
             }
-            uris = new ObservableCollection<string>(lines.Take(6));
-            icRecentFiles.ItemsSource = uris;
+            uris = new ObservableCollectionExtended<string>();
+            uris.AddRange(lines);
+            icRecentFiles.ItemsSource = uris.Taking(0, 6);
             Show();
             //GenericHelpers.LogTime("D");
             BackupWindow bwindow = new BackupWindow(this, s => OpenFileFromPath(s), true);
@@ -54,7 +56,7 @@ namespace TimetablingWPF
                 return;
             }
         }
-        private readonly ObservableCollection<string> uris;
+        private readonly ObservableCollectionExtended<string> uris;
         private void Recent_File_Click(object sender, RoutedEventArgs e)
         {
             Hyperlink link = (Hyperlink)e.Source;

@@ -6,12 +6,15 @@ using System.Threading.Tasks;
 
 namespace TimetablingWPF
 {
-    static class TimetableSettings
+    static class LocalSettings
     {
         public static int TeacherMaxPeriods { get; set; } = TimetableStructure.TotalSchedulable;
         public static int DelayBeforeSearching { get; set; } = 300; //millis
-        public static int RecentListSize { get; set; } = 6;
-        public static int AutosaveInterval { get; set; } = 100000; //millis
         public static int TooltipDelay { get; set; } = 300; //millis
+        /**
+         * Separator between purely local and 'inherited' settings
+         */
+        public static DataProvider<int> RecentListSize { get; set; } = new DataProvider<int>(GlobalSettings.RecentListSize);
+        public static DataProvider<int> AutosaveInterval { get; set; } = new DataProvider<int>(GlobalSettings.AutosaveInterval); //millis
     }
 }

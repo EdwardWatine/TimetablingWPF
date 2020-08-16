@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TimetablingWPF;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -22,7 +23,7 @@ namespace TimetablingWPF
         }
         public RelationalCollection<Group, Subject> Groups { get; private set; } = new RelationalCollection<Group, Subject>(nameof(Group.Subjects));
         public RelationalCollection<Teacher, Subject> Teachers { get; private set; } = new RelationalCollection<Teacher, Subject>(nameof(Teacher.Subjects));
-        public InternalObservableCollection<Lesson> Lessons { get; private set; } = new InternalObservableCollection<Lesson>();
+        public ObservableCollectionExtended<Lesson> Lessons { get; private set; } = new ObservableCollectionExtended<Lesson>();
         public Group RelatedGroup { get; private set; } = new Group();
         private int rooms;
         public int Rooms { get => rooms;

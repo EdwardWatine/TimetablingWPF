@@ -21,6 +21,7 @@ using System.Collections.Specialized;
 using TimetablingWPF;
 using System.ComponentModel;
 using System.Windows.Media.Animation;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -61,7 +62,7 @@ namespace TimetablingWPF
                     HorizontalAlignment = HorizontalAlignment.Right,
                     Style = (Style)Application.Current.Resources["DialogText"]
                 };
-                bool is_timetable = prop.Type == typeof(ObservableCollection<TimetableSlot>);
+                bool is_timetable = prop.Type == typeof(ObservableCollectionExtended<TimetableSlot>);
                 if (prop.Type.IsInterface<IList>() && !is_timetable)
                 {
                     if (iters == 0)
@@ -91,19 +92,20 @@ namespace TimetablingWPF
                     gdilContainer.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(1, GridUnitType.Auto) });
                     ItemList itemlist = new ItemList(prop)
                     {
-                        ItemsSource = ((IList)prop.PropertyInfo.GetValue(Item))
+                        ItemsSource = (IList)prop.PropertyInfo.GetValue(Item)
                     };
                     if (prop.Type.IsInterface<INotifyCollectionChanged>())
                     {
                         itemlist.ListenToCollection((INotifyCollectionChanged)prop.PropertyInfo.GetValue(Item));
                     }
-                    gdilContainer.Children.Add(
-                        new ScrollViewer()
-                        {
-                            HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
-                            VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
-                            Content = itemlist
-                        });
+                    ScrollViewer sv = new ScrollViewer()
+                    {
+                        HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
+                        VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                        Content = itemlist
+                    };
+                    itemlist.SetBinding(WidthProperty, new Binding() { Source = sv, Path = new PropertyPath(ScrollViewer.ViewportWidthProperty) });
+                    gdilContainer.Children.Add(sv);
                     StackPanel sphorizontalMenu = new StackPanel()
                     {
                         Orientation = Orientation.Horizontal
@@ -119,7 +121,7 @@ namespace TimetablingWPF
                     if (generic_argument == typeof(Assignment))
                     {
                         Type box_type = item_type == typeof(Teacher) ? typeof(Lesson) : typeof(Teacher);
-                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(box_type)).GenerateOneWayCopyExtension();
+                        comboBox.ItemsSource = App.Data.FromType(box_type);
                         comboBox.ItemString = box_type.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
                         IntegerUpDown iupdown = new IntegerUpDown()
@@ -191,7 +193,7 @@ namespace TimetablingWPF
                     }
                     else
                     {
-                        comboBox.ItemsSource = ((INotifyCollectionChanged)App.Data.FromType(generic_argument)).GenerateOneWayCopyExtension();
+                        comboBox.ItemsSource = App.Data.FromType(generic_argument);
                         comboBox.ItemString = generic_argument.Name.ToLower(CultureInfo.CurrentCulture);
                         sphorizontalMenu.Children.Add(comboBox);
 
@@ -213,7 +215,7 @@ namespace TimetablingWPF
                         HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
                         VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
                         Margin = new Thickness(0, 5, 0, 0),
-                        Content = GenerateTimetable((ObservableCollection<TimetableSlot>)prop.PropertyInfo.GetValue(Item), ToggleSlot, ToggleAll),
+                        Content = GenerateTimetable((ObservableCollectionExtended<TimetableSlot>)prop.PropertyInfo.GetValue(Item), ToggleSlot, ToggleAll),
                         BorderThickness = new Thickness(1)
                     };
                     gdLeft.Insert(svPeriods, -2, 1);
@@ -357,7 +359,7 @@ namespace TimetablingWPF
             }
             if (CommandType == CommandType.edit)
             {
-                OriginalItem.Update(Item);
+                OriginalItem.UpdateFrom(Item);
                 OriginalItem.Unfreeze();
             }
             else

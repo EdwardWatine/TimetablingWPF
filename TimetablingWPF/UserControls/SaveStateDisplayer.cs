@@ -27,7 +27,6 @@ namespace TimetablingWPF
             timer = new Timer(delay);
             timer.Elapsed += Animate;
             timer.AutoReset = false;
-            Text = "ummm, hello?";
             fadeto = VisualHelpers.GenerateDoubleAnimation(1, 0, fade_duration, this, OpacityProperty, new QuadraticEase());
             fadeto.Completed += FadeToDone;
             fadefrom = VisualHelpers.GenerateDoubleAnimation(0, 1, fade_duration, this, OpacityProperty, new QuadraticEase());
@@ -65,6 +64,7 @@ namespace TimetablingWPF
         private readonly Storyboard fadeto = new Storyboard();
         private readonly Storyboard fadefrom = new Storyboard();
         private readonly Timer timer;
+        private bool running = false;
         private void SetText(string text)
         {
             Dispatcher.Invoke(() => Text = text);
@@ -73,17 +73,22 @@ namespace TimetablingWPF
         {
             if (!App.Data.Unsaved)
             {
+                running = false;
                 count = 0;
                 timer.Stop();
                 fadeto.Stop();
                 SetText("Save file up to date!");
                 return;
             }
-            SetText($"Last saved at {App.Data.LastSave:hh\\:mm}");
-            if (App.Data.LastBackup != null)
+            if (!running)
             {
-                Animate(null, null); // Just looks cooler than engaging timer. 
-                                        // I suppose that the entry point doesn't matter in a cyclical calling structure ^_^
+                SetText($"Last saved at {App.Data.LastSave:hh\\:mm}");
+                if (App.Data.LastBackup != null)
+                {
+                    running = true;
+                    Animate(null, null); // Just looks cooler than engaging timer. 
+                                         // I suppose that the entry point doesn't matter in a cyclical calling structure ^_^
+                }
             }
         }
         public void Dispose()

@@ -102,7 +102,7 @@ namespace TimetablingWPF
                 Committed = true;
             }
         }
-        public void Update(BaseDataClass source)
+        public void UpdateFrom(BaseDataClass source)
         {
             Type type = GetType();
             if (type != source.GetType())
@@ -114,35 +114,31 @@ namespace TimetablingWPF
             foreach (CustomPropertyInfo prop in ExposedProperties[type])
             {
                 object value = prop.PropertyInfo.GetValue(source);
-                if (value is ICloneable cloneable)
-                {
-                    value = cloneable.Clone();
-                }
                 if (value is IRelationalCollection rc)
                 {
                     rc.Parent = this;
                 }
-                prop.PropertyInfo.SetValue(this, value);
-                if (prop.Type.IsInterface<IList>())
+                if (value is IList)
                 {
-                    NotifyPropertyChanged(prop.PropertyInfo.Name);
+                    ((IList)prop.PropertyInfo.GetValue(this)).SetData((IEnumerable)value);
                 }
+                prop.PropertyInfo.SetValue(this, value);
             }
         }
         public BaseDataClass Clone()
         {
             BaseDataClass copy = (BaseDataClass)Activator.CreateInstance(GetType());
-            copy.Update(this);
+            copy.UpdateFrom(this);
             return copy;
         }
-        public void MergeWith(BaseDataClass merger)
+        public void MergeFrom(BaseDataClass merger)
         {
             Type type = GetType();
             if (type != merger.GetType())
             {
                 throw new ArgumentException("The merger class must be the same as the calling class.");
             }
-            ApplyOnType<IAddRange>((prop, val) => val.AddRange((IEnumerable)prop.GetValue(merger)));
+            ApplyOnType<IList>((prop, val) => val.AddRange((IEnumerable)prop.GetValue(merger)));
         }
         /// <summary>
         /// Event when property is changed

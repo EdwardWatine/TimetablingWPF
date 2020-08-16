@@ -24,7 +24,7 @@
     </Window.Resources>
     <Grid>
         <local:AnimatableScrollViewer x:Name="svMain" ScrollChanged="ScrollChanged">
-            <VirtualizingStackPanel Name="spMain"/>
+            <VirtualizingStackPanel Name="spMain" Width="{Binding ActualWidth, ElementName=svMain}"/>
         </local:AnimatableScrollViewer>
         <DockPanel Margin="0, -2, 17.4, 0">
             <StackPanel Name="spTop" DockPanel.Dock="Top" Margin="0"/>

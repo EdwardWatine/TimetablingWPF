@@ -6,19 +6,53 @@
              xmlns:local="clr-namespace:TimetablingWPF"
              mc:Ignorable="d" Name="parent"
              d:DesignHeight="450" d:DesignWidth="800" Focusable="True">
-    <UserControl.Resources>
-        <Style TargetType="ListBox">
-            <Setter Property="ItemTemplate">
-                <Setter.Value>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding}"/>
-                    </DataTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
     <StackPanel Orientation="Vertical">
-        <Border BorderThickness="1" BorderBrush="#000" Margin="0,0,0,-5">
+        <Popup AllowsTransparency="True" PopupAnimation="Scroll" Name="popup" StaysOpen="True" Focusable="True" GotFocus="FocusGainedPopup">
+            <Border BorderThickness="1" BorderBrush="#000" Background="#FFF">
+                <local:ScrollableScrollViewer x:Name="svPop" Margin="5,0,0,0">
+                    <StackPanel Orientation="Vertical">
+                        <ListBox x:Name="lbSelected" BorderThickness="0">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <StackPanel Orientation="Horizontal">
+                                        <Image Source="{StaticResource CheckIcon}" Height="16" Margin="0,0,5,0"/>
+                                        <TextBlock Text="{Binding}" Name="tbtemplate"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <EventSetter Event="MouseDown" Handler="Deselect"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                        </ListBox>
+                        <Separator/>
+                        <TextBlock x:Name="tbStatus" Visibility="Collapsed"/>
+                        <ListBox x:Name="lbFiltered" BorderThickness="0">
+                            <ListBox.Style>
+                                <Style TargetType="ListBox">
+                                    <Setter Property="ItemTemplate">
+                                        <Setter.Value>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}"/>
+                                            </DataTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="ItemContainerStyle">
+                                        <Setter.Value>
+                                            <Style TargetType="ListBoxItem">
+                                                <EventSetter Event="PreviewMouseDown" Handler="Select"/>
+                                            </Style>
+                                        </Setter.Value>
+                                    </Setter>
+                                </Style>
+                            </ListBox.Style>
+                        </ListBox>
+                    </StackPanel>
+                </local:ScrollableScrollViewer>
+            </Border>
+        </Popup>
+        <Border BorderThickness="1" BorderBrush="#000" Margin="0,-1.2,0,-3">
             <Grid Width="{Binding Width, ElementName=parent}" Height="{Binding Height, ElementName=parent}" Background="#FFF">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -34,24 +68,5 @@
                 </Border>
             </Grid>
         </Border>
-        <Popup AllowsTransparency="True" PopupAnimation="Scroll" Name="popup" StaysOpen="True" Focusable="True">
-            <Border BorderThickness="1" BorderBrush="#000" Background="#FFF" Padding="5, 0">
-                <StackPanel Orientation="Vertical">
-                    <ListBox x:Name="lbSelected" BorderThickness="0">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <StackPanel Orientation="Horizontal">
-                                    <Image Source="{StaticResource CheckIcon}" Height="16" Margin="0,0,5,0"/>
-                                    <TextBlock Text="{Binding}" Name="tbtemplate"/>
-                                </StackPanel>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                    <Separator/>
-                    <TextBlock x:Name="tbStatus" Visibility="Collapsed"/>
-                    <ListBox x:Name="lbFiltered" BorderThickness="0"/>
-                </StackPanel>
-            </Border>
-        </Popup>
     </StackPanel>
 </UserControl>

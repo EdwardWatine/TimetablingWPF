@@ -5,10 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace TimetablingWPF
 {
-    public class AnimatableScrollViewer : ScrollViewer
+    public class ScrollableScrollViewer : ScrollViewer
+    {
+        public ScrollableScrollViewer()
+        {
+            PreviewMouseWheel += PreviewScroll;
+            Style = (Style)Application.Current.Resources["ScrollStyle"];
+        }
+
+        private void PreviewScroll(object sender, MouseWheelEventArgs e)
+        {
+            ScrollToVerticalOffset(VerticalOffset - e.Delta);
+            e.Handled = true;
+        }
+    }
+    public class AnimatableScrollViewer : ScrollableScrollViewer
     {
         public AnimatableScrollViewer()
         {

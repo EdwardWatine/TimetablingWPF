@@ -11,11 +11,42 @@ using Xceed.Wpf.Toolkit;
 using System.Windows.Data;
 using System.Collections.Specialized;
 using System.ComponentModel;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
     public static class GenericExtensions
     {
+        public static ObservableCollectionExtended<T> ToObservable<T>(this IEnumerable<T> enumerable)
+        {
+            var temp = new ObservableCollectionExtended<T>();
+            temp.AddRange(enumerable);
+            return temp;
+        }
+        public static void AddRange(this IList list, IEnumerable range)
+        {
+            foreach (object item in range)
+            {
+                list.Add(item);
+            }
+        }
+        public static void AddRange<T>(this IList<T> list, IEnumerable<T> range)
+        {
+            foreach (T item in range)
+            {
+                list.Add(item);
+            }
+        }
+        public static void SetData(this IList list, IEnumerable data)
+        {
+            list.Clear();
+            list.AddRange(data);
+        }
+        public static void SetData<T>(this IList<T> list, IEnumerable<T> data)
+        {
+            list.Clear();
+            list.AddRange(data);
+        }
         public static void InsertDefaultIndex<T>(this IList<T> list, int index, T item)
         {
             list.Insert(Math.Min(list.Count, index), item);
@@ -72,9 +103,9 @@ namespace TimetablingWPF
         {
             collection.CollectionChanged += GenericHelpers.GenerateLinkHandler(target);
         }
-        public static ObservableCollection<object> GenerateOneWayCopyExtension(this INotifyCollectionChanged collection)
+        public static ObservableCollectionExtended<object> GenerateOneWayCopy(this INotifyCollectionChanged collection)
         {
-            ObservableCollection<object> copy = new ObservableCollection<object>(((IEnumerable)collection).Cast<object>());
+            ObservableCollectionExtended<object> copy = ((IEnumerable)collection).Cast<object>().ToObservable();
             collection.LinkList(copy);
             return copy;
         }
@@ -103,50 +134,6 @@ namespace TimetablingWPF
         public static void DefaultDictGet<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, out TValue value) where TValue : new()
         {
             dict.DefaultDictGet<TKey, TValue, TValue>(key, out value);
-        }
-        public static InternalObservableCollection<T> Filter<T>(this IEnumerable<T> list, Predicate<T> predicate)
-        {
-            InternalObservableCollection<T> collection = new InternalObservableCollection<T>(list.Cast<T>().Where(t => predicate(t)));
-            if (list is INotifyCollectionChanged changingCollection)
-            {
-                changingCollection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
-                {
-                    if (!e.IsAddOrRemove())
-                    {
-                        if (e.OldItems != null)
-                        {
-                            foreach (T item in e.OldItems.Cast<T>())
-                            {
-                                if (predicate(item))
-                                {
-                                    collection.Remove(item);
-                                }
-                            }
-                        }
-                        if (e.NewItems != null)
-                        {
-                            foreach (T item in e.NewItems.Cast<T>())
-                            {
-                                if (predicate(item))
-                                {
-                                    collection.Add(item);
-                                }
-                            }
-                        }
-                    }
-                };
-            }
-            collection.CollectionChanged += delegate (object sender, NotifyCollectionChangedEventArgs e)
-            {
-                if (e.IsReplace())
-                {
-                    if (!predicate((T)e.NewItems[0]))
-                    {
-                        collection.RemoveAt(e.NewStartingIndex);
-                    }
-                }
-            };
-            return collection;
         }
         public static System.Windows.Media.Color ToMediaColor(this System.Drawing.Color color)
         {

@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using static TimetablingWPF.FileHelpers;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -38,7 +39,7 @@ namespace TimetablingWPF
             {
                 temp = temp.OrderBy(b => b.FileExists ? 1 : 0);
             }
-            Paths = new ObservableCollection<BackupInfo>(temp);
+            Paths = temp.ToObservable();
             if (!temp.Any())
             {
                 lbMain.Items.Add("There are no backup files to display...");

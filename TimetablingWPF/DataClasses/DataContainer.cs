@@ -10,18 +10,19 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Timers;
 using TimetablingWPF.StructureClasses;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
     public class DataContainer
     {
         public IList<TimetableStructureWeek> TimetableStructure { get; private set; }
-        public InternalObservableCollection<Teacher> Teachers { get; } = new InternalObservableCollection<Teacher>();
-        public InternalObservableCollection<Form> Forms { get; } = new InternalObservableCollection<Form>();
-        public InternalObservableCollection<Year> YearGroups { get; } = new InternalObservableCollection<Year>();
-        public InternalObservableCollection<Lesson> Lessons { get; } = new InternalObservableCollection<Lesson>();
-        public InternalObservableCollection<Subject> Subjects { get; } = new InternalObservableCollection<Subject>();
-        public InternalObservableCollection<Group> Groups { get; } = new InternalObservableCollection<Group>();
+        public ObservableCollectionExtended<Teacher> Teachers { get; } = new ObservableCollectionExtended<Teacher>();
+        public ObservableCollectionExtended<Form> Forms { get; } = new ObservableCollectionExtended<Form>();
+        public ObservableCollectionExtended<Year> YearGroups { get; } = new ObservableCollectionExtended<Year>();
+        public ObservableCollectionExtended<Lesson> Lessons { get; } = new ObservableCollectionExtended<Lesson>();
+        public ObservableCollectionExtended<Subject> Subjects { get; } = new ObservableCollectionExtended<Subject>();
+        public ObservableCollectionExtended<Group> Groups { get; } = new ObservableCollectionExtended<Group>();
         public void AddFromBDC(BaseDataClass dataClass)
         {
             if (dataClass is Teacher teacher) Teachers.Add(teacher);
@@ -62,7 +63,7 @@ namespace TimetablingWPF
     }
     public sealed class SingletonDataContainer : DataContainer, INotifyErrorStateChanged
     {
-        public InternalObservableCollection<BaseDataClass> AllData { get; }
+        public SelectingMany<INotifyCollectionChanged, BaseDataClass> AllData { get; }
         public static SingletonDataContainer Instance { get; } = new SingletonDataContainer();
         public int NumErrors { get; private set; } = 0;
         public int NumWarnings { get; private set; } = 0;
@@ -119,7 +120,7 @@ namespace TimetablingWPF
         }
         public void SetTimer()
         {
-            Timer = new Timer(TimetableSettings.AutosaveInterval);
+            Timer = new Timer(LocalSettings.AutosaveInterval.Value);
             Timer.Elapsed += Autosave;
             Timer.Stop();
         }
@@ -131,7 +132,7 @@ namespace TimetablingWPF
         public bool Unsaved { get; private set; } = false;
         private SingletonDataContainer()
         {
-            AllData = Teachers.Concat<BaseDataClass>(Forms, Subjects, Groups, Lessons);
+            AllData = new ObservableCollectionExtended<INotifyCollectionChanged>() { Teachers, Subjects, Lessons, Forms, Groups }.SelectingMany<INotifyCollectionChanged, BaseDataClass>(x => x);
             Year none = new Year("None")
             {
                 Visible = false

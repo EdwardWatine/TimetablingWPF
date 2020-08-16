@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -16,7 +17,7 @@ namespace TimetablingWPF
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
         }
 
-        public InternalObservableCollection<Form> Forms { get; private set; } = new InternalObservableCollection<Form>();
+        public ObservableCollectionExtended<Form> Forms { get; private set; } = new ObservableCollectionExtended<Form>();
         private string _year;
         public string Name
         {

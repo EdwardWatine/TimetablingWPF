@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Collections.Specialized;
 using System.IO;
 using TimetablingWPF;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -119,7 +120,7 @@ namespace TimetablingWPF
             Assignments.Clear();
             base.Delete();
         }
-        public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
+        public ObservableCollectionExtended<Assignment> Assignments { get; private set; } = new ObservableCollectionExtended<Assignment>();
         private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
         private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();
         private void AssignmentsChanged(object sender, NotifyCollectionChangedEventArgs e)

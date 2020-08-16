@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace TimetablingWPF
 {
@@ -47,6 +48,24 @@ namespace TimetablingWPF
         public static Vector VectorPos(this Window window)
         {
             return new Vector(window.Left, window.Top);
+        }
+        public static FrameworkElement FindChild(this FrameworkElement parent, string name)
+        {
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < count; i++)
+            {
+                FrameworkElement obj = (FrameworkElement)VisualTreeHelper.GetChild(parent, i);
+                if (obj.Name == name)
+                {
+                    return obj;
+                }
+                FrameworkElement result = obj.FindChild(name);
+                if (result != null)
+                {
+                    return result;
+                }
+            }
+            return null;
         }
     }
 }

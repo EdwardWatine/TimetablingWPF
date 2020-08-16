@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Controls;
 using TimetablingWPF;
 using TimetablingWPF.Searching;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -79,9 +80,9 @@ namespace TimetablingWPF
             ErrorList.Add(lesson_missing);
             BindToErrors();
         }
-        public ObservableCollection<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollection<TimetableSlot>();
+        public ObservableCollectionExtended<TimetableSlot> UnavailablePeriods { get; private set; } = new ObservableCollectionExtended<TimetableSlot>();
         public RelationalCollection<Subject, Teacher> Subjects { get; private set; } = new RelationalCollection<Subject, Teacher>(nameof(Subject.Teachers));
-        public ObservableCollection<Assignment> Assignments { get; private set; } = new ObservableCollection<Assignment>();
+        public ObservableCollectionExtended<Assignment> Assignments { get; private set; } = new ObservableCollectionExtended<Assignment>();
         private int maxppc = TimetableStructure.TotalSchedulable;
         public int AvailablePeriods => TimetableStructure.TotalSchedulable - UnavailablePeriods.Count;
         public int MaxPeriodsPerCycle

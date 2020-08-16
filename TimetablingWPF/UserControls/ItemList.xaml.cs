@@ -38,7 +38,7 @@ namespace TimetablingWPF
             get => base.ItemsSource;
             set
             {
-                base.ItemsSource = value;
+                base.ItemsSource = value.Cast<object>().ToList();
                 handler = GenerateLinkHandler((IList)base.ItemsSource);
             }
         }

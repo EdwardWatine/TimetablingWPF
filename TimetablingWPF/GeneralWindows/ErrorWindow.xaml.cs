@@ -16,6 +16,8 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Humanizer;
 using static TimetablingWPF.VisualHelpers;
+using ObservableComputations;
+using System.Collections.Specialized;
 
 namespace TimetablingWPF
 {
@@ -39,13 +41,13 @@ namespace TimetablingWPF
                 header.SetResourceReference(TextBlock.BackgroundProperty, "PrimaryBrush");
                 Headers.Add(header);
                 spMain.Children.Add(header);
-                ObservableCollection<BaseDataClass> list = App.Data.FromType(type).Cast<BaseDataClass>().Filter(
+                Filtering<BaseDataClass> list = ((INotifyCollectionChanged)App.Data.FromType(type)).Casting<BaseDataClass>().Filtering(
                     o => o.Visible && o.ErrorValidations.Any(e => e.IsErroredState)
                 );
                 Console.WriteLine(list.Count);
                 for (int i = 0; i < list.Count; i++)
                 {
-                    BaseDataClass item = (BaseDataClass)list[i];
+                    BaseDataClass item = list[i];
                     if (!item.Visible)
                     {
                         continue;
@@ -75,7 +77,7 @@ namespace TimetablingWPF
             {
                 Text = text,
                 Style = headerStyle,
-                Background = ((SolidColorBrush)FindResource("PrimaryBrush")).CloneCurrentValue(),
+                Background = ((SolidColorBrush)FindResource("PrimaryBrush")).Clone(),
                 Cursor = Cursors.Hand,
                 Tag = index
             };

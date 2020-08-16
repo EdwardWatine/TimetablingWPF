@@ -53,6 +53,7 @@ namespace TimetablingWPF
                     FileHelpers.SaveData(FilePath);
                 }
             };
+            
             //GenericHelpers.LogTime("B");
         }
         public const string Name = "Timetabler";
@@ -62,5 +63,20 @@ namespace TimetablingWPF
         public static readonly string BkPath = Path.Combine(DocPath, "Backup");
         public const string Ext = ".ttbl";
         public const string BkExt = ".ttbk";
+
+        private void ScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            ScrollViewer element = (ScrollViewer)sender;
+            if (element.Tag == null)
+            {
+                element.Tag = element.FindChild("PART_bdMain");
+            }
+            if (element.VerticalOffset == 0)
+            {
+                return;
+            }
+            VisualStateManager.GoToElementState((FrameworkElement)element.Tag, "ManualNormal", true);
+            VisualStateManager.GoToElementState((FrameworkElement)element.Tag, "ManualScroll", true);
+        }
     }
 }

@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms.VisualStyles;
 using static TimetablingWPF.DataHelpers;
+using ObservableComputations;
 
 namespace TimetablingWPF
 {
@@ -23,12 +24,12 @@ namespace TimetablingWPF
             UpdateRecentFilePaths();
         }
         public event PropertyChangedEventHandler PropertyChanged;
-        public IList<string> FilePaths { get; private set; }
+        public ObservableCollectionExtended<string> FilePaths { get; private set; }
         public void UpdateRecentFilePaths()
         {
-            FilePaths = Properties.Settings.Default.RECENT_FILES.Cast<string>().Take(TimetableSettings.RecentListSize + 1).ToList();
+            FilePaths = Properties.Settings.Default.RECENT_FILES.Cast<string>().Take(LocalSettings.RecentListSize.Value + 1).ToObservable();
             FilePaths.Remove(App.FilePath);
-            if (FilePaths.Count > TimetableSettings.RecentListSize)
+            if (FilePaths.Count > LocalSettings.RecentListSize.Value)
             {
                 FilePaths.RemoveAt(FilePaths.Count - 1);
             }

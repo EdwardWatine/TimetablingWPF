@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Xceed.Wpf.Toolkit;
+using ObservableComputations;
 using static TimetablingWPF.DataHelpers;
 using static TimetablingWPF.FileHelpers;
 
@@ -180,7 +182,7 @@ namespace TimetablingWPF
                                         list[list.IndexOf(similar)] = currentdata;
                                         continue;
                                     }
-                                    similar.MergeWith(currentdata);
+                                    similar.MergeFrom(currentdata);
                                     continue;
                                 }
                                 currentdata.Delete(currentContainer);
@@ -214,7 +216,7 @@ namespace TimetablingWPF
         }
         public void BlockingViewClick(object sender, RoutedEventArgs e)
         {
-            
+            new BlockingWindow().Show();   
         }
         public void ChangeTimetable(object sender, RoutedEventArgs e)
         {
@@ -235,6 +237,10 @@ namespace TimetablingWPF
 
         private void DebugBreakpoint(object sender, RoutedEventArgs e)
         {
+            void Handler(object inner, EventArgs e2)
+            {
+                Console.WriteLine("Change!");
+            }
             Debugger.Break();
         }
 

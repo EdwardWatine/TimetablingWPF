@@ -15,22 +15,20 @@ namespace TimetablingWPF.Searching
     {
         public ComparisonSearchFactory(Func<T, int> valueGenerator, string verb)
         {
-            ListSearch.Verb = verb;
-            ListSearch.ValueGenerator = valueGenerator;
+            ComparisonSearch.Verb = verb;
+            ComparisonSearch.ValueGenerator = valueGenerator;
         }
         
         public override SearchBase GenerateSearch()
         {
-            return new ListSearch();
+            return new ComparisonSearch();
         }
-        private class ListSearch : SearchBase
+        private class ComparisonSearch : SearchBase
         {
             private ComparisonLogicModifier modifier;
             private IntegerUpDown target;
-            public static IList OptionList;
             public static Func<T, int> ValueGenerator;
             public static string Verb;
-            public static string Optiontype;
             public override UIElement GenerateUI()
             {
                 Thickness sep = new Thickness(5, 0, 0, 0);
