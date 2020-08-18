@@ -277,8 +277,8 @@
                                     </VisualState>
                                     <VisualState Name="ManualScroll">
                                         <Storyboard>
-                                            <DoubleAnimation To="0.60" Storyboard.TargetName="PART_bdMain" Storyboard.TargetProperty="Opacity" Duration="0:0:0.2"/>
-                                            <DoubleAnimation To="0.10" Storyboard.TargetName="PART_bdMain" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.7" Duration="0:0:0.4"/>
+                                            <DoubleAnimation To="0.60" Storyboard.TargetName="PART_bdMain" Storyboard.TargetProperty="Opacity" Duration="0:0:0:0.05"/>
+                                            <DoubleAnimation To="0.10" Storyboard.TargetName="PART_bdMain" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.6" Duration="0:0:0.4"/>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState Name="ManualNormal">
@@ -294,9 +294,9 @@
                                     <RowDefinition Height="*"/>
                                     <RowDefinition Height="auto"/>
                                 </Grid.RowDefinitions>
-                                <Ellipse Width="4" Height="4" Fill="{TemplateBinding Background}"/>
-                                <Ellipse Grid.Row="2" Width="4" Height="4" Fill="{TemplateBinding Background}"/>
-                                <Rectangle Grid.RowSpan="3" Width="4" Fill="{TemplateBinding Background}" Margin="0, 2"/>
+                                <Ellipse Width="4" Height="4" Fill="{TemplateBinding Foreground}"/>
+                                <Ellipse Grid.Row="2" Width="4" Height="4" Fill="{TemplateBinding Foreground}"/>
+                                <Rectangle Grid.RowSpan="3" Width="4" Fill="{TemplateBinding Foreground}" Margin="0, 2"/>
                             </Grid>
                         </Border>
                     </ControlTemplate>
@@ -309,10 +309,10 @@
             <Setter Property="Height" Value="Auto"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate>
+                    <ControlTemplate TargetType="ScrollBar">
                         <Track Name="PART_Track" IsDirectionReversed="True" HorizontalAlignment="Center">
                             <Track.Thumb>
-                                <Thumb Style="{StaticResource ScrollThumb}" Background="{TemplateBinding Background}" Margin="1,0,1,0"/>
+                                <Thumb Style="{StaticResource ScrollThumb}" Foreground="{TemplateBinding Foreground}" Margin="1,0,1,0"/>
                             </Track.Thumb>
                         </Track>
                     </ControlTemplate>
@@ -322,16 +322,16 @@
         <Style x:Key="ScrollStyle" TargetType="{x:Type ScrollViewer}">
             <EventSetter Event="ScrollChanged" Handler="ScrollViewer_ScrollChanged"/>
             <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Background" Value="#000"/>
+            <Setter Property="Foreground" Value="#000"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                        <StackPanel Orientation="Horizontal" Margin="{TemplateBinding Margin}">
-                            <ScrollContentPresenter/>
-                            <ScrollBar x:Name="PART_VerticalScrollBar" Value="{TemplateBinding VerticalOffset}" Maximum="{TemplateBinding ScrollableHeight}" Style="{StaticResource ScrollBarStyle}"
-                                       ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" HorizontalAlignment="Right" Background="{TemplateBinding Background}">
+                        <DockPanel Margin="{TemplateBinding Margin}" Background="{TemplateBinding Background}">
+                            <ScrollBar DockPanel.Dock="Right" x:Name="PART_VerticalScrollBar" Value="{TemplateBinding VerticalOffset}" Maximum="{TemplateBinding ScrollableHeight}" Style="{StaticResource ScrollBarStyle}"
+                                       ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}">
                             </ScrollBar>
-                        </StackPanel>
+                            <ScrollContentPresenter/>
+                        </DockPanel>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
@@ -339,14 +339,14 @@
         <Style x:Key="IntegratedScrollStyle" TargetType="{x:Type ScrollViewer}">
             <EventSetter Event="ScrollChanged" Handler="ScrollViewer_ScrollChanged"/>
             <Setter Property="OverridesDefaultStyle" Value="True"/>
-            <Setter Property="Background" Value="#000"/>
+            <Setter Property="Foreground" Value="#000"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ScrollViewer}">
-                        <Grid>
+                        <Grid Background="{TemplateBinding Background}">
                             <ScrollContentPresenter Margin="{TemplateBinding Margin}"/>
                             <ScrollBar x:Name="PART_VerticalScrollBar" Value="{TemplateBinding VerticalOffset}" Maximum="{TemplateBinding ScrollableHeight}" Style="{StaticResource ScrollBarStyle}"
-                                       ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" HorizontalAlignment="Right" Background="{TemplateBinding Background}">
+                                       ViewportSize="{TemplateBinding ViewportHeight}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" HorizontalAlignment="Right" Foreground="{TemplateBinding Foreground}">
                             </ScrollBar>
                         </Grid>
                     </ControlTemplate>

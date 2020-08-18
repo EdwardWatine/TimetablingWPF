@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,18 +25,42 @@ namespace TimetablingWPF
         public BlockingWindow()
         {
             InitializeComponent();
+            current = _ph;
+            icYear.ItemsSource = App.Data.YearGroups;
+            fadeout.Completed += Fadeout_Completed;
+        }
+
+        private void Fadeout_Completed(object sender, EventArgs e)
+        {
+            gdContent.Children.RemoveAt(1);
+            SetYearData((Year)selected.DataContext);
+        }
+
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
             animDark = (ColorAnimation)Resources["animDark"];
             animLight = (ColorAnimation)Resources["animLight"];
             animWhite = (ColorAnimation)Resources["animWhite"];
-            icYear.ItemsSource = App.Data.YearGroups;
         }
-
         private Border selected;
+        private FrameworkElement current;
         private Border bottom;
-        private readonly ColorAnimation animDark;
-        private readonly ColorAnimation animLight;
-        private readonly ColorAnimation animWhite;
-
+        private ColorAnimation animDark;
+        private ColorAnimation animLight;
+        private ColorAnimation animWhite;
+        private readonly ColorAnimation animBlack = new ColorAnimation(GenericResources.BLACK.Color, 200.ToMillisDuration());
+        private readonly DoubleAnimation fadein = new DoubleAnimation(1, 200.ToMillisDuration());
+        private readonly DoubleAnimation fadeout = new DoubleAnimation(0, 200.ToMillisDuration());
+        private void SetYearData(Year year)
+        {
+            ScrollableScrollViewer sv = new ScrollableScrollViewer() { Opacity = 0, Background = GenericResources.WHITE };
+            WrapPanel wp = new WrapPanel();
+            wp.Children.Add(new TextBlock() { Text = year.ToString() });
+            sv.Content = wp;
+            current = sv;
+            gdContent.Children.Add(sv);
+            sv.BeginAnimation(OpacityProperty, fadein);
+        }
         private void Border_MouseEnter(object sender, MouseEventArgs e)
         {
             if (sender != selected)
@@ -54,10 +79,14 @@ namespace TimetablingWPF
         private void ToNormal(Border border)
         {
             ((SolidColorBrush)border.Background).BeginAnimation(SolidColorBrush.ColorProperty, animDark);
+            ((SolidColorBrush)border.BorderBrush).BeginAnimation(SolidColorBrush.ColorProperty, animBlack);
+            SetParentBorder(border);
         }
-        private void SetBorder(Thickness th)
+        private void SetParentBorder(Border border)
         {
-            if (IsLastInContainer(selected))
+            Border parent = (Border)border.Parent;
+            Thickness th = new Thickness(0, 0, 0, 1);
+            if (IsLastInContainer(border))
             {
                 th.Bottom = 0;
             }
@@ -65,36 +94,32 @@ namespace TimetablingWPF
             {
                 th.Bottom = 1;
             }
-            selected.BorderThickness = th;
-        }
-        private void FixBorder(int bottom_t)
-        {
-            Thickness t = bottom.BorderThickness;
-            bottom.BorderThickness = new Thickness(t.Left, t.Top, t.Right, bottom_t);
+            parent.BorderThickness = th;
         }
         private void SetSelected(Border border)
         {
+            current.BeginAnimation(OpacityProperty, fadeout);
             selected = border;
             ((SolidColorBrush)border.Background).BeginAnimation(SolidColorBrush.ColorProperty, animWhite);
-            SetBorder(new Thickness(0, 0, 0, 1));
-
+            ((SolidColorBrush)border.BorderBrush).BeginAnimation(SolidColorBrush.ColorProperty, animWhite);
+            SetParentBorder(border);
         }
         private void Border_MouseDown(object sender, MouseButtonEventArgs e)
         {
             if (selected != sender)
             {
                 ToNormal(selected);
-                SetBorder(new Thickness(0, 0, 1, 1));
                 SetSelected((Border)sender);
             }
         }
-        private static bool IsLastInContainer(Border b)
+        private bool IsLastInContainer(Border b)
         {
             return App.Data.YearGroups.IndexOf((Year)b.DataContext) == App.Data.YearGroups.Count - 1;
         }
         private void Border_Loaded(object sender, RoutedEventArgs e)
         {
             Border b = (Border)sender;
+            b.BorderBrush = new SolidColorBrush(GenericResources.BLACK.Color); // This is the way it is due to 'freezable' stuff
             if (selected == null)
             {
                 SetSelected(b);
@@ -103,10 +128,10 @@ namespace TimetablingWPF
             {
                 if (bottom != null)
                 {
-                    FixBorder(1);
+                    SetParentBorder(bottom);
                 }
                 bottom = b;
-                FixBorder(0);
+                SetParentBorder(b);
             }
         }
     }

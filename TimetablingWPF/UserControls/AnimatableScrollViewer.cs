@@ -19,7 +19,7 @@ namespace TimetablingWPF
 
         private void PreviewScroll(object sender, MouseWheelEventArgs e)
         {
-            ScrollToVerticalOffset(VerticalOffset - e.Delta);
+            ScrollToVerticalOffset(VerticalOffset - e.Delta/10.0);
             e.Handled = true;
         }
     }

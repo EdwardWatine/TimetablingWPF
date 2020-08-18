@@ -71,7 +71,7 @@ namespace TimetablingWPF
             {
                 element.Tag = element.FindChild("PART_bdMain");
             }
-            if (element.VerticalOffset == 0)
+            if (e.VerticalChange == 0)
             {
                 return;
             }

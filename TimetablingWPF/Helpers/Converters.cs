@@ -216,11 +216,11 @@ namespace TimetablingWPF
             return null;
         }
     }
-    public class Root2Multiplier : IValueConverter
+    public class MultiplierConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (double)value * 1.42;
+            return (double)value * double.Parse((string)parameter, CultureInfo.InvariantCulture);
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {

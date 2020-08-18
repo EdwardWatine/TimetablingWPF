@@ -8,7 +8,7 @@
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
     <local:TabBase.Resources>
-        <local:Root2Multiplier x:Key="R2M"/>
+        <local:MultiplierConverter x:Key="R2M"/>
         <local:BindingProxy x:Key="ColorProxy" Data="{DynamicResource PrimaryColor}"/>
         <local:TinterConverter x:Key="tinter"/>
     </local:TabBase.Resources>
@@ -31,9 +31,9 @@
             <EventTrigger RoutedEvent="Grid.Loaded">
                 <BeginStoryboard>
                     <Storyboard>
-                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
+                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, ConverterParameter=1.42, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
                                      Storyboard.TargetName="bgEllipse" Storyboard.TargetProperty="RadiusX"/>
-                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
+                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, ConverterParameter=1.42, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
                                      Storyboard.TargetName="bgEllipse" Storyboard.TargetProperty="RadiusY"/>
                         <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Storyboard.TargetName="tbTitle" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.3" FillBehavior="HoldEnd"/>
                         <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Storyboard.TargetName="gdLeft" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.8" FillBehavior="HoldEnd"/>
