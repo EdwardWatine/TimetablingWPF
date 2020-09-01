@@ -33,13 +33,10 @@ namespace TimetablingWPF
         void Save(BinaryWriter writer);
         void Load(BinaryReader reader, Version version, DataContainer container);
     }
-    public interface IDataObject : INotifyPropertyChanged
+    public interface IDeleteable
     {
-        int StorageIndex { get; set; }
-        void Delete(DataContainer container);
-        string Name { get; set; }
-        bool Committed { get; }
-        bool Visible { get; }
+        void Delete();
+        event EventHandler Deleted;
     }
     public class ErrorStateChangedEventArgs
     {

@@ -12,9 +12,11 @@ namespace TimetablingWPF
         public static int DelayBeforeSearching { get; set; } = 300; //millis
         public static int TooltipDelay { get; set; } = 300; //millis
         /**
-         * Separator between purely local and 'inherited' settings
+         * Separator between constant and 'inherited' settings
          */
         public static DataProvider<int> RecentListSize { get; set; } = new DataProvider<int>(GlobalSettings.RecentListSize);
         public static DataProvider<int> AutosaveInterval { get; set; } = new DataProvider<int>(GlobalSettings.AutosaveInterval); //millis
+        public static DataProvider<double> AnimationModifier { get; } = new DataProvider<double>(GlobalSettings.AnimationModifier);
+        public static DataProvider<bool> AutoSubjectConstraint { get; } = new DataProvider<bool>(GlobalSettings.AutoSubjectConstraint);
     }
 }

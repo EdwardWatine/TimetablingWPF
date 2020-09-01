@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using TimetablingWPF;
 using ObservableComputations;
+using System.Runtime.Remoting;
 
 namespace TimetablingWPF
 {
@@ -21,9 +22,10 @@ namespace TimetablingWPF
         {
             Groups.AddParentToOther(RelatedGroup);
         }
-        public RelationalCollection<Group, Subject> Groups { get; private set; } = new RelationalCollection<Group, Subject>(nameof(Group.Subjects));
-        public RelationalCollection<Teacher, Subject> Teachers { get; private set; } = new RelationalCollection<Teacher, Subject>(nameof(Teacher.Subjects));
-        public ObservableCollectionExtended<Lesson> Lessons { get; private set; } = new ObservableCollectionExtended<Lesson>();
+        public RelationalCollection<Group, Subject> Groups { get; } = new RelationalCollection<Group, Subject>(nameof(Group.Subjects));
+        public RelationalCollection<Teacher, Subject> Teachers { get; } = new RelationalCollection<Teacher, Subject>(nameof(Teacher.Subjects));
+        public ObservableCollectionExtended<Lesson> Lessons { get; } = new ObservableCollectionExtended<Lesson>();
+        public Dictionaring<Year, Year, bool> BoundYearContraints { get; } = SingletonDataContainer.Instance.YearGroups.Dictionaring(y => y, y => false);
         public Group RelatedGroup { get; private set; } = new Group();
         private int rooms;
         public int Rooms { get => rooms;
@@ -53,27 +55,27 @@ namespace TimetablingWPF
         {
             if (!Committed)
             {
-                RelatedGroup.Name = Name;
-                RelatedGroup.Shorthand = Shorthand;
                 RelatedGroup.Visible = false;
                 RelatedGroup.Commit(container);
             }
             base.Commit(container);
         }
-        public override void Save(BinaryWriter writer)
+        public override void SaveChild(BinaryWriter writer)
         {
-            SaveParent(writer);
             Saving.WriteIntEnum(Teachers.Select(t => t.StorageIndex), writer);
         }
 
-        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        public override void LoadChild(BinaryReader reader, Version version, DataContainer container)
         {
-            LoadParent(reader, version, container);
             Loading.LoadEnum(() => Teachers.Add(container.Teachers[reader.ReadInt32()]), reader);
         }
         public override void Delete(DataContainer container = null)
         {
-            RelatedGroup.Delete();
+            RelatedGroup.Delete(container);
+            foreach (Lesson lesson in Lessons)
+            {
+                lesson.Subject = App.Data.NoneSubject;
+            }
             base.Delete(container);
         }
     }

@@ -25,14 +25,12 @@ namespace TimetablingWPF
         public BlockingWindow()
         {
             InitializeComponent();
-            current = _ph;
             icYear.ItemsSource = App.Data.YearGroups;
             fadeout.Completed += Fadeout_Completed;
         }
 
         private void Fadeout_Completed(object sender, EventArgs e)
         {
-            gdContent.Children.RemoveAt(1);
             SetYearData((Year)selected.DataContext);
         }
 
@@ -43,7 +41,6 @@ namespace TimetablingWPF
             animWhite = (ColorAnimation)Resources["animWhite"];
         }
         private Border selected;
-        private FrameworkElement current;
         private Border bottom;
         private ColorAnimation animDark;
         private ColorAnimation animLight;
@@ -53,13 +50,8 @@ namespace TimetablingWPF
         private readonly DoubleAnimation fadeout = new DoubleAnimation(0, 200.ToMillisDuration());
         private void SetYearData(Year year)
         {
-            ScrollableScrollViewer sv = new ScrollableScrollViewer() { Opacity = 0, Background = GenericResources.WHITE };
-            WrapPanel wp = new WrapPanel();
-            wp.Children.Add(new TextBlock() { Text = year.ToString() });
-            sv.Content = wp;
-            current = sv;
-            gdContent.Children.Add(sv);
-            sv.BeginAnimation(OpacityProperty, fadein);
+            icMain.ItemsSource = year.IndependentSets;
+            svMain.BeginAnimation(OpacityProperty, fadein);
         }
         private void Border_MouseEnter(object sender, MouseEventArgs e)
         {
@@ -98,7 +90,7 @@ namespace TimetablingWPF
         }
         private void SetSelected(Border border)
         {
-            current.BeginAnimation(OpacityProperty, fadeout);
+            svMain.BeginAnimation(OpacityProperty, fadeout);
             selected = border;
             ((SolidColorBrush)border.Background).BeginAnimation(SolidColorBrush.ColorProperty, animWhite);
             ((SolidColorBrush)border.BorderBrush).BeginAnimation(SolidColorBrush.ColorProperty, animWhite);

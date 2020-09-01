@@ -63,6 +63,10 @@ namespace TimetablingWPF
     }
     public sealed class SingletonDataContainer : DataContainer, INotifyErrorStateChanged
     {
+        static SingletonDataContainer()
+        {
+            Instance.Initialise();
+        }
         public SelectingMany<INotifyCollectionChanged, BaseDataClass> AllData { get; }
         public static SingletonDataContainer Instance { get; } = new SingletonDataContainer();
         public int NumErrors { get; private set; } = 0;
@@ -83,6 +87,22 @@ namespace TimetablingWPF
         public void Autosave()
         {
             Autosave(null, null);
+        }
+        private void Initialise()
+        {
+            Year none = new Year("None");
+            YearGroups.Add(none);
+            NoneYear = none;
+            Subject noneS = new Subject()
+            {
+                Name = "None",
+                Shorthand = "NONE",
+                Visible = false
+            };
+            Subjects.Add(noneS);
+            NoneSubject = noneS;
+            AllData.CollectionChanged += SetUnsaved;
+            YearGroups.CollectionChanged += SetUnsaved;
         }
         public void Autosave(object sender, ElapsedEventArgs e)
         {
@@ -133,22 +153,6 @@ namespace TimetablingWPF
         private SingletonDataContainer()
         {
             AllData = new ObservableCollectionExtended<INotifyCollectionChanged>() { Teachers, Subjects, Lessons, Forms, Groups }.SelectingMany<INotifyCollectionChanged, BaseDataClass>(x => x);
-            Year none = new Year("None")
-            {
-                Visible = false
-            };
-            YearGroups.Add(none);
-            NoneYear = none;
-            Subject noneS = new Subject()
-            {
-                Name = "None",
-                Shorthand = "NONE",
-                Visible = false
-            };
-            Subjects.Add(noneS);
-            NoneSubject = noneS;
-            AllData.CollectionChanged += SetUnsaved;
-            YearGroups.CollectionChanged += SetUnsaved;
         }
         private void SetUnsaved(object sender, NotifyCollectionChangedEventArgs e)
         {

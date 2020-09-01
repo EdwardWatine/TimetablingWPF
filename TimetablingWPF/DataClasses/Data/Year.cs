@@ -1,17 +1,23 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
 using ObservableComputations;
 
 namespace TimetablingWPF
 {
-    public class Year : IDataObject
+    public class Year : IDeleteable, INotifyPropertyChanged, ISaveable
     {
+        public Year() { }
         public Year(string name)
         {
             Name = name;
         }
         public bool Committed { get; private set; } = false;
-
+        public HashSet<BaseIndependentSet> IndependentSets { get; } = new HashSet<BaseIndependentSet>();
         public event PropertyChangedEventHandler PropertyChanged;
+        public event EventHandler Deleted;
+
         public void NotifyPropertyChanged(string property)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
@@ -31,9 +37,6 @@ namespace TimetablingWPF
             }
         }
         public int StorageIndex { get; set; }
-
-        public bool Visible { get; set; } = true;
-
         public void Commit(DataContainer container = null)
         {
             if (!Committed)
@@ -46,9 +49,10 @@ namespace TimetablingWPF
         {
             foreach (Form form in Forms)
             {
-                form.YearGroup = null;
+                form.YearGroup = App.Data.NoneYear;
             }
             (container ?? App.Data).YearGroups.Remove(this);
+            Deleted?.Invoke(this, EventArgs.Empty);
         }
         public override string ToString()
         {
@@ -64,6 +68,22 @@ namespace TimetablingWPF
         {
             return Name.GetHashCode();
         }
+
+        public void Delete()
+        {
+            Delete(null);
+        }
+
+        public virtual void Save(BinaryWriter writer)
+        {
+            writer.Write(Name);
+        }
+
+        public void Load(BinaryReader reader, Version version, DataContainer container)
+        {
+            Name = reader.ReadString();
+        }
+
         public static bool operator ==(Year left, Year right)
         {
             return Equals(left, right);

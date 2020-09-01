@@ -32,6 +32,7 @@
         <SolidColorBrush x:Key="WarningBrush" Color="{DynamicResource WarningColor}"/>
         <SolidColorBrush x:Key="ErrorBrush" Color="{DynamicResource ErrorColor}"/>
         <SolidColorBrush x:Key="PressedBrush" Color="#707070"/>
+        <local:AnimationModifier x:Key="animMod"/>
         <Style TargetType="Button">
             <Setter Property="OverridesDefaultStyle" Value="True"/>
             <Setter Property="BorderThickness" Value="1"/>

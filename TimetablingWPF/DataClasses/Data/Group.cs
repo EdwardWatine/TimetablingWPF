@@ -28,16 +28,14 @@ namespace TimetablingWPF
                 }
             }
         }
-        public override void Save(BinaryWriter writer)
+        public override void SaveChild(BinaryWriter writer)
         {
-            SaveParent(writer);
             Saving.WriteIntEnum(Subjects.Select(s => s.StorageIndex), writer);
             writer.Write(Rooms);
         }
 
-        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        public override void LoadChild(BinaryReader reader, Version version, DataContainer container)
         {
-            LoadParent(reader, version, container);
             Loading.LoadEnum(() => Subjects.Add(container.Subjects[reader.ReadInt32()]), reader);
             rooms = reader.ReadInt32();
         }

@@ -26,12 +26,9 @@ namespace TimetablingWPF
         }
         public Form()
         {
-            ErrorContainer no_year = new ErrorContainer(e => YearGroup == null, e => "No year group has been assigned", ErrorType.Critical);
-            ErrorList.Add(no_year);
             YearGroup = App.Data.NoneYear;
-            BindToErrors();
         }
-        public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>("Forms");
+        public RelationalCollection<Lesson, Form> Lessons { get; private set; } = new RelationalCollection<Lesson, Form>(nameof(Lesson.Forms));
         private Year _year;
         public Year YearGroup
         {
@@ -48,15 +45,13 @@ namespace TimetablingWPF
             }
         }
 
-        public override void Save(BinaryWriter writer)
+        public override void SaveChild(BinaryWriter writer)
         {
-            SaveParent(writer);
             writer.Write(YearGroup.StorageIndex);
         }
 
-        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        public override void LoadChild(BinaryReader reader, Version version, DataContainer container)
         {
-            LoadParent(reader, version, container);
             YearGroup = container.YearGroups[reader.ReadInt32()];
         }
     }

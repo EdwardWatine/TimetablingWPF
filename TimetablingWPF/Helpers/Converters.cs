@@ -259,4 +259,33 @@ namespace TimetablingWPF
             return null;
         }
     }
+
+    public class AnimationModifier : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string duration = (string)parameter;
+            double modifier = (double)value;
+            return new Duration(TimeSpan.FromTicks((long)(TimeSpan.Parse(duration, CultureInfo.InvariantCulture).Ticks * modifier)));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class TimespanModifier : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            string duration = (string)parameter;
+            double modifier = (double)value;
+            return TimeSpan.FromTicks((long)(TimeSpan.Parse(duration, CultureInfo.InvariantCulture).Ticks * modifier));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

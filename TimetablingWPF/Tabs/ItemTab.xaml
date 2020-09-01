@@ -27,18 +27,34 @@
                 </DrawingBrush.Drawing>
             </DrawingBrush>
         </Grid.Background>
+        <Grid.Resources>
+            <local:AnimationModifier x:Key="animMod"/>
+            <local:TimespanModifier x:Key="tsMod"/>
+            <local:BindingProxy x:Key="dur0_4"
+                                Data="{Binding Value, Source={x:Static local:LocalSettings.AnimationModifier}, Converter={StaticResource animMod}, ConverterParameter=0:0:0.4}"/>
+            <local:BindingProxy x:Key="dur0_7"
+                                Data="{Binding Value, Source={x:Static local:LocalSettings.AnimationModifier}, Converter={StaticResource animMod}, ConverterParameter=0:0:0.7}"/>
+            <local:BindingProxy x:Key="dur0_3"
+                                Data="{Binding Value, Source={x:Static local:LocalSettings.AnimationModifier}, Converter={StaticResource tsMod}, ConverterParameter=0:0:0.3}"/>
+            <local:BindingProxy x:Key="dur0_8"
+                                Data="{Binding Value, Source={x:Static local:LocalSettings.AnimationModifier}, Converter={StaticResource tsMod}, ConverterParameter=0:0:0.8}"/>
+        </Grid.Resources>
         <Grid.Triggers>
             <EventTrigger RoutedEvent="Grid.Loaded">
                 <BeginStoryboard>
                     <Storyboard>
-                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, ConverterParameter=1.42, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
+                        <DoubleAnimation Duration="{Binding Data, Source={StaticResource dur0_7}}" From="0" To="{Binding ActualWidth, ElementName=gdMain, ConverterParameter=1.42, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
                                      Storyboard.TargetName="bgEllipse" Storyboard.TargetProperty="RadiusX"/>
-                        <DoubleAnimation Duration="0:0:0.7" From="0" To="{Binding ActualWidth, ElementName=gdMain, ConverterParameter=1.42, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
+                        <DoubleAnimation Duration="{Binding Data, Source={StaticResource dur0_7}}" From="0" To="{Binding ActualWidth, ElementName=gdMain, ConverterParameter=1.42, Converter={StaticResource R2M}}" FillBehavior="HoldEnd"
                                      Storyboard.TargetName="bgEllipse" Storyboard.TargetProperty="RadiusY"/>
-                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Storyboard.TargetName="tbTitle" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.3" FillBehavior="HoldEnd"/>
-                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Storyboard.TargetName="gdLeft" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.8" FillBehavior="HoldEnd"/>
-                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Name="anim1" Storyboard.TargetName="gdBottom" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.8" FillBehavior="HoldEnd"/>
-                        <DoubleAnimation Duration="0:0:0.4" From="0" To="1" Name="anim2" Storyboard.TargetProperty="Opacity" BeginTime="0:0:0.8" FillBehavior="HoldEnd"/>
+                        <DoubleAnimation Duration="{Binding Data, Source={StaticResource dur0_4}}" From="0" To="1" Storyboard.TargetName="tbTitle" Storyboard.TargetProperty="Opacity"
+                                         BeginTime="{Binding Data, Source={StaticResource dur0_3}}" FillBehavior="HoldEnd"/>
+                        <DoubleAnimation Duration="{Binding Data, Source={StaticResource dur0_4}}" From="0" To="1" Storyboard.TargetName="gdLeft" Storyboard.TargetProperty="Opacity"
+                                         BeginTime="{Binding Data, Source={StaticResource dur0_8}}" FillBehavior="HoldEnd"/>
+                        <DoubleAnimation Duration="{Binding Data, Source={StaticResource dur0_4}}" From="0" To="1" Name="anim1" Storyboard.TargetName="gdBottom" Storyboard.TargetProperty="Opacity"
+                                         BeginTime="{Binding Data, Source={StaticResource dur0_8}}" FillBehavior="HoldEnd"/>
+                        <DoubleAnimation Duration="{Binding Data, Source={StaticResource dur0_4}}" From="0" To="1" Name="anim2" Storyboard.TargetProperty="Opacity"
+                                         BeginTime="{Binding Data, Source={StaticResource dur0_8}}" FillBehavior="HoldEnd"/>
                     </Storyboard>
                 </BeginStoryboard>
             </EventTrigger>

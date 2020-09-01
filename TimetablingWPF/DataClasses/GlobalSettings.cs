@@ -10,5 +10,7 @@ namespace TimetablingWPF
     {
         public static DataWrapper<int> RecentListSize { get; } = new DataWrapper<int>(6);
         public static DataWrapper<int> AutosaveInterval { get; } = new DataWrapper<int>(10_000);
+        public static DataWrapper<double> AnimationModifier { get; } = new DataWrapper<double>(0);
+        public static DataWrapper<bool> AutoSubjectConstraint { get; } = new DataWrapper<bool>(true);
     }
 }

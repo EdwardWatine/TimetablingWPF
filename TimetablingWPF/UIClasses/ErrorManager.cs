@@ -48,10 +48,12 @@ namespace TimetablingWPF
         }
         public void BindProperty(INotifyPropertyChanged item, string property)
         {
+            #if DEBUG
             if (item.GetType().GetProperty(property) == null)
             {
                 throw new InvalidOperationException($"Property '{property}' not found on item of type '{item.GetType().Name}'");
             }
+            #endif
             item.PropertyChanged += delegate (object o, PropertyChangedEventArgs e) { if (property == e.PropertyName) { UpdateError(); } };
         }
 

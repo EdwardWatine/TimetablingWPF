@@ -22,7 +22,7 @@ namespace TimetablingWPF
     /// </summary>
     /// 
 
-    public abstract class BaseDataClass : IDataObject, IFreezable, ISaveable, INotifyErrorStateChanged
+    public abstract class BaseDataClass : IDeleteable, IFreezable, ISaveable, INotifyErrorStateChanged, INotifyPropertyChanged
     {
 
         public BaseDataClass()
@@ -121,6 +121,7 @@ namespace TimetablingWPF
                 if (value is IList)
                 {
                     ((IList)prop.PropertyInfo.GetValue(this)).SetData((IEnumerable)value);
+                    continue;
                 }
                 prop.PropertyInfo.SetValue(this, value);
             }
@@ -145,6 +146,7 @@ namespace TimetablingWPF
         /// </summary>
         public event PropertyChangedEventHandler PropertyChanged;
         public event ErrorStateChangedEventHandler ErrorStateChanged;
+        public event EventHandler Deleted;
         private void ErrorsChanged(ErrorStateChangedEventArgs e)
         {
             ErrorStateChanged?.Invoke(e.AppendObject(this));
@@ -161,7 +163,7 @@ namespace TimetablingWPF
         /// <summary>
         /// Will remove all instances of self from <see cref="RelationalCollection{T}"/>. Will then remove self from the properties list
         /// </summary>
-        public virtual void Delete(DataContainer container = null)
+        public virtual void Delete(DataContainer container)
         {
             void delete(PropertyInfo prop, IRelationalCollection val)
             {
@@ -172,8 +174,12 @@ namespace TimetablingWPF
             }
             ApplyOnType<IRelationalCollection>(delete);
             (container ?? App.Data).FromType(GetType()).Remove(this);
+            Deleted?.Invoke(this, EventArgs.Empty);
         }
-
+        public virtual void Delete()
+        {
+            Delete(null);
+        }
         public virtual void Freeze()
         {
             if (Frozen) { return; }
@@ -198,19 +204,21 @@ namespace TimetablingWPF
                 }
             };
         }
-        public abstract void Save(BinaryWriter writer);
-        public abstract void Load(BinaryReader reader, Version version, DataContainer container);
-        protected void LoadParent(BinaryReader reader, Version version, DataContainer container)
+        public abstract void SaveChild(BinaryWriter writer);
+        public abstract void LoadChild(BinaryReader reader, Version version, DataContainer container);
+        public void Load(BinaryReader reader, Version version, DataContainer container)
         {
             Name = reader.ReadString();
             Shorthand = reader.ReadString();
             Visible = reader.ReadBoolean();
+            LoadChild(reader, version, container);
         }
-        protected void SaveParent(BinaryWriter writer)
+        public void Save(BinaryWriter writer)
         {
             writer.Write(Name);
             writer.Write(Shorthand);
             writer.Write(Visible);
+            SaveChild(writer);
         }
         protected List<ErrorContainer> ErrorList { get; } = new List<ErrorContainer>();
         protected void BindToErrors()

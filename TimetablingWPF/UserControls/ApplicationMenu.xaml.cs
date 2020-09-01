@@ -188,6 +188,7 @@ namespace TimetablingWPF
                                 currentdata.Delete(currentContainer);
                                 continue;
                             }
+                            //TODO: Unnecessary?
                             foreach (BaseDataClass dataClass in currentContainer.FromType(mapping.Key))
                             {
                                 dataClass.Delete(currentContainer);

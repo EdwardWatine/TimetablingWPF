@@ -268,10 +268,7 @@ namespace TimetablingWPF
                     };
                     pcbox.comboBox.SetBinding(PlaceholderComboBox.SelectedItemProperty,
                         new Binding(prop.PropertyInfo.Name) { Source = Item, Mode = BindingMode.TwoWay });
-                    if (prop.Type == typeof(Year))
-                    {
-                        pcbox.SelectedItem = App.Data.NoneYear;
-                    }
+                    pcbox.SelectedItem = prop.PropertyInfo.GetValue(Item);
                     gdLeft.Insert(pcbox, -2, 1);
                     continue;
                 }

@@ -59,7 +59,7 @@ namespace TimetablingWPF
             InitializeComponent();
             lbMain.ItemsSource = YearList;
         }
-        private readonly IList<YearData> YearList = App.Data.YearGroups.Where(y => y.Visible).Select(y => new YearData(y)).ToObservable();
+        private readonly IList<YearData> YearList = App.Data.YearGroups.Except(App.Data.NoneYear).Select(y => new YearData(y)).ToObservable();
         private bool focusFlag = false;
         private void SelectedChanged(object sender, SelectionChangedEventArgs e)
         {

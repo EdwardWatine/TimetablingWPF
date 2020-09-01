@@ -41,8 +41,7 @@ namespace TimetablingWPF
             WriteList(data.YearGroups, (y, i) =>
             {
                 y.StorageIndex = i;
-                writer.Write(y.Name);
-                writer.Write(y.Visible);
+                y.Save(writer);
             }, writer);
             foreach (Type type in DataHelpers.UserTypes)
             {

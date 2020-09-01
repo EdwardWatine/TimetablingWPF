@@ -65,24 +65,6 @@ namespace TimetablingWPF
         {
             return typeof(T).IsAssignableFrom(type);
         }
-        public static void BindValue(this IntegerUpDown iupdown, object item, string property)
-        {
-            iupdown.SetBinding(IntegerUpDown.ValueProperty, new Binding(property)
-            {
-                Source = item,
-                Mode = BindingMode.TwoWay
-            });
-
-        }
-        public static void BindToProperty(this IntegerUpDown iupdown, DependencyProperty dp, object item, string property)
-        {
-            iupdown.SetBinding(dp, new Binding(property)
-            {
-                Source = item,
-                Mode = BindingMode.TwoWay
-            });
-
-        }
         public static void Insert(this Grid grid, UIElement element, int row, int col)
         {
             Grid.SetColumn(element, (grid.ColumnDefinitions.Count + col) % grid.ColumnDefinitions.Count);
@@ -103,6 +85,17 @@ namespace TimetablingWPF
         {
             collection.CollectionChanged += GenericHelpers.GenerateLinkHandler(target);
         }
+        public static ItemsProcessingVoid<IDeleteable> LinkDeletions(this INotifyCollectionChanged collection)
+        {
+            void DeleteHandler(object sender, EventArgs e)
+            {
+                ((IList)collection).Remove(sender);
+            }
+            return collection.ItemsProcessing<IDeleteable>(
+                (d, ip, o, e) => d.Deleted += DeleteHandler,
+                (d, ip, o, e) => d.Deleted -= DeleteHandler
+            );
+        }
         public static ObservableCollectionExtended<object> GenerateOneWayCopy(this INotifyCollectionChanged collection)
         {
             ObservableCollectionExtended<object> copy = ((IEnumerable)collection).Cast<object>().ToObservable();
@@ -113,7 +106,7 @@ namespace TimetablingWPF
         {
             return (e.NewItems != null || e.OldItems != null) && (e.Action != NotifyCollectionChangedAction.Replace || !ReferenceEquals(e.NewItems[0], e.OldItems[0])) && (e.Action != NotifyCollectionChangedAction.Move);
         }
-        public static bool IsReplace(this NotifyCollectionChangedEventArgs e)
+        public static bool IsItemChanged(this NotifyCollectionChangedEventArgs e)
         {
             return e.NewItems != null && e.OldItems != null && ReferenceEquals(e.NewItems[0], e.OldItems[0]);
         }
@@ -142,6 +135,16 @@ namespace TimetablingWPF
         public static System.Drawing.Color ToDrawingColor(this System.Windows.Media.Color color)
         {
             return System.Drawing.Color.FromArgb(color.R, color.G, color.B);
+        }
+        public static IEnumerable<T> Except<T>(this IEnumerable<T> enumerable, T obj)
+        {
+            foreach (T item in enumerable)
+            {
+                if (!obj.Equals(item))
+                {
+                    yield return item;
+                }
+            }
         }
     }
 }

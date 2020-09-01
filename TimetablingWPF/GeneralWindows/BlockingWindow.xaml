@@ -12,6 +12,36 @@
         <ColorAnimation x:Key="animDark" To="{Binding Data, Source={StaticResource ColourProxy}, Converter={StaticResource tinter}, ConverterParameter=0.6}" Duration="0:0:0.2"/>
         <ColorAnimation x:Key="animLight" To="{Binding Data, Source={StaticResource ColourProxy}, Converter={StaticResource tinter}, ConverterParameter=0.8}" Duration="0:0:0.2"/>
         <ColorAnimation x:Key="animWhite" To="#FFF" Duration="0:0:0.2"/>
+        <Style x:Key="borderStyle" TargetType="Border">
+            <Setter Property="Margin" Value="0, 0, 30, 30"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Width" Value="150"/>
+            <Setter Property="Height" Value="243"/>
+            <Setter Property="CornerRadius" Value="5"/>
+            <Setter Property="Background" Value="#90EE90"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding ValidState}" Value="False">
+                    <Setter Property="Background" Value="#EE9090"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="itemStyle" TargetType="ItemsControl">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <DataTemplate DataType="{x:Type local:ListIndependentSet}">
+            <Border Style="{StaticResource borderStyle}">
+                <DockPanel>
+                    <TextBlock HorizontalAlignment="Center" FontSize="20" Text="{Binding Name}" Foreground="#000"/>
+                </DockPanel>
+            </Border>
+        </DataTemplate>
     </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -43,7 +73,9 @@
             <ContentControl Name="ccLoad">
                 <TextBlock Name="tbLoading" Text="Loading constraints..." FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
             </ContentControl>
-            <FrameworkElement Name="_ph"/>
+            <local:ScrollableScrollViewer x:Name="svMain" Opacity="0" Background="#FFF">
+                <ItemsControl Name="icMain" Style="{StaticResource itemStyle}" Padding="30, 30, 0, 0"/>
+            </local:ScrollableScrollViewer>
         </Grid>
     </Grid>
 </Window>

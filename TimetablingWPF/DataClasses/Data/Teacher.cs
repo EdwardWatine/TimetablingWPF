@@ -100,7 +100,7 @@ namespace TimetablingWPF
         public override void Delete(DataContainer dataContainer = null)
         {
             Assignments.Clear();
-            base.Delete();
+            base.Delete(dataContainer);
         }
         private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
         private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();
@@ -148,16 +148,14 @@ namespace TimetablingWPF
             }
         }
 
-        public override void Save(BinaryWriter writer)
+        public override void SaveChild(BinaryWriter writer)
         {
-            SaveParent(writer);
             writer.Write(MaxPeriodsPerCycle);
             Saving.WriteIntEnum(UnavailablePeriods.Select(p => p.ToInt()), writer);
         }
 
-        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        public override void LoadChild(BinaryReader reader, Version version, DataContainer container)
         {
-            LoadParent(reader, version, container);
             MaxPeriodsPerCycle = reader.ReadInt32();
             Loading.LoadEnum(() => UnavailablePeriods.Add(TimetableSlot.FromInt(reader.ReadInt32())), reader);
         }

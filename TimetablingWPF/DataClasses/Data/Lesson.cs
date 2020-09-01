@@ -31,8 +31,6 @@ namespace TimetablingWPF
         {
             Subject = App.Data.NoneSubject;
             Assignments.CollectionChanged += AssignmentsChanged;
-            ErrorContainer no_subject = new ErrorContainer((e) => Subject == null, (e) => "No subject has been selected.", ErrorType.Critical);
-            no_subject.BindProperty(this, nameof(Subject));
 
             ErrorContainer too_many_lessons = new ErrorContainer(e => LessonLength * LessonsPerCycle > TimetableStructure.TotalSchedulable, e => $"This lesson has a minimum of {LessonsPerCycle * LessonLength} periods per cycle, but there is a maximum of {TimetableStructure.TotalSchedulable} periods per cycle.",
                 ErrorType.Critical); ;
@@ -73,8 +71,11 @@ namespace TimetablingWPF
             insuf_teacher_slots.BindProperty(this, nameof(LessonLength));
             ErrorList.Add(insuf_teacher_slots);
             BindToErrors();
+
+            _prevent_gc_holder = Forms.ItemsProcessing<Form>(
+                (f, ip, o, e) => DoConstraintCheck(f.YearGroup));
         }
-        public RelationalCollection<Form, Lesson> Forms { get; private set; } = new RelationalCollection<Form, Lesson>(nameof(Form.Lessons));
+        public RelationalCollection<Form, Lesson> Forms { get; } = new RelationalCollection<Form, Lesson>(nameof(Form.Lessons));
         private int _lpc;
         public int LessonsPerCycle
         {
@@ -115,11 +116,24 @@ namespace TimetablingWPF
                 }
             }
         }
+        private void DoConstraintCheck(Year year)
+        {
+            if (!Committed || !LocalSettings.AutoSubjectConstraint.Value)
+            {
+                return;
+            }
+            if (!Subject.BoundYearContraints[year])
+            {
+                year.IndependentSets.Add(new ListIndependentSet(year, Subject));
+                Subject.BoundYearContraints[year] = true;
+            }
+        }
         public override void Delete(DataContainer dataContainer = null)
         {
             Assignments.Clear();
-            base.Delete();
+            base.Delete(dataContainer);
         }
+        private object _prevent_gc_holder;
         public ObservableCollectionExtended<Assignment> Assignments { get; private set; } = new ObservableCollectionExtended<Assignment>();
         private readonly List<Assignment> frozenAssignmentsAdd = new List<Assignment>();
         private readonly List<Assignment> frozenAssignmentsRemove = new List<Assignment>();
@@ -167,9 +181,8 @@ namespace TimetablingWPF
             }
         }
 
-        public override void Save(BinaryWriter writer)
+        public override void SaveChild(BinaryWriter writer)
         {
-            SaveParent(writer);
             Saving.WriteIntEnum(Forms.Select(f => f.StorageIndex), writer);
             writer.Write(LessonsPerCycle);
             writer.Write(LessonLength);
@@ -181,9 +194,8 @@ namespace TimetablingWPF
             }, writer);
         }
 
-        public override void Load(BinaryReader reader, Version version, DataContainer container)
+        public override void LoadChild(BinaryReader reader, Version version, DataContainer container)
         {
-            LoadParent(reader, version, container);
             Loading.LoadEnum(() => Forms.Add(container.Forms[reader.ReadInt32()]), reader);
             LessonsPerCycle = reader.ReadInt32();
             LessonLength = reader.ReadInt32();

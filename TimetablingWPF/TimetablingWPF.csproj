@@ -163,7 +163,7 @@
     <Compile Include="DataClasses\DataGeneration\DataClasses.cs" />
     <Compile Include="DataClasses\Data\Group.cs" />
     <Compile Include="DataClasses\GlobalSettings.cs" />
-    <Compile Include="DataClasses\IndependentSet.cs" />
+    <Compile Include="DataClasses\BaseIndependentSet.cs" />
     <Compile Include="DataClasses\Searching\ComparisonModifier.cs" />
     <Compile Include="DataClasses\Searching\ListLogicModifier.cs" />
     <Compile Include="DataClasses\Searching\ComparisonSearch.cs" />

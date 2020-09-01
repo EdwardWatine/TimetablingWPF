@@ -16,6 +16,52 @@ namespace TimetablingWPF
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
+    public sealed class DeleteableWrapper<T> : BaseDataProvider<T> where T : class, IDeleteable
+    {
+        public DeleteableWrapper(T fallback = null)
+        {
+            this.fallback = fallback;
+        }
+        public DeleteableWrapper(T value, T fallback = null)
+        {
+            this.fallback = fallback;
+            Value = value;
+        }
+        public void BindPropertyChanged(Action callback)
+        {
+            PropertyChanged += delegate (object sender, PropertyChangedEventArgs e)
+            {
+                callback();
+            };
+        }
+        private T value;
+        private void DeleteHandler(object sender, EventArgs e)
+        {
+            Value = null;
+        }
+        public override T Value
+        {
+            get => value;
+            set
+            {
+                value = value ?? fallback;
+                if (!value?.Equals(this.value) ?? this.value != null)
+                {
+                    if (this.value != null)
+                    {
+                        this.value.Deleted -= DeleteHandler;
+                    }
+                    this.value = value;
+                    if (this.value != null)
+                    {
+                        this.value.Deleted += DeleteHandler;
+                    }
+                    RaisePropertyChanged(nameof(Value));
+                }
+            }
+        }
+        private readonly T fallback;
+    }
     public class DataProvider<T> : BaseDataProvider<T>
     {
         public DataProvider(T defaultValue) : this(new DataWrapper<T>(defaultValue)) { }
@@ -68,13 +114,16 @@ namespace TimetablingWPF
         public DataWrapper(T value)
         {
             Value = value;
+            Original = value;
         }
         public DataWrapper()
         {
             Value = default;
+            Original = Value;
         }
         private T value;
-        public override T Value { 
+        public T Original { get; }
+        public override T Value {
             get => value;
             set
             {

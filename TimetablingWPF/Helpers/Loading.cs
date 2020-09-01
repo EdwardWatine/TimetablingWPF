@@ -62,11 +62,8 @@ namespace TimetablingWPF
             UpdateWorker("Year Groups");
             LoadEnum(() =>
             {
-                string name = reader.ReadString();
-                Year year = new Year(name)
-                {
-                    Visible = reader.ReadBoolean()
-                };
+                Year year = new Year();
+                year.Load(reader, version, container);
                 year.Commit(container);
             }, reader);
             object[] parameters = new object[] { reader, version, container };
