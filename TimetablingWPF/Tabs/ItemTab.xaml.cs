@@ -98,7 +98,7 @@ namespace TimetablingWPF
                     {
                         itemlist.ListenToCollection((INotifyCollectionChanged)prop.PropertyInfo.GetValue(Item));
                     }
-                    ScrollViewer sv = new ScrollViewer()
+                    ScrollableScrollViewer sv = new ScrollableScrollViewer()
                     {
                         HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
                         VerticalScrollBarVisibility = ScrollBarVisibility.Auto,

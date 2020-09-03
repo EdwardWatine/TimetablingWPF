@@ -11,7 +11,7 @@
         <local:BoolToVisibility x:Key="boolToVis"/>
         <local:NullToBool x:Key="nullToBool"/>
         <local:InverseBool x:Key="invBool"/>
-        <local:MultiplyConverter x:Key="multiC"/>
+        <local:MultiplyArrayConverter x:Key="multiC"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>

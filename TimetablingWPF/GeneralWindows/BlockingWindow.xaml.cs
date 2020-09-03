@@ -126,5 +126,21 @@ namespace TimetablingWPF
                 SetParentBorder(b);
             }
         }
+
+        private void ToggleExpander(object sender, MouseButtonEventArgs e)
+        {
+            ((ImageExpander)((Border)sender).Child).IsExpanded ^= true;
+        }
+
+        private void bdBottom_MouseEnter(object sender, MouseEventArgs e)
+        {
+            VisualStateManager.GoToState((FrameworkElement)sender, "MouseOver", false);
+            var x = ((VisualStateGroup)VisualStateManager.GetVisualStateGroups((FrameworkElement)sender)[0]).States;
+        }
+
+        private void bdBottom_MouseLeave(object sender, MouseEventArgs e)
+        {
+            VisualStateManager.GoToState((FrameworkElement)sender, "Normal", false);
+        }
     }
 }

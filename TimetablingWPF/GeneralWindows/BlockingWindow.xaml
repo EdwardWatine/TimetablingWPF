@@ -4,22 +4,24 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TimetablingWPF"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         mc:Ignorable="d" Loaded="Window_Loaded"
         Title="BlockingWindow" Height="450" Width="800">
     <Window.Resources>
+        <local:SubtractionConverter x:Key="subconv"/>
         <local:BindingProxy x:Key="ColourProxy" Data="{DynamicResource PrimaryColor}"/>
         <local:TinterConverter x:Key="tinter"/>
+        <local:MultiplierConverter x:Key="mconv"/>
         <ColorAnimation x:Key="animDark" To="{Binding Data, Source={StaticResource ColourProxy}, Converter={StaticResource tinter}, ConverterParameter=0.6}" Duration="0:0:0.2"/>
         <ColorAnimation x:Key="animLight" To="{Binding Data, Source={StaticResource ColourProxy}, Converter={StaticResource tinter}, ConverterParameter=0.8}" Duration="0:0:0.2"/>
         <ColorAnimation x:Key="animWhite" To="#FFF" Duration="0:0:0.2"/>
+        <local:NullVisibilityConverter x:Key="nvConverter"/>
         <Style x:Key="borderStyle" TargetType="Border">
             <Setter Property="Margin" Value="0, 0, 30, 30"/>
-            <Setter Property="Padding" Value="10"/>
-            <Setter Property="Width" Value="150"/>
-            <Setter Property="Height" Value="243"/>
             <Setter Property="CornerRadius" Value="5"/>
             <Setter Property="Background" Value="#90EE90"/>
             <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="SnapsToDevicePixels" Value="True"/>
             <Style.Triggers>
                 <DataTrigger Binding="{Binding ValidState}" Value="False">
                     <Setter Property="Background" Value="#EE9090"/>
@@ -36,10 +38,94 @@
             </Setter>
         </Style>
         <DataTemplate DataType="{x:Type local:ListIndependentSet}">
-            <Border Style="{StaticResource borderStyle}">
-                <DockPanel>
-                    <TextBlock HorizontalAlignment="Center" FontSize="20" Text="{Binding Name}" Foreground="#000"/>
-                </DockPanel>
+            <Border Name="bdMain" Style="{StaticResource borderStyle}">
+                <!--Height 243-->
+                <Grid Width="150">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock HorizontalAlignment="Center" Margin="10" Name="title">
+                            <InlineUIContainer BaselineAlignment="Center">
+                                <Image Source="{StaticResource LinkIcon}" Height="{Binding ActualHeight, ElementName=tbName, Converter={StaticResource mconv}, ConverterParameter=0.5}"
+                                       Visibility="{Binding Subject, Converter={StaticResource nvConverter}}" Margin="0,0,5,0"/>
+                            </InlineUIContainer>
+                            <TextBlock Name="tbName" FontSize="20" Text="{Binding Name}" Foreground="#000" FontWeight="DemiBold"/>
+                        </TextBlock>
+                    <local:ScrollableScrollViewer x:Name="items" Grid.Row="1" Height="0">
+                        <ItemsControl ItemsSource="{Binding Forms}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                        </ItemsControl>
+                    </local:ScrollableScrollViewer>
+                    <Border Grid.Row="2" CornerRadius="0, 0, 5, 5" Height="24" BorderBrush="#000" Padding="0, 2"
+                        HorizontalAlignment="Stretch" SnapsToDevicePixels="True" BorderThickness="0, 1, 0, 0" MouseDown="ToggleExpander" Name="bdBottom">
+                        <Border.Background>
+                            <SolidColorBrush x:Name="_holder" Color="{Binding Background.(SolidColorBrush.Color), ElementName=bdMain}"/>
+                        </Border.Background>
+                        <Border.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="0:0:0.2" To="{Binding Background.(SolidColorBrush.Color), ElementName=bdMain,
+                                            Converter={StaticResource tinter}, ConverterParameter=0.4}" Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ColorAnimation Duration="0:0:0.2" To="{Binding Background.(SolidColorBrush.Color), ElementName=bdMain}"
+                                                        Storyboard.TargetProperty="Background.(SolidColorBrush.Color)"/>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Border.Triggers>
+                        <local:ImageExpander x:Name="iexp">
+                            <local:ImageExpander.Triggers>
+                                <EventTrigger RoutedEvent="local:ImageExpander.Expanded">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{Binding Duration, ElementName=iexp}" Storyboard.TargetProperty="Height" Storyboard.Target="{Binding ElementName=items}">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <ExponentialEase EasingMode="EaseInOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                                <DoubleAnimation.To>
+                                                    <MultiBinding Converter="{StaticResource subconv}">
+                                                        <Binding>
+                                                            <Binding.Source>
+                                                                <sys:Double>
+                                                                    170
+                                                                </sys:Double>
+                                                            </Binding.Source>
+                                                        </Binding>
+                                                        <Binding Path="ActualHeight" ElementName="title"/>
+                                                        <Binding Path="ActualHeight" ElementName="bdBottom"/>
+                                                    </MultiBinding>
+                                                </DoubleAnimation.To>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                                <EventTrigger RoutedEvent="local:ImageExpander.Collapsed">
+                                    <BeginStoryboard>
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="{Binding Duration, ElementName=iexp}" To="0" Storyboard.TargetProperty="Height" Storyboard.Target="{Binding ElementName=items}">
+                                                <DoubleAnimation.EasingFunction>
+                                                    <ExponentialEase EasingMode="EaseInOut"/>
+                                                </DoubleAnimation.EasingFunction>
+                                            </DoubleAnimation>
+                                        </Storyboard>
+                                    </BeginStoryboard>
+                                </EventTrigger>
+                            </local:ImageExpander.Triggers>
+                        </local:ImageExpander>
+                    </Border>
+                </Grid>
             </Border>
         </DataTemplate>
     </Window.Resources>

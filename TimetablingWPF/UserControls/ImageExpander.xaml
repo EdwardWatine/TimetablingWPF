@@ -1,0 +1,43 @@
+﻿<base:ImageExpanderBase x:Class="TimetablingWPF.ImageExpander"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" x:Name="parent"
+             xmlns:local="clr-namespace:TimetablingWPF" xmlns:base="clr-namespace:TimetablingWPF.UCBases" RenderTransformOrigin="0.5, 0.5"
+             mc:Ignorable="d" Source="{StaticResource ExpandIcon}">
+    <base:ImageExpanderBase.Resources>
+        <local:AnimationModifier x:Key="animc"/>
+    </base:ImageExpanderBase.Resources>
+    <base:ImageExpanderBase.Duration>
+        <Binding Path="Value" Source="{x:Static local:LocalSettings.AnimationModifier}" Converter="{StaticResource animc}" ConverterParameter="0:0:0.30"/>
+    </base:ImageExpanderBase.Duration>
+    <base:ImageExpanderBase.RenderTransform>
+        <RotateTransform Angle="180"/>
+    </base:ImageExpanderBase.RenderTransform>
+    <base:ImageExpanderBase.Triggers>
+        <EventTrigger RoutedEvent="local:ImageExpander.Expanded">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Duration="{Binding Duration, ElementName=parent}" To="0"
+                                         Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)">
+                        <DoubleAnimation.EasingFunction>
+                            <ExponentialEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="local:ImageExpander.Collapsed">
+            <BeginStoryboard>
+                <Storyboard>
+                    <DoubleAnimation Duration="{Binding Duration, ElementName=parent}" To="180"
+                                                 Storyboard.TargetProperty="RenderTransform.(RotateTransform.Angle)">
+                        <DoubleAnimation.EasingFunction>
+                            <ExponentialEase EasingMode="EaseInOut"/>
+                        </DoubleAnimation.EasingFunction>
+                    </DoubleAnimation>
+                </Storyboard>
+            </BeginStoryboard>
+        </EventTrigger>
+    </base:ImageExpanderBase.Triggers>
+</base:ImageExpanderBase>

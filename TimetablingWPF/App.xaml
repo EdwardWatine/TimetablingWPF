@@ -23,6 +23,7 @@
         <BitmapImage x:Key="FilterIcon" UriSource="Media/FilterIcon.png"/>
         <BitmapImage x:Key="ExpandIcon" UriSource="Media/ExpandIcon.png"/>
         <BitmapImage x:Key="BlackBinIcon" UriSource="Media/BlackBinIcon.png"/>
+        <BitmapImage x:Key="LinkIcon" UriSource="Media/LinkIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
         <Color x:Key="WarningColor">#fc9803</Color>

@@ -54,7 +54,11 @@ namespace TimetablingWPF
             int count = VisualTreeHelper.GetChildrenCount(parent);
             for (int i = 0; i < count; i++)
             {
-                FrameworkElement obj = (FrameworkElement)VisualTreeHelper.GetChild(parent, i);
+                FrameworkElement obj = VisualTreeHelper.GetChild(parent, i) as FrameworkElement;
+                if (obj == null)
+                {
+                    continue;
+                }
                 if (obj.Name == name)
                 {
                     return obj;

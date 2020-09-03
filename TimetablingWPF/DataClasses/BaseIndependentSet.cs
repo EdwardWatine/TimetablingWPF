@@ -134,7 +134,7 @@ namespace TimetablingWPF
             );
         }
         public Hashing<Form, Form> FormHashSet { get; private set; }
-        private readonly Subject Subject;
+        public Subject Subject { get; }
         public override IEnumerable<Form> GetUsefulForms(Form form)
         {
             if (!FormHashSet.Contains(form))

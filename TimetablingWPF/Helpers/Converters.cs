@@ -43,7 +43,7 @@ namespace TimetablingWPF
             throw new NotImplementedException();
         }
     }
-    public class MultiplyConverter : IMultiValueConverter
+    public class MultiplyArrayConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
@@ -252,7 +252,7 @@ namespace TimetablingWPF
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return VisualHelpers.TintColour((Color)value, double.Parse((string)parameter, CultureInfo.InvariantCulture));
+           return VisualHelpers.TintColour((Color)value, double.Parse((string)parameter, CultureInfo.InvariantCulture));
         }
         public object ConvertBack(object value, Type targetType, object paramter, CultureInfo culture)
         {
@@ -284,6 +284,30 @@ namespace TimetablingWPF
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class NullVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value == null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class SubtractionConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (double)values[0] - values.Skip(1).Cast<double>().Sum();
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

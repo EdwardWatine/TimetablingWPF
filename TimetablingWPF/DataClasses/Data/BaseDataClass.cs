@@ -114,10 +114,6 @@ namespace TimetablingWPF
             foreach (CustomPropertyInfo prop in ExposedProperties[type])
             {
                 object value = prop.PropertyInfo.GetValue(source);
-                if (value is IRelationalCollection rc)
-                {
-                    rc.Parent = this;
-                }
                 if (value is IList)
                 {
                     ((IList)prop.PropertyInfo.GetValue(this)).SetData((IEnumerable)value);

@@ -93,11 +93,14 @@ namespace TimetablingWPF
             {
                 RemoveFromOther(obj); // removes the parent from all of its RelationalLists
             }
-            base.ClearItems();
+            while (Count > 0)
+            {
+                base.RemoveItem(Count - 1); // can't clear :(
+            }
         }
         protected override void SetItem(int index, TContent item)
         {
-            RemoveFromOther(this[index]);
+            RemoveFromOther(item);
             base.SetItem(index, item);
             AddParentToOther(item);
         }
