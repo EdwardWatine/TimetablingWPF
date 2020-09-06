@@ -12,6 +12,7 @@ using System.Windows.Data;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using ObservableComputations;
+using System.Windows.Media.Animation;
 
 namespace TimetablingWPF
 {
@@ -145,6 +146,24 @@ namespace TimetablingWPF
                     yield return item;
                 }
             }
+        }
+        public static Duration Scale(this TimeSpan timespan, double scale)
+        {
+            return new Duration(TimeSpan.FromTicks((long)(timespan.Ticks * scale)));
+        }
+        public static DependencyObject GetTarget(this Timeline timeline, FrameworkElement reference = null)
+        {
+            DependencyObject res = Storyboard.GetTarget(timeline);
+            if (res == null)
+            {
+                string name = Storyboard.GetTargetName(timeline);
+                if (name == null || reference == null)
+                {
+                    return null;
+                }
+                return (DependencyObject)reference.FindName(name);
+            }
+            return res;
         }
     }
 }

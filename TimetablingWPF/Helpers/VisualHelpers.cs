@@ -16,6 +16,7 @@ using static TimetablingWPF.GenericResources;
 
 namespace TimetablingWPF
 {
+    sealed class UIHook { }
     class VisualHelpers
     {
         public static StackPanel GenerateTimetable(IEnumerable<TimetableSlot> slots, MouseButtonEventHandler leftClickHandler = null,

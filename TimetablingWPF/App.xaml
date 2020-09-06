@@ -24,6 +24,7 @@
         <BitmapImage x:Key="ExpandIcon" UriSource="Media/ExpandIcon.png"/>
         <BitmapImage x:Key="BlackBinIcon" UriSource="Media/BlackBinIcon.png"/>
         <BitmapImage x:Key="LinkIcon" UriSource="Media/LinkIcon.png"/>
+        <BitmapImage x:Key="WhiteCrossIcon" UriSource="Media/WhiteCrossIcon.png"/>
         <Color x:Key="PrimaryColor">#1A1A74</Color>
         <Color x:Key="SecondaryColor">#FFF</Color>
         <Color x:Key="WarningColor">#fc9803</Color>
@@ -352,6 +353,15 @@
                             </ScrollBar>
                         </Grid>
                     </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="icWrapStyle" TargetType="ItemsControl">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <WrapPanel/>
+                    </ItemsPanelTemplate>
                 </Setter.Value>
             </Setter>
         </Style>

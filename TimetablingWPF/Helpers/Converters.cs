@@ -266,7 +266,7 @@ namespace TimetablingWPF
         {
             string duration = (string)parameter;
             double modifier = (double)value;
-            return new Duration(TimeSpan.FromTicks((long)(TimeSpan.Parse(duration, CultureInfo.InvariantCulture).Ticks * modifier)));
+            return TimeSpan.Parse(duration, CultureInfo.InvariantCulture).Scale(modifier);
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -300,6 +300,18 @@ namespace TimetablingWPF
             throw new NotImplementedException();
         }
     }
+    public class InverseNullVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value != null ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
     public class SubtractionConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
@@ -308,6 +320,18 @@ namespace TimetablingWPF
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+    public class AddConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (double)value + double.Parse((string)parameter, CultureInfo.InvariantCulture);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }
