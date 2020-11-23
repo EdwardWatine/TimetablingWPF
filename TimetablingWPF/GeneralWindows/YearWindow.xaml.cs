@@ -118,6 +118,7 @@ namespace TimetablingWPF
                         {
                             return;
                         }
+                        flag = true;
                     }
                     data.Year.Delete();
                     continue;
